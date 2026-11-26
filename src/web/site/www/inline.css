@@ -1,0 +1,24 @@
+/* Written by spikes/site-claude/tools/build.mjs: the door's page's style attributes, one rule each, since its policy admits none inline. */
+[data-style="0"] { --k: 0; --v: 1 }
+[data-style="1"] { --k: 1; --v: .878 }
+[data-style="2"] { --k: 2; --v: .78 }
+[data-style="3"] { --k: 3; --v: .707 }
+[data-style="4"] { --k: 4; --v: .537 }
+[data-style="5"] { --v: .78 }
+[data-style="6"] { --k: 0 }
+[data-style="7"] { --k: 1 }
+[data-style="8"] { --k: 2 }
+[data-style="9"] { --k: 0; --v: .939 }
+[data-style="10"] { --k: 1; --v: .909 }
+[data-style="11"] { --k: 2; --v: 1 }
+[data-style="12"] { --k: 3; --v: .879 }
+[data-style="13"] { --k: 4; --v: .97 }
+[data-style="14"] { --k: 5; --v: .939 }
+[data-style="15"] { --k: 6; --v: .909 }
+[data-style="16"] { --k: 7; --v: .97 }
+[data-style="17"] { --k: 8; --v: .879 }
+[data-style="18"] { --k: 9; --v: .939 }
+[data-style="19"] { --k: 10; --v: .909 }
+[data-style="20"] { --k: 11; --v: .273 }
+[data-style="21"] { --k: 12; --v: .242 }
+[data-style="22"] { --k: 13; --v: .242 }

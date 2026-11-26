@@ -1,0 +1,321 @@
+{"t":145,"scene":"stop-mid-text","prompt":"Write a long note on shipping."}
+{"t":146,"frame":{"kind":"life","epoch":"7dd771d7a06038eb06ac36ab892f2590"}}
+{"t":146,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":1,"entryId":"0ad83619","body":{"form":"model_change","provider":"google","modelId":"gemini-3.6-flash"}}}
+{"t":146,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":2,"entryId":"19ec57a6","body":{"form":"thinking_level_change","thinkingLevel":"low"}}}
+{"t":146,"frame":{"kind":"turn","running":false}}
+{"t":146,"frame":{"kind":"sleep","dueInMs":3599854}}
+{"t":146,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":147,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":147,"frame":{"kind":"turn","running":true}}
+{"t":165,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":3,"entryId":"d1469f4d","body":{"form":"system","counts":{"contentBlocks":0,"sections":5,"toolsAdded":4,"toolsRemoved":0}}}}
+{"t":166,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":4,"entryId":"43d1c375","body":{"form":"message","role":"user","content":[{"form":"text","text":"Write a long note on shipping."}],"timestamp":1790821879445}}}
+{"t":270,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_start","contentIndex":0}}}
+{"t":270,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_delta","contentIndex":0,"delta":"Planning the note."}}}
+{"t":368,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_end","contentIndex":0,"content":"Planning the note."}}}
+{"t":368,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":1}}}
+{"t":368,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 1. "}}}
+{"t":470,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 2. "}}}
+{"t":573,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 3. "}}}
+{"t":672,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 4. "}}}
+{"t":773,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 5. "}}}
+{"t":875,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 6. "}}}
+{"t":977,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 7. "}}}
+{"t":1069,"command":"abort"}
+{"t":1089,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":1089,"answered":"abort"}
+{"t":1091,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":5,"entryId":"b0295620","body":{"form":"message","role":"assistant","content":[{"form":"thinking","thinking":"Planning the note."},{"form":"text","text":"Line 1. Line 2. Line 3. Line 4. Line 5. Line 6. Line 7. "}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"aborted","timestamp":1790821879456,"errorMessage":"This operation was aborted"}}}
+{"t":1091,"frame":{"kind":"turn","running":false}}
+{"t":2590,"scene":"stop-mid-bash","prompt":"Run the slow check."}
+{"t":2591,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":2594,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":2594,"frame":{"kind":"turn","running":true}}
+{"t":2599,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":6,"entryId":"b702dabd","body":{"form":"message","role":"user","content":[{"form":"text","text":"Run the slow check."}],"timestamp":1790821881891}}}
+{"t":2644,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_start","contentIndex":0}}}
+{"t":2644,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_delta","contentIndex":0,"delta":"Running it."}}}
+{"t":2683,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_end","contentIndex":0,"content":"Running it."}}}
+{"t":2683,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_start","contentIndex":1,"id":"bash_1790821881982_1","toolName":"bash"}}}
+{"t":2683,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_delta","contentIndex":1,"delta":"{\"command\":\"printf 'checking\\\\n'; sleep 6; printf 'done\\\\n'\"}"}}}
+{"t":2683,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_end","contentIndex":1,"toolCall":{"type":"toolCall","id":"bash_1790821881982_1","name":"bash","arguments":{"command":"printf 'checking\\n'; sleep 6; printf 'done\\n'"}}}}}
+{"t":2727,"frame":{"kind":"delta","body":{"form":"tool_delta","toolCallId":"bash_1790821881982_1","toolName":"bash","partial":{"content":[]}}}}
+{"t":2732,"frame":{"kind":"delta","body":{"form":"tool_delta","toolCallId":"bash_1790821881982_1","toolName":"bash","partial":{"content":[{"form":"text","text":"checking\n"}]}}}}
+{"t":3885,"command":"abort"}
+{"t":3889,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":3889,"answered":"abort"}
+{"t":3889,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":7,"entryId":"40a45edf","body":{"form":"message","role":"assistant","content":[{"form":"thinking","thinking":"Running it."},{"form":"tool_call","id":"bash_1790821881982_1","name":"bash","arguments":{"command":"printf 'checking\\n'; sleep 6; printf 'done\\n'"}}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":20,"output":10,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":30,"cost":{"input":0.000015,"output":0.000037500000000000003,"cacheRead":0,"cacheWrite":0,"total":0.0000525}},"stopReason":"toolUse","timestamp":1790821881895,"rawStopReason":"STOP"}}}
+{"t":3889,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":8,"entryId":"79c311af","body":{"form":"message","role":"tool_result","toolCallId":"bash_1790821881982_1","toolName":"bash","content":[{"form":"text","text":"checking\n\n\nCommand aborted"}],"details":{},"isError":true,"timestamp":1790821883186}}}
+{"t":3889,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":9,"entryId":"940175c1","body":{"form":"message","role":"assistant","content":[],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"error","errorMessage":"This operation was aborted","timestamp":1790821883188}}}
+{"t":3890,"frame":{"kind":"turn","running":false}}
+{"t":5390,"scene":"stop-mid-read","prompt":"Read the pipe."}
+{"t":5391,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":5397,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":5397,"frame":{"kind":"turn","running":true}}
+{"t":5405,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":10,"entryId":"d3e640c0","body":{"form":"message","role":"user","content":[{"form":"text","text":"Read the pipe."}],"timestamp":1790821884694}}}
+{"t":5447,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_start","contentIndex":0}}}
+{"t":5447,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_delta","contentIndex":0,"delta":"Reading it."}}}
+{"t":5487,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_end","contentIndex":0,"content":"Reading it."}}}
+{"t":5488,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_start","contentIndex":1,"id":"read_1790821884786_2","toolName":"read"}}}
+{"t":5488,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_delta","contentIndex":1,"delta":"{\"path\":\"waiting.pipe\"}"}}}
+{"t":5488,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_end","contentIndex":1,"toolCall":{"type":"toolCall","id":"read_1790821884786_2","name":"read","arguments":{"path":"waiting.pipe"}}}}}
+{"t":6689,"command":"abort"}
+{"t":6690,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":6690,"answered":"abort"}
+{"t":6691,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":11,"entryId":"5941d7ea","body":{"form":"message","role":"assistant","content":[{"form":"thinking","thinking":"Reading it."},{"form":"tool_call","id":"read_1790821884786_2","name":"read","arguments":{"path":"waiting.pipe"}}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":20,"output":10,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":30,"cost":{"input":0.000015,"output":0.000037500000000000003,"cacheRead":0,"cacheWrite":0,"total":0.0000525}},"stopReason":"toolUse","timestamp":1790821884698,"rawStopReason":"STOP"}}}
+{"t":6691,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":12,"entryId":"5a6325e5","body":{"form":"message","role":"tool_result","toolCallId":"read_1790821884786_2","toolName":"read","content":[{"form":"text","text":"Operation aborted"}],"details":{},"isError":true,"timestamp":1790821885988}}}
+{"t":6691,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":13,"entryId":"3fbb1cb2","body":{"form":"message","role":"assistant","content":[],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"error","errorMessage":"This operation was aborted","timestamp":1790821885989}}}
+{"t":6691,"frame":{"kind":"turn","running":false}}
+{"t":8191,"scene":"stop-two-steps","prompt":"Check, then read the pipe."}
+{"t":8192,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":8195,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":8195,"frame":{"kind":"turn","running":true}}
+{"t":8201,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":14,"entryId":"d808b5c4","body":{"form":"message","role":"user","content":[{"form":"text","text":"Check, then read the pipe."}],"timestamp":1790821887492}}}
+{"t":8244,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_start","contentIndex":0}}}
+{"t":8244,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_delta","contentIndex":0,"delta":"Two steps."}}}
+{"t":8285,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_end","contentIndex":0,"content":"Two steps."}}}
+{"t":8286,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_start","contentIndex":1,"id":"bash_1790821887584_3","toolName":"bash"}}}
+{"t":8286,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_delta","contentIndex":1,"delta":"{\"command\":\"sleep 6\"}"}}}
+{"t":8286,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_end","contentIndex":1,"toolCall":{"type":"toolCall","id":"bash_1790821887584_3","name":"bash","arguments":{"command":"sleep 6"}}}}}
+{"t":8326,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_start","contentIndex":2,"id":"read_1790821887625_4","toolName":"read"}}}
+{"t":8326,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_delta","contentIndex":2,"delta":"{\"path\":\"waiting.pipe\"}"}}}
+{"t":8326,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_end","contentIndex":2,"toolCall":{"type":"toolCall","id":"read_1790821887625_4","name":"read","arguments":{"path":"waiting.pipe"}}}}}
+{"t":8371,"frame":{"kind":"delta","body":{"form":"tool_delta","toolCallId":"bash_1790821887584_3","toolName":"bash","partial":{"content":[]}}}}
+{"t":9487,"command":"abort"}
+{"t":9494,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":9494,"answered":"abort"}
+{"t":9497,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":15,"entryId":"4503227d","body":{"form":"message","role":"assistant","content":[{"form":"thinking","thinking":"Two steps."},{"form":"tool_call","id":"bash_1790821887584_3","name":"bash","arguments":{"command":"sleep 6"}},{"form":"tool_call","id":"read_1790821887625_4","name":"read","arguments":{"path":"waiting.pipe"}}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":20,"output":10,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":30,"cost":{"input":0.000015,"output":0.000037500000000000003,"cacheRead":0,"cacheWrite":0,"total":0.0000525}},"stopReason":"toolUse","timestamp":1790821887496,"rawStopReason":"STOP"}}}
+{"t":9497,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":16,"entryId":"e6c69905","body":{"form":"message","role":"tool_result","toolCallId":"bash_1790821887584_3","toolName":"bash","content":[{"form":"text","text":"Command aborted"}],"details":{},"isError":true,"timestamp":1790821888789}}}
+{"t":9497,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":17,"entryId":"a8541107","body":{"form":"message","role":"tool_result","toolCallId":"read_1790821887625_4","toolName":"read","content":[{"form":"text","text":"Operation aborted"}],"details":{},"isError":true,"timestamp":1790821888790}}}
+{"t":9497,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":18,"entryId":"eb714778","body":{"form":"message","role":"assistant","content":[],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"error","errorMessage":"This operation was aborted","timestamp":1790821888792}}}
+{"t":9498,"frame":{"kind":"turn","running":false}}
+{"t":10995,"scene":"stop-before-first-byte","prompt":"Say hello."}
+{"t":10996,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":10997,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":10997,"frame":{"kind":"turn","running":true}}
+{"t":11001,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":19,"entryId":"8badcd8b","body":{"form":"message","role":"user","content":[{"form":"text","text":"Say hello."}],"timestamp":1790821890295}}}
+{"t":11799,"command":"abort"}
+{"t":11804,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":11804,"answered":"abort"}
+{"t":11805,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":20,"entryId":"86de5680","body":{"form":"message","role":"assistant","content":[],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"aborted","timestamp":1790821890297,"errorMessage":"Request aborted"}}}
+{"t":11806,"frame":{"kind":"turn","running":false}}
+{"t":13305,"scene":"send-mid-text","prompt":"Write a long note on shipping."}
+{"t":13305,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":13308,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":13308,"frame":{"kind":"turn","running":true}}
+{"t":13313,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":21,"entryId":"6c6e35af","body":{"form":"message","role":"user","content":[{"form":"text","text":"Write a long note on shipping."}],"timestamp":1790821892605}}}
+{"t":13418,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_start","contentIndex":0}}}
+{"t":13418,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_delta","contentIndex":0,"delta":"Planning the note."}}}
+{"t":13526,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_end","contentIndex":0,"content":"Planning the note."}}}
+{"t":13526,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":1}}}
+{"t":13526,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 1. "}}}
+{"t":13623,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 2. "}}}
+{"t":13724,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 3. "}}}
+{"t":13824,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 4. "}}}
+{"t":13924,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 5. "}}}
+{"t":14025,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 6. "}}}
+{"t":14127,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 7. "}}}
+{"t":14227,"command":"prompt","message":"Also mention ports."}
+{"t":14227,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 8. "}}}
+{"t":14329,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 9. "}}}
+{"t":14431,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 10. "}}}
+{"t":14531,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 11. "}}}
+{"t":14632,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 12. "}}}
+{"t":14732,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 13. "}}}
+{"t":14834,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 14. "}}}
+{"t":14937,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 15. "}}}
+{"t":15037,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 16. "}}}
+{"t":15140,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 17. "}}}
+{"t":15239,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 18. "}}}
+{"t":15340,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 19. "}}}
+{"t":15442,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 20. "}}}
+{"t":15542,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 21. "}}}
+{"t":15642,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 22. "}}}
+{"t":15742,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 23. "}}}
+{"t":15844,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 24. "}}}
+{"t":15944,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 25. "}}}
+{"t":16045,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 26. "}}}
+{"t":16147,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 27. "}}}
+{"t":16248,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 28. "}}}
+{"t":16349,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 29. "}}}
+{"t":16450,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 30. "}}}
+{"t":16551,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":1,"content":"Line 1. Line 2. Line 3. Line 4. Line 5. Line 6. Line 7. Line 8. Line 9. Line 10. Line 11. Line 12. Line 13. Line 14. Line 15. Line 16. Line 17. Line 18. Line 19. Line 20. Line 21. Line 22. Line 23. Line 24. Line 25. Line 26. Line 27. Line 28. Line 29. Line 30. "}}}
+{"t":16559,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":22,"entryId":"c8285252","body":{"form":"message","role":"assistant","content":[{"form":"thinking","thinking":"Planning the note."},{"form":"text","text":"Line 1. Line 2. Line 3. Line 4. Line 5. Line 6. Line 7. Line 8. Line 9. Line 10. Line 11. Line 12. Line 13. Line 14. Line 15. Line 16. Line 17. Line 18. Line 19. Line 20. Line 21. Line 22. Line 23. Line 24. Line 25. Line 26. Line 27. Line 28. Line 29. Line 30. "}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":20,"output":10,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":30,"cost":{"input":0.000015,"output":0.000037500000000000003,"cacheRead":0,"cacheWrite":0,"total":0.0000525}},"stopReason":"stop","timestamp":1790821892609,"rawStopReason":"STOP"}}}
+{"t":16559,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":23,"entryId":"7d877711","body":{"form":"message","role":"user","content":[{"form":"text","text":"Also mention ports."}],"timestamp":1790821893526}}}
+{"t":16622,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":16622,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Noted: "}}}
+{"t":16682,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"the second message."}}}
+{"t":16742,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Noted: the second message."}}}
+{"t":16745,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":16746,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":24,"entryId":"72b5d8f2","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Noted: the second message."}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":20,"output":10,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":30,"cost":{"input":0.000015,"output":0.000037500000000000003,"cacheRead":0,"cacheWrite":0,"total":0.0000525}},"stopReason":"stop","timestamp":1790821895854,"rawStopReason":"STOP"}}}
+{"t":16747,"frame":{"kind":"turn","running":false}}
+{"t":18246,"scene":"stop-queued-mid-text","prompt":"Write a long note on returns."}
+{"t":18246,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":18247,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":18247,"frame":{"kind":"turn","running":true}}
+{"t":18251,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":25,"entryId":"82cf7362","body":{"form":"message","role":"user","content":[{"form":"text","text":"Write a long note on returns."}],"timestamp":1790821897545}}}
+{"t":18355,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_start","contentIndex":0}}}
+{"t":18355,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_delta","contentIndex":0,"delta":"Planning the note."}}}
+{"t":18454,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_end","contentIndex":0,"content":"Planning the note."}}}
+{"t":18454,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":1}}}
+{"t":18454,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 1. "}}}
+{"t":18555,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 2. "}}}
+{"t":18657,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 3. "}}}
+{"t":18758,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 4. "}}}
+{"t":18859,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 5. "}}}
+{"t":18961,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 6. "}}}
+{"t":19061,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 7. "}}}
+{"t":19155,"command":"prompt","message":"Keep it short."}
+{"t":19161,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 8. "}}}
+{"t":19263,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 9. "}}}
+{"t":19357,"command":"clear_queue"}
+{"t":19358,"command":"abort"}
+{"t":19361,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":19361,"answered":"abort"}
+{"t":19363,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":26,"entryId":"0775388c","body":{"form":"message","role":"assistant","content":[{"form":"thinking","thinking":"Planning the note."},{"form":"text","text":"Point 1. Point 2. Point 3. Point 4. Point 5. Point 6. Point 7. Point 8. Point 9. "}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"aborted","timestamp":1790821897547,"errorMessage":"This operation was aborted"}}}
+{"t":19363,"frame":{"kind":"turn","running":false}}
+{"t":19363,"command":"prompt","message":"Keep it short."}
+{"t":19363,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":19365,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":19365,"frame":{"kind":"turn","running":true}}
+{"t":19371,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":27,"entryId":"7c9c6987","body":{"form":"message","role":"user","content":[{"form":"text","text":"Keep it short."}],"timestamp":1790821898663}}}
+{"t":19435,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":19435,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Short: "}}}
+{"t":19496,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"returns go back within 30 days."}}}
+{"t":19556,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Short: returns go back within 30 days."}}}
+{"t":19557,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":19558,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":28,"entryId":"87993388","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Short: returns go back within 30 days."}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":20,"output":10,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":30,"cost":{"input":0.000015,"output":0.000037500000000000003,"cacheRead":0,"cacheWrite":0,"total":0.0000525}},"stopReason":"stop","timestamp":1790821898666,"rawStopReason":"STOP"}}}
+{"t":19559,"frame":{"kind":"turn","running":false}}
+{"t":21059,"scene":"stop-queued-mid-step","prompt":"Run the long check."}
+{"t":21059,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":21062,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":21062,"frame":{"kind":"turn","running":true}}
+{"t":21069,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":29,"entryId":"b7a7f63c","body":{"form":"message","role":"user","content":[{"form":"text","text":"Run the long check."}],"timestamp":1790821900360}}}
+{"t":21114,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_start","contentIndex":0}}}
+{"t":21114,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_delta","contentIndex":0,"delta":"Running it."}}}
+{"t":21153,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_end","contentIndex":0,"content":"Running it."}}}
+{"t":21153,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_start","contentIndex":1,"id":"bash_1790821900452_5","toolName":"bash"}}}
+{"t":21153,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_delta","contentIndex":1,"delta":"{\"command\":\"printf 'checking\\\\n'; sleep 6\"}"}}}
+{"t":21153,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_end","contentIndex":1,"toolCall":{"type":"toolCall","id":"bash_1790821900452_5","name":"bash","arguments":{"command":"printf 'checking\\n'; sleep 6"}}}}}
+{"t":21197,"frame":{"kind":"delta","body":{"form":"tool_delta","toolCallId":"bash_1790821900452_5","toolName":"bash","partial":{"content":[]}}}}
+{"t":21208,"frame":{"kind":"delta","body":{"form":"tool_delta","toolCallId":"bash_1790821900452_5","toolName":"bash","partial":{"content":[{"form":"text","text":"checking\n"}]}}}}
+{"t":22354,"command":"prompt","message":"Then list the files."}
+{"t":22356,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":30,"entryId":"4fb7ecad","body":{"form":"message","role":"assistant","content":[{"form":"thinking","thinking":"Running it."},{"form":"tool_call","id":"bash_1790821900452_5","name":"bash","arguments":{"command":"printf 'checking\\n'; sleep 6"}}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":20,"output":10,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":30,"cost":{"input":0.000015,"output":0.000037500000000000003,"cacheRead":0,"cacheWrite":0,"total":0.0000525}},"stopReason":"toolUse","timestamp":1790821900363,"rawStopReason":"STOP"}}}
+{"t":22556,"command":"clear_queue"}
+{"t":22557,"command":"abort"}
+{"t":22565,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":22565,"answered":"abort"}
+{"t":22566,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":31,"entryId":"f6c17bcc","body":{"form":"message","role":"tool_result","toolCallId":"bash_1790821900452_5","toolName":"bash","content":[{"form":"text","text":"checking\n\n\nCommand aborted"}],"details":{},"isError":true,"timestamp":1790821901859}}}
+{"t":22566,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":32,"entryId":"a9cf2d4b","body":{"form":"message","role":"assistant","content":[],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"error","errorMessage":"This operation was aborted","timestamp":1790821901862}}}
+{"t":22566,"frame":{"kind":"turn","running":false}}
+{"t":22566,"command":"prompt","message":"Then list the files."}
+{"t":22566,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":22567,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":22567,"frame":{"kind":"turn","running":true}}
+{"t":22571,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":33,"entryId":"bfe70f82","body":{"form":"message","role":"user","content":[{"form":"text","text":"Then list the files."}],"timestamp":1790821901866}}}
+{"t":22635,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":22635,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"The files: "}}}
+{"t":22696,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"a.txt, b.txt."}}}
+{"t":22758,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"The files: a.txt, b.txt."}}}
+{"t":22760,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":22761,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":34,"entryId":"4e0cbee8","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"The files: a.txt, b.txt."}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":20,"output":10,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":30,"cost":{"input":0.000015,"output":0.000037500000000000003,"cacheRead":0,"cacheWrite":0,"total":0.0000525}},"stopReason":"stop","timestamp":1790821901868,"rawStopReason":"STOP"}}}
+{"t":22762,"frame":{"kind":"turn","running":false}}
+{"t":24261,"scene":"whole-thinking-text","prompt":"Think, then answer."}
+{"t":24261,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":24263,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":24263,"frame":{"kind":"turn","running":true}}
+{"t":24268,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":35,"entryId":"3240b9a8","body":{"form":"message","role":"user","content":[{"form":"text","text":"Think, then answer."}],"timestamp":1790821903561}}}
+{"t":24350,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_start","contentIndex":0}}}
+{"t":24350,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_delta","contentIndex":0,"delta":"First I weigh it. "}}}
+{"t":24431,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_delta","contentIndex":0,"delta":"Then I decide. "}}}
+{"t":24513,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_end","contentIndex":0,"content":"First I weigh it. Then I decide. "}}}
+{"t":24513,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":1}}}
+{"t":24513,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Answer 1. "}}}
+{"t":24595,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Answer 2. "}}}
+{"t":24675,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Answer 3. "}}}
+{"t":24755,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Answer 4. "}}}
+{"t":24836,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Answer 5. "}}}
+{"t":24917,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Answer 6. "}}}
+{"t":24999,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Answer 7. "}}}
+{"t":25081,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Answer 8. "}}}
+{"t":25161,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Answer 9. "}}}
+{"t":25243,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Answer 10. "}}}
+{"t":25324,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Answer 11. "}}}
+{"t":25405,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Answer 12. "}}}
+{"t":25486,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":1,"content":"Answer 1. Answer 2. Answer 3. Answer 4. Answer 5. Answer 6. Answer 7. Answer 8. Answer 9. Answer 10. Answer 11. Answer 12. "}}}
+{"t":25487,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":25488,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":36,"entryId":"3386f674","body":{"form":"message","role":"assistant","content":[{"form":"thinking","thinking":"First I weigh it. Then I decide. "},{"form":"text","text":"Answer 1. Answer 2. Answer 3. Answer 4. Answer 5. Answer 6. Answer 7. Answer 8. Answer 9. Answer 10. Answer 11. Answer 12. "}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":20,"output":10,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":30,"cost":{"input":0.000015,"output":0.000037500000000000003,"cacheRead":0,"cacheWrite":0,"total":0.0000525}},"stopReason":"stop","timestamp":1790821903564,"rawStopReason":"STOP"}}}
+{"t":25488,"frame":{"kind":"turn","running":false}}
+{"t":26988,"scene":"whole-text-tool","prompt":"Say what you will do, then do it."}
+{"t":26988,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":26989,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":26989,"frame":{"kind":"turn","running":true}}
+{"t":26992,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":37,"entryId":"70200e80","body":{"form":"message","role":"user","content":[{"form":"text","text":"Say what you will do, then do it."}],"timestamp":1790821906287}}}
+{"t":27075,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":27075,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"I will list the files 1. "}}}
+{"t":27155,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"I will list the files 2. "}}}
+{"t":27238,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"I will list the files 3. "}}}
+{"t":27320,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"I will list the files 4. "}}}
+{"t":27399,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"I will list the files 5. "}}}
+{"t":27481,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"I will list the files 6. "}}}
+{"t":27562,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"I will list the files 7. "}}}
+{"t":27642,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"I will list the files 8. "}}}
+{"t":27723,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"I will list the files 1. I will list the files 2. I will list the files 3. I will list the files 4. I will list the files 5. I will list the files 6. I will list the files 7. I will list the files 8. "}}}
+{"t":27723,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_start","contentIndex":1,"id":"bash_1790821907021_6","toolName":"bash"}}}
+{"t":27723,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_delta","contentIndex":1,"delta":"{\"command\":\"ls\"}"}}}
+{"t":27723,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_end","contentIndex":1,"toolCall":{"type":"toolCall","id":"bash_1790821907021_6","name":"bash","arguments":{"command":"ls"}}}}}
+{"t":27804,"frame":{"kind":"delta","body":{"form":"tool_delta","toolCallId":"bash_1790821907021_6","toolName":"bash","partial":{"content":[]}}}}
+{"t":27811,"frame":{"kind":"delta","body":{"form":"tool_delta","toolCallId":"bash_1790821907021_6","toolName":"bash","partial":{"content":[{"form":"text","text":"notes.md\nwaiting.pipe\n"}]}}}}
+{"t":27813,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":38,"entryId":"66edcc32","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"I will list the files 1. I will list the files 2. I will list the files 3. I will list the files 4. I will list the files 5. I will list the files 6. I will list the files 7. I will list the files 8. "},{"form":"tool_call","id":"bash_1790821907021_6","name":"bash","arguments":{"command":"ls"}}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":20,"output":10,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":30,"cost":{"input":0.000015,"output":0.000037500000000000003,"cacheRead":0,"cacheWrite":0,"total":0.0000525}},"stopReason":"toolUse","timestamp":1790821906289,"rawStopReason":"STOP"}}}
+{"t":27813,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":39,"entryId":"d0f9746d","body":{"form":"message","role":"tool_result","toolCallId":"bash_1790821907021_6","toolName":"bash","content":[{"form":"text","text":"notes.md\nwaiting.pipe\n"}],"isError":false,"timestamp":1790821907110}}}
+{"t":27896,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":27896,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Listed 1. "}}}
+{"t":27977,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Listed 2. "}}}
+{"t":28058,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Listed 3. "}}}
+{"t":28140,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Listed 4. "}}}
+{"t":28223,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Listed 5. "}}}
+{"t":28304,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Listed 6. "}}}
+{"t":28384,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Listed 1. Listed 2. Listed 3. Listed 4. Listed 5. Listed 6. "}}}
+{"t":28386,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":28387,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":40,"entryId":"f1c5de59","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Listed 1. Listed 2. Listed 3. Listed 4. Listed 5. Listed 6. "}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":20,"output":10,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":30,"cost":{"input":0.000015,"output":0.000037500000000000003,"cacheRead":0,"cacheWrite":0,"total":0.0000525}},"stopReason":"stop","timestamp":1790821907111,"rawStopReason":"STOP"}}}
+{"t":28387,"frame":{"kind":"turn","running":false}}
+{"t":29887,"scene":"stop-recorded-mid-step","prompt":"Run the other check."}
+{"t":29888,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":29890,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":29890,"frame":{"kind":"turn","running":true}}
+{"t":29897,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":41,"entryId":"a097700c","body":{"form":"message","role":"user","content":[{"form":"text","text":"Run the other check."}],"timestamp":1790821909188}}}
+{"t":29940,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_start","contentIndex":0}}}
+{"t":29940,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_delta","contentIndex":0,"delta":"Running it."}}}
+{"t":29980,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_end","contentIndex":0,"content":"Running it."}}}
+{"t":29980,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_start","contentIndex":1,"id":"bash_1790821909279_7","toolName":"bash"}}}
+{"t":29980,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_delta","contentIndex":1,"delta":"{\"command\":\"printf 'checking\\\\n'; sleep 6\"}"}}}
+{"t":29980,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_end","contentIndex":1,"toolCall":{"type":"toolCall","id":"bash_1790821909279_7","name":"bash","arguments":{"command":"printf 'checking\\n'; sleep 6"}}}}}
+{"t":30020,"frame":{"kind":"delta","body":{"form":"tool_delta","toolCallId":"bash_1790821909279_7","toolName":"bash","partial":{"content":[]}}}}
+{"t":30025,"frame":{"kind":"delta","body":{"form":"tool_delta","toolCallId":"bash_1790821909279_7","toolName":"bash","partial":{"content":[{"form":"text","text":"checking\n"}]}}}}
+{"t":31181,"command":"prompt","message":"And the logs too."}
+{"t":31182,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":42,"entryId":"c97371f2","body":{"form":"message","role":"assistant","content":[{"form":"thinking","thinking":"Running it."},{"form":"tool_call","id":"bash_1790821909279_7","name":"bash","arguments":{"command":"printf 'checking\\n'; sleep 6"}}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":20,"output":10,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":30,"cost":{"input":0.000015,"output":0.000037500000000000003,"cacheRead":0,"cacheWrite":0,"total":0.0000525}},"stopReason":"toolUse","timestamp":1790821909191,"rawStopReason":"STOP"}}}
+{"t":31383,"command":"abort"}
+{"t":31391,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":31391,"answered":"abort"}
+{"t":31392,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":43,"entryId":"320e25a2","body":{"form":"message","role":"tool_result","toolCallId":"bash_1790821909279_7","toolName":"bash","content":[{"form":"text","text":"checking\n\n\nCommand aborted"}],"details":{},"isError":true,"timestamp":1790821910685}}}
+{"t":31392,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":44,"entryId":"255b8d0f","body":{"form":"message","role":"user","content":[{"form":"text","text":"And the logs too."}],"timestamp":1790821910480}}}
+{"t":31392,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":45,"entryId":"692d7627","body":{"form":"message","role":"assistant","content":[],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"error","errorMessage":"This operation was aborted","timestamp":1790821910689}}}
+{"t":31392,"frame":{"kind":"turn","running":false}}
+{"t":32892,"scene":"tidy-manual","prompt":"Note that returns take 30 days."}
+{"t":32892,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":32894,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":32894,"frame":{"kind":"turn","running":true}}
+{"t":32901,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":46,"entryId":"67fad4be","body":{"form":"message","role":"user","content":[{"form":"text","text":"Note that returns take 30 days."}],"timestamp":1790821912192}}}
+{"t":32962,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":32962,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Noted: "}}}
+{"t":33022,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"returns take 30 days."}}}
+{"t":33083,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Noted: returns take 30 days."}}}
+{"t":33084,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":33085,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":47,"entryId":"63e31186","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Noted: returns take 30 days."}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":20,"output":10,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":30,"cost":{"input":0.000015,"output":0.000037500000000000003,"cacheRead":0,"cacheWrite":0,"total":0.0000525}},"stopReason":"stop","timestamp":1790821912195,"rawStopReason":"STOP"}}}
+{"t":33086,"frame":{"kind":"turn","running":false}}
+{"t":33885,"command":"compact"}
+{"t":33885,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":33885,"frame":{"kind":"compaction","running":true}}
+{"t":33885,"frame":{"kind":"turn","running":true}}
+{"t":38056,"answered":"compact"}
+{"t":38057,"frame":{"kind":"entry","epoch":"7dd771d7a06038eb06ac36ab892f2590","seq":48,"entryId":"d1f3bad4","body":{"form":"compaction","summary":"The seller asked about shipping and returns; returns take 30 days.\n\n---\n\n**Turn Context (split turn):**\n\nDone.\n\n<read-files>\nwaiting.pipe\n</read-files>","firstKeptEntryId":"63e31186","tokensBefore":30,"details":{"readFiles":["waiting.pipe"],"modifiedFiles":[]},"usage":{"input":40,"output":20,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":60,"cost":{"input":0.00003,"output":0.00007500000000000001,"cacheRead":0,"cacheWrite":0,"total":0.000105}},"fromHook":false}}}
+{"t":38057,"frame":{"kind":"compaction","running":false}}
+{"t":38057,"frame":{"kind":"turn","running":false}}
+{"t":39558,"frame":{"kind":"sleep","dueInMs":0}}

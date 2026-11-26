@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<script src="../assets/js/appearance.js"></script>
+<link rel="icon" href="../assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/brand/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../assets/brand/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/css/theme.css">
+<link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="../assets/css/chrome.css">
+<link rel="stylesheet" href="../assets/css/legal.css">
+<link rel="alternate" hreflang="zh-CN" href="../terms/">
+<link rel="alternate" hreflang="en" href="../en/terms/">
+<!-- Before the page draws: the script is on; ?still asks for a picture, with nothing moving; and the first page of a visit lets
+     the header come down into place (chrome.css). -->
+<script>(() => {
+  const root = document.documentElement;
+  root.classList.add("js");
+  if (new URLSearchParams(location.search).has("still")) root.classList.add("still");
+  try { if (!sessionStorage.getItem("cmx-site-entered")) { sessionStorage.setItem("cmx-site-entered", "1"); root.classList.add("enter"); } }
+  catch { root.classList.add("enter"); }
+})()</script>
+<script src="../assets/js/chrome.js" defer></script>
+<title>服务条款 — ComChatX</title>
+<meta name="description" content="使用 ComChatX 的约定：账户、余额、Pro、充值、邀请和退款。">
+</head>
+<body data-page="terms">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="site-header">
+  <div class="container header-row">
+    <a class="brand" href="../"><span class="wordmark">ComChatX</span></a>
+    <nav class="nav" aria-label="主导航">
+      <ul class="nav-list" role="list">
+        <li><a class="nav-link" href="../pricing/">价格</a></li>
+      </ul>
+      <a class="btn btn-outline" href="../contact/">联系销售</a>
+      <a class="btn btn-primary way-in" href="https://comchatx.com/login">试用 ComChatX</a>
+    </nav>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="菜单"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 8h16M4 16h16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="菜单" hidden>
+    <div class="mobile-menu-head">
+      <a class="brand" href="../"><span class="wordmark">ComChatX</span></a>
+      <button class="menu-toggle menu-close" type="button" aria-label="关闭"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    </div>
+    <ul class="mobile-menu-list" role="list">
+      <li><a class="mm-link" href="../pricing/">价格</a></li>
+    </ul>
+    <div class="mobile-menu-actions">
+      <a class="btn btn-outline" href="../contact/">联系销售</a>
+      <a class="btn btn-primary way-in" href="https://comchatx.com/login">试用 ComChatX</a>
+    </div>
+  </div>
+</header>
+<main id="main" class="page-enter">
+<article class="legal" aria-labelledby="page-title">
+<div class="container">
+<div class="legal-column">
+<h1 id="page-title">服务条款</h1>
+<p class="legal-date">2026 年 11 月 25 日起生效</p>
+<nav class="legal-toc" aria-label="目录">
+<ol role="list">
+<li><a href="#service">ComChatX 是什么</a></li>
+<li><a href="#eligibility">谁可以使用</a></li>
+<li><a href="#account">账户</a></li>
+<li><a href="#balance">余额和扣费</a></li>
+<li><a href="#trial">试用</a></li>
+<li><a href="#pro">Pro</a></li>
+<li><a href="#top-ups">充值</a></li>
+<li><a href="#invitations">邀请</a></li>
+<li><a href="#refunds">退款</a></li>
+<li><a href="#computer">cx 的电脑</a></li>
+<li><a href="#content">你的内容</a></li>
+<li><a href="#ownership">我们的软件和商标</a></li>
+<li><a href="#third-parties">第三方服务</a></li>
+<li><a href="#service-changes">服务的变化和中止</a></li>
+<li><a href="#liability">责任</a></li>
+<li><a href="#indemnity">赔偿</a></li>
+<li><a href="#terms-changes">条款的修改</a></li>
+<li><a href="#law">适用法律和争议</a></li>
+<li><a href="#general">一般条款</a></li>
+<li><a href="#contact">联系我们</a></li>
+</ol>
+</nav>
+<section class="legal-section" id="s1" aria-labelledby="service">
+  <h2 id="service">ComChatX 是什么</h2>
+  <p><strong>这项服务</strong>：ComChatX 是给亚马逊卖家用的对话式助手。你在对话里和 cx 说话，cx 在一台属于你的电脑（cx 的电脑）上替你查数据、写东西、整理文件，用到的模型和数据源由我们接好。</p>
+  <p><strong>约定</strong>：本条款是你和 ComChatX 之间关于使用这项服务的约定。注册或使用 ComChatX，即表示你同意本条款、<a href="/privacy/">隐私政策</a>和<a href="/usage-policy/">使用政策</a>。</p>
+</section>
+<section class="legal-section" aria-labelledby="eligibility">
+  <h2 id="eligibility">谁可以使用</h2>
+  <p><strong>资格</strong>：只有年满 18&nbsp;周岁、为自己或所代表的企业经营而使用 ComChatX 的人，才可以注册和使用；代表企业注册的，须有权代表该企业同意本条款。</p>
+  <p><strong>制裁和出口管制</strong>：受贸易限制或经济制裁的人或企业，不得注册和使用 ComChatX；你也不能在出口管制或制裁禁止的国家或地区使用 ComChatX，或让受这些限制的人使用。</p>
+</section>
+<section class="legal-section" id="s2" aria-labelledby="account">
+  <h2 id="account">账户</h2>
+  <p><strong>登录</strong>：你用邮箱或 Google 账号登录，登录由我们的身份服务商 Clerk 处理。</p>
+  <p><strong>保管</strong>：账户只供你本人使用；你要保管好登录方式，账户下发生的使用都记在这个账户上。</p>
+</section>
+<section class="legal-section" id="s3" aria-labelledby="balance">
+  <h2 id="balance">余额和扣费</h2>
+  <p><strong>扣费</strong>：平台提供的模型、数据源和 cx 的电脑按实际用量从你的余额里扣费，每一笔都记在应用的用量里；你用自己的模型 API 密钥调用模型时，费用由模型提供方向你收取，不从余额里扣。价格见<a href="/pricing/">定价页</a>。余额以美元计，按笔记账，不足一个最小单位的部分向上取整。</p>
+  <p><strong>额度和到期</strong>：余额由几笔额度组成，每笔有自己的到期日，扣费时先用最早到期、且能付这项费用的那一笔。到期未用完的额度作废。</p>
+  <p><strong>欠款</strong>：如某次消费超出余额，差额记为欠款，下一笔到账的余额将优先抵扣。</p>
+  <p><strong>转让和提现</strong>：余额只能用来支付 ComChatX 上的费用。它不是货币，不能转给其他账户，也不能提现，“<a href="#refunds">退款</a>”一节写明的情形除外。</p>
+</section>
+<section class="legal-section" id="s4" aria-labelledby="trial">
+  <h2 id="trial">试用</h2>
+  <p><strong>新账户可领取一次试用余额</strong>：直接注册 $1，受邀注册 $5，7&nbsp;天内有效。试用余额可以支付平台提供的全部模型、Jev、数据源和 cx 的电脑。每个账户只能领取一次。</p>
+</section>
+<section class="legal-section" id="s5" aria-labelledby="pro">
+  <h2 id="pro">Pro</h2>
+  <p><strong>价格和赠送余额</strong>：Pro 每月 $10，每期赠送 $10&nbsp;余额，可用于平台提供的全部模型、Jev、数据源和 cx 的电脑。每期自开始之日起，至下个月同一日的前一天结束。赠送余额当期有效，到期清零，不能用来支付 Pro 费用。</p>
+  <p><strong>付款和续费</strong>：连续包月仅支持银行卡；单月可使用支付宝或银行卡支付，余额足够时也可使用余额支付。连续包月在每期结束时自动从银行卡扣款续费。连续包月扣款失败时，Pro 在当期结束时到期，之后将再次尝试扣款；扣款成功后 Pro 恢复。</p>
+  <p><strong>余额自动续费</strong>：单月 Pro 到期时，不会从支付宝或银行卡自动扣款。单月 Pro 默认开启余额自动续费，到期时如充值余额和奖励余额合计满 $10，将自动扣除 $10 续费一个月。余额自动续费可随时关闭。</p>
+  <p><strong>取消</strong>：自动续费可随时取消。取消自动续费时，余额自动续费随之关闭。取消自动续费或关闭余额自动续费后，Pro 在当期结束时到期，不再续费。</p>
+</section>
+<section class="legal-section" id="s6" aria-labelledby="top-ups">
+  <h2 id="top-ups">充值</h2>
+  <p><strong>金额</strong>：充值仅限 Pro，金额须为整数，最低 $10，不收手续费。</p>
+  <p><strong>用途和有效期</strong>：充值余额和奖励余额可用于模型、Jev、数据源、cx 的电脑和 Pro 费用。充值余额和奖励余额自到账之日起 12&nbsp;个月内有效。</p>
+  <p><strong>付款</strong>：付款由 Stripe 处理，支持银行卡和支付宝。</p>
+</section>
+<section class="legal-section" id="s7" aria-labelledby="invitations">
+  <h2 id="invitations">邀请</h2>
+  <p><strong>好友和奖励</strong>：Pro 账户可通过邀请链接邀请好友注册，人数不限。好友通过你的邀请链接注册，前 3&nbsp;位可获得 $5 试用余额，之后的好友可获得 $1 试用余额。好友在注册后 30&nbsp;天内首次订阅，你将获得 $5 奖励余额。同一张银行卡或同一个支付宝账户仅奖励一次。</p>
+  <p><strong>订阅中断时</strong>：Pro 到期后邀请链接暂不可用，恢复订阅后可继续使用。已注册的好友如在注册后 30&nbsp;天内首次订阅，奖励仍会到账。</p>
+</section>
+<section class="legal-section" id="s8" aria-labelledby="refunds">
+  <h2 id="refunds">退款</h2>
+  <p><strong>已付费用</strong>：已付的 Pro 费用和充值不退。</p>
+  <p><strong>没用完的余额</strong>：如果我们在你没有违约时关闭你的账户，会退还没用完的充值余额和当期赠送余额；试用余额和奖励余额不退。</p>
+  <p><strong>扣款有误</strong>：如果你认为扣款有误，例如重复扣款，请把付款信息发到 <a href="mailto:support@comchatx.com">support@comchatx.com</a>，我们核实后更正。</p>
+  <p><strong>银行退款和争议</strong>：银行或支付方判定退款、或付款争议成立时，对应的余额会从你的账户扣回；不够扣的部分记为欠款，欠款还清前不能再使用付费功能。</p>
+</section>
+<section class="legal-section" id="s9" aria-labelledby="computer">
+  <h2 id="computer">cx 的电脑</h2>
+  <p><strong>开机和关机</strong>：cx 的电脑是一台只属于你账户的云端电脑。它空闲一段时间后会自动关机，除非你在应用的设置里打开“保持开机”；开机期间按时长扣费；它的存储按每天的大小扣费，开机关机都算。</p>
+  <p><strong>你的文件</strong>：你的文件保存在我们的存储里，cx 的电脑上的是副本。</p>
+  <p><strong>名额</strong>：同时可以开通电脑的账户数量有限，名额满时需要等待。</p>
+</section>
+<section class="legal-section" id="s10" aria-labelledby="content">
+  <h2 id="content">你的内容</h2>
+  <p><strong>归你所有</strong>：你在对话里写的内容、上传的文件和 cx 为你生成的文件归你所有。我们只为提供服务而处理它们，详见<a href="/privacy/">隐私政策</a>。</p>
+  <p><strong>模型的内容</strong>：模型生成的内容可能出错，用于经营决定之前请自行核对。</p>
+</section>
+<section class="legal-section" aria-labelledby="ownership">
+  <h2 id="ownership">我们的软件和商标</h2>
+  <p><strong>归属</strong>：ComChatX 的软件、界面和商标归我们或我们的授权方所有。</p>
+  <p><strong>使用许可</strong>：我们许可你按本条款使用 ComChatX；除此以外，本条款不给你这些软件、界面或商标的任何权利。</p>
+</section>
+<section class="legal-section" aria-labelledby="third-parties">
+  <h2 id="third-parties">第三方服务</h2>
+  <p><strong>各自的条款</strong>：ComChatX 用到的模型、数据源、登录服务 Clerk 和付款服务 Stripe，都按各自提供方的条款提供；它们的内容和故障由提供方负责，我们不为此负责。</p>
+</section>
+<section class="legal-section" id="s11" aria-labelledby="service-changes">
+  <h2 id="service-changes">服务的变化和中止</h2>
+  <p><strong>改进和中断</strong>：我们会持续改进 ComChatX，功能、模型和数据源可能增加、变化或下线。我们不承诺服务不中断。</p>
+  <p><strong>违约</strong>：你违反本条款或<a href="/usage-policy/">使用政策</a>时，我们可以限制或停止你的账户。</p>
+  <p><strong>停止服务</strong>：除此以外，我们只在停止提供 ComChatX 时关闭账户，并会提前在应用里或通过邮件告诉你；退还的余额见“<a href="#refunds">退款</a>”一节。</p>
+  <p><strong>删除账户</strong>：你可以随时删除账户，见<a href="/privacy/">隐私政策</a>。</p>
+</section>
+<section class="legal-section" id="s12" aria-labelledby="liability">
+  <h2 id="liability">责任</h2>
+  <p><strong>责任限制</strong>：在法律允许的范围内，ComChatX 按现状提供，不对你因使用或无法使用服务造成的间接损失负责；我们对你承担的责任以你在此前 12&nbsp;个月里付给我们的金额为限。</p>
+</section>
+<section class="legal-section" aria-labelledby="indemnity">
+  <h2 id="indemnity">赔偿</h2>
+  <p><strong>第三方索赔</strong>：你违反本条款或<a href="/usage-policy/">使用政策</a>，或侵犯他人的权利，使第三方向我们索赔的，由你赔偿我们因此产生的损失和费用。</p>
+</section>
+<section class="legal-section" id="s13" aria-labelledby="terms-changes">
+  <h2 id="terms-changes">条款的修改</h2>
+  <p><strong>更新和通知</strong>：我们修改本条款时，会更新本页和生效日期；涉及费用的重要变化，会提前在应用里或通过邮件告诉你。修改生效后继续使用，即表示你接受修改后的条款。</p>
+</section>
+<section class="legal-section" aria-labelledby="law">
+  <h2 id="law">适用法律和争议</h2>
+  <p><strong>适用法律</strong>：本条款适用香港特别行政区法律。</p>
+  <p><strong>争议</strong>：因本条款或使用 ComChatX 产生的争议，可以由香港特别行政区法院审理；你和我们也可以向其他有管辖权的法院起诉。</p>
+</section>
+<section class="legal-section" aria-labelledby="general">
+  <h2 id="general">一般条款</h2>
+  <p><strong>部分无效</strong>：本条款的某一条无效或不能执行的，不影响其他各条。</p>
+  <p><strong>未行使的权利</strong>：你或我们没有行使或推迟行使本条款下的某项权利，不等于放弃这项权利。</p>
+  <p><strong>转让</strong>：你不能把账户或本条款下的权利和义务转让给他人。</p>
+  <p><strong>第三方的权利</strong>：除你和我们以外，任何人都不能依据本条款主张权利。</p>
+  <p><strong>语言</strong>：本条款、<a href="/privacy/">隐私政策</a>和<a href="/usage-policy/">使用政策</a>各有中文和英文两版，两者不一致时，以中文版为准。</p>
+</section>
+<section class="legal-section" id="s14" aria-labelledby="contact">
+  <h2 id="contact">联系我们</h2>
+  <p><strong>邮件</strong>：对本条款有疑问，请写信到 <a href="mailto:support@comchatx.com">support@comchatx.com</a>。</p>
+</section>
+</div>
+</div>
+</article>
+</main>
+<footer class="site-footer" data-theme="dark">
+<div class="container">
+  <div class="footer-grid">
+    <a class="footer-logo" href="../"><span class="wordmark">ComChatX</span></a>
+    <nav class="footer-cols" aria-label="页脚">
+  <div class="footer-col">
+    <ul role="list">
+      <li><a href="../pricing/">价格</a></li>
+      <li><a class="way-in" href="https://comchatx.com/login">登录</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <ul role="list">
+      <li><a href="../pricing/#faq">常见问题</a></li>
+      <li><a href="../contact/">联系销售</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <ul role="list">
+      <li><a href="/terms/" aria-current="page">服务条款</a></li>
+      <li><a href="/privacy/">隐私政策</a></li>
+    </ul>
+  </div>
+</nav>
+    <p class="footer-copy">© 2026 ComChatX</p>
+  </div>
+  <div class="footer-bar">
+    <!-- ComChatX has no X or LinkedIn account yet: the two icons stand where the links will go, and link nowhere until then. -->
+<ul class="footer-social" role="list" aria-label="社交媒体">
+  <li><a class="footer-social-link" role="link" aria-disabled="true" aria-label="X"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 1.5h4l9 13h-4Z" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/><path d="M14.5 1.5 9.18 6.82M6.82 9.18 1.5 14.5" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/></svg></a></li>
+  <li><a class="footer-social-link" role="link" aria-disabled="true" aria-label="LinkedIn"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M2.25.75h11.5a1.5 1.5 0 0 1 1.5 1.5v11.5a1.5 1.5 0 0 1-1.5 1.5H2.25a1.5 1.5 0 0 1-1.5-1.5V2.25a1.5 1.5 0 0 1 1.5-1.5Zm1.6 4.8a1.34 1.34 0 1 0 0-2.68 1.34 1.34 0 0 0 0 2.68ZM2.68 6.56h2.34v6.57H2.68Zm3.73 0h2.23v.95c.36-.61 1.14-1.12 2.17-1.12 1.81 0 2.51 1.17 2.51 2.96v3.78h-2.34v-3.29c0-.87-.27-1.45-1.09-1.45-.89 0-1.25.62-1.25 1.45v3.29H6.41Z"/></svg></a></li>
+</ul>
+    <div class="lang-switch">
+  <button type="button" aria-expanded="false" aria-controls="lang-menu" aria-label="语言：中文"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M2.6 10h14.8M10 2.5c2 2.1 3 4.6 3 7.5s-1 5.4-3 7.5c-2-2.1-3-4.6-3-7.5s1-5.4 3-7.5Z" fill="none" stroke="currentColor" stroke-width="1.2"/></svg><span>中文</span><svg class="caret" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3.5 7 10 13.5 16.5 7" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <ul class="lang-menu" id="lang-menu" role="list">
+    <li><a href="../terms/" hreflang="zh-CN" lang="zh-CN" aria-current="true">中文</a></li>
+    <li><a href="../en/terms/" hreflang="en" lang="en">English</a></li>
+  </ul>
+</div>
+  </div>
+</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- The door's head: the product's own theme, appearance and door files, the site's files from the copied folder, and no inline
+     script or style, since the door's policy admits neither (src/platform/page-headers.ts). -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<script src="./door-start.js"></script>
+<script src="./appearance.js"></script>
+<link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="./assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
+<link rel="stylesheet" href="./theme.css">
+<link rel="stylesheet" href="./www/assets/css/base.css">
+<link rel="stylesheet" href="./www/assets/css/chrome.css">
+<link rel="stylesheet" href="./www/assets/css/sign-in.css">
+<link rel="stylesheet" href="./www/assets/css/pricing.css">
+<link rel="stylesheet" href="./www/inline.css">
+<link rel="stylesheet" href="./door.css">
+<link rel="stylesheet" href="./forms.css">
+<link rel="alternate" hreflang="zh-CN" href="/login?lang=zh">
+<link rel="alternate" hreflang="en" href="/login?lang=en">
+<script src="./www/assets/js/chrome.js" defer></script>
+<script src="./www/assets/js/sign-in.js" defer></script>
+<script src="./www/assets/js/pricing.js" defer></script>
+<script type="module" src="./door.js"></script>
+<title>Log in to ComChatX</title>
+<meta name="description" content="cx is your AI assistant. It looks up the data and makes the plan.">
+</head>
+<body class="theme-app" data-page="login">
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="site-header">
+  <div class="container header-row">
+    <a class="brand" href="https://www.comchatx.com/en/"><span class="wordmark">ComChatX</span></a>
+    <nav class="nav" aria-label="Main">
+      <ul class="nav-list" role="list">
+        <li><a class="nav-link" href="https://www.comchatx.com/en/pricing/">Pricing</a></li>
+      </ul>
+      <a class="btn btn-outline" href="https://www.comchatx.com/en/contact/">Contact sales</a>
+      <a class="btn btn-primary way-in" href="/login?lang=en">Try ComChatX</a>
+    </nav>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 8h16M4 16h16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+    <div class="mobile-menu-head">
+      <a class="brand" href="https://www.comchatx.com/en/"><span class="wordmark">ComChatX</span></a>
+      <button class="menu-toggle menu-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    </div>
+    <ul class="mobile-menu-list" role="list">
+      <li><a class="mm-link" href="https://www.comchatx.com/en/pricing/">Pricing</a></li>
+    </ul>
+    <div class="mobile-menu-actions">
+      <a class="btn btn-outline" href="https://www.comchatx.com/en/contact/">Contact sales</a>
+      <a class="btn btn-primary way-in" href="/login?lang=en">Try ComChatX</a>
+    </div>
+  </div>
+</header>
+<main id="main">
+  <section class="hero-login" aria-labelledby="hero-title">
+    <div class="container">
+      <div class="hero-copy">
+        <h1 class="hero-title" id="hero-title">Hand your Amazon operations to&nbsp;<span class="hero-cx">cx<svg class="hero-cx-figure" viewBox="-78 -40 156 81" aria-hidden="true" color="var(--cx-line)" focusable="false"><defs><mask id="cxh-mx" maskUnits="userSpaceOnUse" x="-63" y="-41" width="126" height="82"><rect x="-63" y="-41" width="126" height="82" fill="white"></rect><rect x="-23.77" y="-6.25" width="47.54" height="12.5" fill="black" transform="rotate(45)"></rect><rect x="-23.77" y="-6.25" width="47.54" height="12.5" fill="black" transform="rotate(-45)"></rect></mask><mask id="cxh-mb" maskUnits="userSpaceOnUse" x="-63" y="-41" width="126" height="82"><rect x="-63" y="-41" width="126" height="82" fill="white"></rect><rect x="-23.77" y="-6.25" width="47.54" height="12.5" fill="black" transform="rotate(45)"></rect><rect x="-23.77" y="-6.25" width="47.54" height="12.5" fill="black" transform="rotate(-45)"></rect><path d="M 0 -32.33 A 37.5 37.5 0 0 0 0 32.33 A 37.5 37.5 0 0 0 0 -32.33 Z" fill="black" stroke="black" stroke-width="1" clip-path="url(#cxh-eyeL)"></path><path d="M 0 -32.33 A 37.5 37.5 0 0 0 0 32.33 A 37.5 37.5 0 0 0 0 -32.33 Z" fill="black" stroke="black" stroke-width="1" clip-path="url(#cxh-eyeR)"></path></mask><mask id="cxh-mw" maskUnits="userSpaceOnUse" x="-63" y="-41" width="126" height="82"><polygon points="-70,-70 70,70 -70,70" fill="white"></polygon></mask><clipPath id="cxh-eyeL"><polygon points="0,0 -70,-70 -70,70"></polygon></clipPath><clipPath id="cxh-eyeR"><polygon points="0,0 70,-70 70,70"></polygon></clipPath></defs><g class="cx-body" id="cxh-body"><g class="cx-paper"><g mask="url(#cxh-mb)" transform="translate(0 1.8)"><circle cx="-19" cy="0" r="30" fill="none" stroke="var(--cx-forest-shade)" stroke-width="15"></circle><circle cx="19" cy="0" r="30" fill="none" stroke="var(--cx-sand-shade)" stroke-width="15"></circle><path d="M 0 -32.33 A 37.5 37.5 0 0 0 0 32.33 A 37.5 37.5 0 0 0 0 -32.33 Z" fill="var(--cx-sand-shade)"></path><g mask="url(#cxh-mw)"><circle cx="-19" cy="0" r="30" fill="none" stroke="var(--cx-forest-shade)" stroke-width="15"></circle><path d="M 0 -32.33 A 37.5 37.5 0 0 0 0 32.33 A 37.5 37.5 0 0 0 0 -32.33 Z" fill="var(--cx-forest-shade)"></path></g></g><g mask="url(#cxh-mb)"><circle cx="-19" cy="0" r="30" fill="none" stroke="var(--cx-forest)" stroke-width="15"></circle><circle cx="19" cy="0" r="30" fill="none" stroke="var(--cx-sand)" stroke-width="15"></circle><path d="M 0 -32.33 A 37.5 37.5 0 0 0 0 32.33 A 37.5 37.5 0 0 0 0 -32.33 Z" fill="var(--cx-sand)"></path><g mask="url(#cxh-mw)"><circle cx="-19" cy="0" r="30" fill="none" stroke="var(--cx-forest)" stroke-width="15"></circle><path d="M 0 -32.33 A 37.5 37.5 0 0 0 0 32.33 A 37.5 37.5 0 0 0 0 -32.33 Z" fill="var(--cx-forest)"></path></g></g></g><g class="cx-eyes"><g transform="translate(-13.60 0.00) scale(1.00 1.00) translate(13.60 0)"><g transform="translate(0 0.9)" clip-path="url(#cxh-eyeL)" mask="url(#cxh-mx)"><path d="M 0 -32.33 A 37.5 37.5 0 0 0 0 32.33 A 37.5 37.5 0 0 0 0 -32.33 Z" fill="var(--cx-forest-shade)"></path></g><g clip-path="url(#cxh-eyeL)" mask="url(#cxh-mx)"><path d="M 0 -32.33 A 37.5 37.5 0 0 0 0 32.33 A 37.5 37.5 0 0 0 0 -32.33 Z" fill="var(--cx-forest)"></path></g></g><g transform="translate(13.60 0.00) scale(1.00 1.00) translate(-13.60 0)"><g transform="translate(0 0.9)" clip-path="url(#cxh-eyeR)" mask="url(#cxh-mx)"><path d="M 0 -32.33 A 37.5 37.5 0 0 0 0 32.33 A 37.5 37.5 0 0 0 0 -32.33 Z" fill="var(--cx-sand-shade)"></path></g><g clip-path="url(#cxh-eyeR)" mask="url(#cxh-mx)"><path d="M 0 -32.33 A 37.5 37.5 0 0 0 0 32.33 A 37.5 37.5 0 0 0 0 -32.33 Z" fill="var(--cx-sand)"></path></g></g></g><g class="cx-hands" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-width="1.10"><g><path vector-effect="non-scaling-stroke" d="M -55.00 -2.00 Q -58.18 1.15 -59.62 2.77 Q -61.06 4.39 -62.37 6.04 Q -63.68 7.69 -64.78 9.43 Q -65.87 11.17 -66.99 12.87 Q -68.10 14.58 -68.68 16.50 Q -69.27 18.43 -69.59 20.39 Q -69.90 22.36 -70.67 24.20 Q -71.44 26.04 -71.72 28.02 L -72.00 30.00"></path><circle r="3.8" vector-effect="non-scaling-stroke" cx="-72.00" cy="30.00"></circle><path vector-effect="non-scaling-stroke" d="M -69.82 33.11 Q -67.74 35.63 -66.92 37.03 L -66.09 38.44"></path><path vector-effect="non-scaling-stroke" d="M -71.67 33.79 Q -71.73 37.05 -71.41 38.66 L -71.10 40.26"></path><path vector-effect="non-scaling-stroke" d="M -73.61 33.44 Q -75.05 36.36 -75.70 37.85 L -76.35 39.33"></path></g><g><path vector-effect="non-scaling-stroke" d="M 55.00 -2.00 Q 58.39 0.96 59.94 2.50 Q 61.49 4.04 62.47 5.94 Q 63.46 7.84 64.35 9.69 Q 65.23 11.55 66.66 13.06 Q 68.09 14.58 68.98 16.39 Q 69.86 18.20 70.03 20.24 Q 70.21 22.27 70.70 24.18 Q 71.20 26.09 71.60 28.04 L 72.00 30.00"></path><circle r="3.8" vector-effect="non-scaling-stroke" cx="72.00" cy="30.00"></circle><path vector-effect="non-scaling-stroke" d="M 73.61 33.44 Q 74.70 36.52 75.52 37.93 L 76.35 39.33"></path><path vector-effect="non-scaling-stroke" d="M 71.67 33.79 Q 71.71 37.05 71.40 38.66 L 71.10 40.26"></path><path vector-effect="non-scaling-stroke" d="M 69.82 33.11 Q 67.84 35.69 66.96 37.06 L 66.09 38.44"></path></g></g></g></svg></span></h1>
+        <p class="hero-sub">cx is your AI assistant. It looks up the data and <span class="nowrap">makes the plan.</span></p>
+        <!-- Where the product's door mounts Clerk's card (src/web/door.ts): the note over it, the card, the lines under it. Nothing else is
+     drawn here; the card's words, ways and states are the door's. -->
+<div class="door-column">
+  <div class="door-slot" id="door-note"></div>
+  <div class="door-card" id="door-card"></div>
+  <div class="door-slot door-under" id="door-under"></div>
+</div>
+      </div>
+      <div class="hero-media"><div class="art" data-art>
+  <div class="art-stage" data-stage aria-hidden="true">
+    <div class="art-window">
+      <div class="art-bar"><i></i><i></i><i></i><span>ComChatX</span></div>
+      <div class="art-head">
+        <p class="art-heads">
+          <span class="art-slot is-on" data-head>Thinking about a new product</span>
+          <span class="art-slot" data-head>Your title is missing a rising search term</span>
+          <span class="art-slot" data-head>Another seller took your Buy&nbsp;Box</span>
+        </p>
+        <p class="art-sample">Sample data</p>
+      </div>
+      <div class="art-body" data-body>
+        <div class="art-scene art-slot is-on" data-scene>
+          <p class="art-me art-part" data-part="me1" data-still>I'm thinking of a stainless steel cat water fountain. <span class="nowrap">Is it worth it?</span></p>
+          <p class="art-step art-part" data-part="s1" data-still><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.6 5.6h8.8l-.75 8.15H4.35L3.6 5.6Z" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/><path d="M5.9 7.4V4.6a2.1 2.1 0 0 1 4.2 0v2.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg><span>Bought the search results for “stainless steel cat water fountain” <span class="nowrap">from Keepa</span></span></p>
+          <p class="art-step art-part" data-part="s2" data-still><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.9 8S4.1 3.9 8 3.9 14.1 8 14.1 8 11.9 12.1 8 12.1 1.9 8 1.9 8Z" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/><circle cx="8" cy="8" r="1.9" fill="none" stroke="currentColor" stroke-width="1.1"/></svg><span>Read this term's search volume in Brand Analytics</span></p>
+          <p class="art-answer art-part" data-part="ans" data-still>Yes, it's worth it.</p>
+          <div class="art-plan art-part" data-part="plan" data-still>
+            <ul class="art-items">
+              <li>Price at $36.99</li>
+              <li>First order of 962&nbsp;units</li>
+              <li>Write the listing draft</li>
+            </ul>
+          </div>
+          <p class="art-acts art-part art-why" data-part="acts1"><b data-aim="yes1">Approve</b><span>Not now</span></p>
+          <p class="art-me art-part art-why" data-part="me2">Why 962&nbsp;units for the first order?</p>
+          <div class="art-evidence art-part art-why" data-part="why" data-aim="evidence">
+            <p>Five competitors at this price sell 32 a day on average, so 962&nbsp;units last about 30&nbsp;days.</p>
+            <div class="art-bars art-bars-few">
+              <i data-style="0"><b>41</b></i><i data-style="1"><b>36</b></i><i data-style="2"><b>32</b></i><i data-style="3"><b>29</b></i><i data-style="4"><b>22</b></i>
+              <span class="art-avg" data-style="5"><span>Average 32</span></span>
+            </div>
+            <p class="art-src">Keepa · Oct 19</p>
+          </div>
+          <div class="art-turn">
+            <p class="art-acts art-part" data-part="acts2"><b data-aim="yes2">Approve</b><span>Not now</span></p>
+            <p class="art-done art-part" data-part="done" data-still><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 1.75h5.25L12.5 5v9.25H4V1.75Z" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/><path d="M9 1.75V5.25h3.5M6 8.5h4.5M6 11h4.5" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg><span>The listing draft is saved in your files.</span></p>
+          </div>
+          <p class="art-answer art-part art-direct" data-part="sum">962&nbsp;units last about 30&nbsp;days. Restock on day&nbsp;20.</p>
+        </div>
+        <div class="art-scene art-slot" data-scene>
+          <div class="art-knock" data-knock data-aim="knock">
+            <p class="art-knock-head"><i class="art-knock-mark"></i><span>Monday search-term check</span><time>09:00</time></p>
+            <ul class="art-checks">
+              <li data-style="6"><span lang="en">Pet Water Dispenser</span><b>−38%</b></li>
+              <li class="is-found" data-style="7"><span lang="en">Gift for Cat Lovers</span><b>+164%</b><i class="art-flag">!</i></li>
+            </ul>
+            <p class="art-knock-foot"><span>New title ready</span><b data-aim="view">View</b></p>
+          </div>
+          <p class="art-step art-part" data-part="s1"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.9" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="M8 4.9V8l2.1 1.4" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg><span>The Monday search-term check you set up</span></p>
+          <p class="art-step art-part" data-part="s2"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.9 8S4.1 3.9 8 3.9 14.1 8 14.1 8 11.9 12.1 8 12.1 1.9 8 1.9 8Z" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/><circle cx="8" cy="8" r="1.9" fill="none" stroke="currentColor" stroke-width="1.1"/></svg><span>Read Brand Analytics search terms</span></p>
+          <div class="art-plan art-part" data-part="plan">
+            <dl class="art-cmp">
+              <div><dt>Now</dt><dd lang="en">Kittlewell Cat Water Fountain, 2.5L, <del>Pet Water Dispenser</del>, Quiet Pump</dd><dd class="art-count">68/75 characters</dd></div>
+              <div><dt>After</dt><dd lang="en">Kittlewell Cat Water Fountain, <ins>Gift for Cat Lovers</ins>, 2.5L, Quiet Pump</dd><dd class="art-count">68/75 characters</dd></div>
+            </dl>
+          </div>
+          <p class="art-acts art-part art-why" data-part="acts1"><b data-aim="yes1">Approve</b><span>Not now</span></p>
+          <p class="art-me art-part art-why" data-part="me2">Why Gift for Cat Lovers?</p>
+          <div class="art-evidence art-part art-why" data-part="why" data-aim="evidence">
+            <p>Over 8&nbsp;weeks, searches for Gift for Cat Lovers rose 164% and Pet Water Dispenser fell 38%.</p>
+            <p class="art-legend" lang="en"><span class="is-up">Gift for Cat Lovers <b>+164%</b></span><span class="is-down">Pet Water Dispenser <b>−38%</b></span></p>
+            <svg class="art-lines" viewBox="0 0 80 12.4"><polyline class="is-up" pathLength="1" points="2,7.46 12.86,6.99 23.71,6.24 34.57,5.49 45.43,4.39 56.29,3.32 67.14,2.1 78,1"/><polyline class="is-down" pathLength="1" points="2,7.46 12.86,7.62 23.71,7.82 34.57,8.05 45.43,8.33 56.29,8.56 67.14,8.8 78,8.96"/></svg>
+            <p class="art-src">Brand Analytics · Oct 19</p>
+          </div>
+          <div class="art-turn">
+            <p class="art-acts art-part" data-part="acts2"><b data-aim="yes2">Approve</b><span>Not now</span></p>
+            <p class="art-done art-part" data-part="done"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.9" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="m5.4 8.2 1.75 1.75L10.7 6.3" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>New title submitted to Amazon.</span></p>
+          </div>
+        </div>
+        <div class="art-scene art-slot" data-scene>
+          <div class="art-knock" data-knock data-aim="knock">
+            <p class="art-knock-head"><i class="art-knock-mark"></i><span>Hourly Buy&nbsp;Box check</span><time>10:00</time></p>
+            <ul class="art-checks">
+              <li data-style="6"><span>B0EXAMPLE3</span><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.9" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="m5.4 8.2 1.75 1.75L10.7 6.3" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></li>
+              <li data-style="7"><span>B0EXAMPLE2</span><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.9" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="m5.4 8.2 1.75 1.75L10.7 6.3" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></li>
+              <li class="is-found" data-style="8"><span>B0EXAMPLE1</span><em>Taken by another seller</em><i class="art-flag">!</i></li>
+            </ul>
+            <p class="art-knock-foot"><span>3 options ready</span><b data-aim="view">View</b></p>
+          </div>
+          <p class="art-step art-part" data-part="s1"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.9" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="M8 4.9V8l2.1 1.4" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg><span>The hourly Buy&nbsp;Box check you set up</span></p>
+          <p class="art-step art-part" data-part="s2"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.9 8S4.1 3.9 8 3.9 14.1 8 14.1 8 11.9 12.1 8 12.1 1.9 8 1.9 8Z" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/><circle cx="8" cy="8" r="1.9" fill="none" stroke="currentColor" stroke-width="1.1"/></svg><span>Read the offers and sales on B0EXAMPLE1</span></p>
+          <p class="art-step art-part" data-part="s3"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.6 5.6h8.8l-.75 8.15H4.35L3.6 5.6Z" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/><path d="M5.9 7.4V4.6a2.1 2.1 0 0 1 4.2 0v2.8" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg><span>Bought each seller's stock on B0EXAMPLE1 from Keepa</span></p>
+          <p class="art-answer art-part" data-part="ans">They're at $27.49, $2.50 below you.<span class="art-src">Amazon seller account · Oct 19</span></p>
+          <div class="art-plan art-part" data-part="plan">
+            <ol class="art-options">
+              <li><i>A</i><span>Match them at $27.49</span></li>
+              <li class="art-pick"><i>B</i><span>Keep your price and wait for them to sell out<em>Recommended</em></span></li>
+              <li><i>C</i><span>Test-buy, then report them</span></li>
+            </ol>
+          </div>
+          <p class="art-acts art-part art-why" data-part="acts1"><b data-aim="yes1">Go with option B</b><span>Not now</span></p>
+          <p class="art-me art-part art-why" data-part="me2">Why not match their price?</p>
+          <div class="art-evidence art-part art-why" data-part="why" data-aim="evidence">
+            <p>They have 69&nbsp;units left, about 3&nbsp;days at their current sales. Matching costs you $2.50 a unit.</p>
+            <p class="art-legend"><span class="is-up">Their stock <b>140 → 69</b></span></p>
+            <svg class="art-lines" viewBox="0 0 80 12.4"><polyline class="is-up" pathLength="1" points="2,1 14.67,1 27.33,1 40,1 52.67,2.71 65.33,4.57 78,6.27"/></svg>
+            <p class="art-axis"><span>Oct 13</span><span>Oct 19</span></p>
+            <p class="art-src">Keepa · Oct 19</p>
+          </div>
+          <div class="art-turn">
+            <p class="art-acts art-part" data-part="acts2"><b data-aim="yes2">Go with option B</b><span>Not now</span></p>
+            <p class="art-done art-part" data-part="done"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.9" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="m5.4 8.2 1.75 1.75L10.7 6.3" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Price kept at $29.99. cx will tell you when the Buy&nbsp;Box is <span class="nowrap">yours again.</span></span></p>
+          </div>
+          <div class="art-summary art-part art-direct" data-part="sum" data-aim="sum">
+            <p>Since they cut their price on Oct 17, your daily sales fell from 31 to 8. Their stock runs out in about 3&nbsp;days.</p>
+            <div class="art-sales">
+              <p class="art-chart-name">Your daily sales · 14&nbsp;days</p>
+              <div class="art-bars art-bars-many">
+                <i data-style="9"></i><i data-style="10"></i><i data-style="11"></i><i data-style="12"></i><i data-style="13"></i><i data-style="14"></i><i data-style="15"></i><i data-style="16"></i><i data-style="17"></i><i data-style="18"></i><i data-style="19"></i><i class="is-low" data-style="20"></i><i class="is-low" data-style="21"></i><i class="is-low" data-style="22"></i>
+                <span class="art-cut">Price cut</span>
+              </div>
+              <p class="art-axis"><span>Oct 6</span><span>Oct 19</span></p>
+            </div>
+            <p class="art-src">Amazon seller account · Oct 19</p>
+          </div>
+        </div>
+      </div>
+      <div class="art-composer" data-composer>
+        <p class="art-input" data-aim="composer"><span data-typed></span><i class="art-caret"></i><span class="art-placeholder">Message cx</span></p>
+        <b class="art-send" data-aim="send"><svg viewBox="0 0 12 12"><path d="M6 9.5v-7M3 5.5l3-3 3 3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></b>
+      </div>
+    </div>
+    <i class="art-dim"></i>
+    <div class="art-card" data-card="0">
+      <p class="art-card-head"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 1.75h5.25L12.5 5v9.25H4V1.75Z" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/><path d="M9 1.75V5.25h3.5M6 8.5h4.5M6 11h4.5" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg><span>Listing draft</span><em>Your files</em></p>
+      <div class="art-listing">
+        <i class="art-photo"><svg viewBox="0 0 32 32"><path d="M8 24.5h16M9.5 24.5 11 14h10l1.5 10.5M10.5 14c0-3 2.5-5.5 5.5-5.5s5.5 2.5 5.5 5.5M16 8.5V6.2" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
+        <div>
+          <p class="art-listing-title" lang="en">Kittlewell Stainless Steel Cat Water Fountain, 3L, Quiet Pump, Easy Clean</p>
+          <p class="art-count">73/75 characters</p>
+          <p class="art-price">$36.99</p>
+        </div>
+      </div>
+      <p class="art-card-foot">First order of 962&nbsp;units</p>
+    </div>
+    <div class="art-card art-amazon" data-card="1">
+      <p class="amz-nav is-seller"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 4.25h11M2.5 8h11M2.5 11.75h11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>Seller Central</span><i class="amz-search"></i></p>
+      <div class="amz-page" lang="en">
+        <div class="amz-product"><i class="amz-photo"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M9.5 26h29l-2.3 11.6a3.2 3.2 0 0 1-3.1 2.6H14.9a3.2 3.2 0 0 1-3.1-2.6z" fill="var(--amz-line)" stroke="var(--amz-field)" stroke-width=".9"/><ellipse cx="24" cy="26" rx="14.5" ry="3.3" fill="var(--amz-glow)" stroke="var(--amz-field)" stroke-width=".9"/><path d="M20.6 26v-9a3.4 3.4 0 0 1 6.8 0v9" fill="var(--amz-page)" stroke="var(--amz-field)" stroke-width=".9"/><path d="M24 13.6c3.6 0 6.6 3.3 7.5 9" fill="none" stroke="var(--amz-link)" stroke-width="1.5" stroke-linecap="round"/></svg></i><p><span>Kittlewell Cat Water Fountain</span><span>ASIN B0EXAMPLE1</span></p></div>
+        <p class="amz-label">Item Name</p>
+        <p class="amz-field"><span class="art-strip" data-strip>Kittlewell Cat Water Fountain, <ins data-term><span><b>Gift for Cat Lovers</b>, </span></ins>2.5L, <del data-term><span>Pet Water Dispenser, </span></del>Quiet Pump</span></p>
+      </div>
+    </div>
+    <div class="art-card art-amazon" data-card="2">
+      <p class="amz-nav"><span>amazon.com</span><i class="amz-search"></i><i class="amz-go"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="7" cy="7" r="4.25" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10.2 10.2 3.3 3.3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></i></p>
+      <div class="amz-page" lang="en">
+        <div class="amz-item">
+          <i class="amz-photo"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M9.5 26h29l-2.3 11.6a3.2 3.2 0 0 1-3.1 2.6H14.9a3.2 3.2 0 0 1-3.1-2.6z" fill="var(--amz-line)" stroke="var(--amz-field)" stroke-width=".9"/><ellipse cx="24" cy="26" rx="14.5" ry="3.3" fill="var(--amz-glow)" stroke="var(--amz-field)" stroke-width=".9"/><path d="M20.6 26v-9a3.4 3.4 0 0 1 6.8 0v9" fill="var(--amz-page)" stroke="var(--amz-field)" stroke-width=".9"/><path d="M24 13.6c3.6 0 6.6 3.3 7.5 9" fill="none" stroke="var(--amz-link)" stroke-width="1.5" stroke-linecap="round"/></svg></i>
+          <div>
+            <p class="amz-title">Kittlewell Cat Water Fountain, Gift for Cat Lovers, 2.5L, Quiet Pump</p>
+            <p class="amz-stars"><svg viewBox="0 0 80 16" aria-hidden="true" focusable="false"><path transform="translate(0 0)" d="M8 1.3l2.03 4.3 4.67.57-3.44 3.2.88 4.63L8 11.72 3.86 14l.88-4.63L1.3 6.17l4.67-.57z" fill="currentColor"/><path transform="translate(16 0)" d="M8 1.3l2.03 4.3 4.67.57-3.44 3.2.88 4.63L8 11.72 3.86 14l.88-4.63L1.3 6.17l4.67-.57z" fill="currentColor"/><path transform="translate(32 0)" d="M8 1.3l2.03 4.3 4.67.57-3.44 3.2.88 4.63L8 11.72 3.86 14l.88-4.63L1.3 6.17l4.67-.57z" fill="currentColor"/><path transform="translate(48 0)" d="M8 1.3l2.03 4.3 4.67.57-3.44 3.2.88 4.63L8 11.72 3.86 14l.88-4.63L1.3 6.17l4.67-.57z" fill="currentColor"/><path transform="translate(64 0)" d="M8 1.3l2.03 4.3 4.67.57-3.44 3.2.88 4.63L8 11.72 3.86 14l.88-4.63L1.3 6.17l4.67-.57z" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg><span>1,284</span></p>
+          </div>
+        </div>
+        <div class="amz-box">
+          <p class="amz-price"><sup>$</sup>27<sup>49</sup></p>
+          <p class="amz-stock">In Stock</p>
+          <p class="amz-cart">Add to Cart</p>
+          <p class="amz-buy">Buy Now</p>
+          <dl class="amz-seller"><dt>Ships from</dt><dd>Amazon</dd><dt>Sold by</dt><dd>EXAMPLE Shop</dd></dl>
+        </div>
+      </div>
+    </div>
+    <svg class="art-link" data-link><path pathLength="1"/><circle r=".3"/><circle r=".3"/></svg>
+    <div class="art-cx" data-cx><svg viewBox="-78 -40 156 81" color="var(--cx-line)"><use href="#cxh-body"></use></svg></div>
+    <div class="art-pointer" data-pointer><svg viewBox="0 0 16 24"><path d="M0 0v19.5l4.6-4.4 3.1 7 3.3-1.4-3-6.9h6.5z"/></svg></div>
+  </div>
+</div></div>
+    </div>
+  </section>
+
+  <section class="section" id="plans" aria-labelledby="plans-title">
+    <div class="container">
+      <h2 class="section-title" id="plans-title">Explore plans</h2>
+      <div class="tabs reveal">
+  <div class="tablist" role="tablist" aria-label="Plans and costs">
+    <button class="tab" role="tab" type="button" id="tab-plans" aria-selected="true" aria-controls="panel-plans">Plans</button>
+    <button class="tab" role="tab" type="button" id="tab-billing" aria-selected="false" aria-controls="panel-billing" tabindex="-1">Costs</button>
+  </div>
+</div>
+<div class="tabpanel" role="tabpanel" id="panel-plans" aria-labelledby="tab-plans" tabindex="0">
+  <div class="trial">
+    <p class="trial-words">$1.00 of trial balance when you sign up<span data-invited> directly</span>, <span data-invited><span class="nowrap">or $5.00</span> through an invitation link, </span><span class="nowrap">good for 7 days,</span> <span class="nowrap">once per account</span></p>
+    <a class="btn btn-primary way-in" href="/login?lang=en">Try ComChatX</a>
+  </div>
+  <div class="plans">
+    <article class="plan" aria-labelledby="plan-pro">
+      <svg class="plan-icon" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round"><path d="M6 25.5 16 21l10 4.5v10L16 40 6 35.5v-10Z"/><path d="M6 25.5 16 30l10-4.5M16 30v10"/><path d="M18 14.5 28 10l10 4.5v10L28 29l-10-4.5v-10Z"/><path d="M18 14.5 28 19l10-4.5M28 19v10"/><path d="M28 6V3"/><path d="M23.5 4.5 25 6M32.5 4.5 31 6"/></g></svg>
+      <h3 class="plan-name" id="plan-pro">Pro</h3>
+      <p class="plan-price">$10.00</p>
+      <p class="plan-note">Per month, all $10.00 added to your balance, <span class="nowrap">valid for the period</span></p>
+      <a class="btn btn-primary btn-block way-in" href="/login?lang=en">Subscribe</a>
+      <p class="plan-fine">Cancel auto-renewal anytime</p>
+      <hr class="plan-rule">
+      <div>
+        <ul class="plan-list" role="list">
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Every data source</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>The leading models on the market</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>An isolated, secure environment</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Every plugin you can install</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Top up as you need</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Invite friends; your first 3 each get <span class="nowrap">$5.00 of trial balance</span></span></li>
+        </ul>
+        <p class="plan-lead">Any account can:</p>
+        <ul class="plan-list" role="list">
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Connect your store</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Connect your own model API key or subscription</span></li>
+        </ul>
+      </div>
+    </article>
+    <article class="plan" aria-labelledby="plan-enterprise">
+      <svg class="plan-icon" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round"><path d="M22 6 34 11.5v22L22 39l-12-5.5v-22L22 6Z"/><path d="M10 11.5 22 17l12-5.5M22 17v22"/><path d="M10 18.8 22 24.3l12-5.5M10 26.2 22 31.7l12-5.5"/></g></svg>
+      <h3 class="plan-name" id="plan-enterprise">Enterprise</h3>
+      <p class="plan-price in-words">Custom pricing</p>
+      <p class="plan-note">Built and delivered to order for your company</p>
+      <a class="btn btn-primary btn-block" href="https://www.comchatx.com/en/contact/">Contact sales</a>
+      <p class="plan-fine"></p>
+      <hr class="plan-rule">
+      <div>
+        <p class="plan-lead">Everything in Pro, plus:</p>
+        <ul class="plan-list" role="list">
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>cx configured around your workflows and rules</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>AI across your operations, sooner</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Your data stays inside your company network</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Data fetching and access set to <span class="nowrap">your company's security rules</span></span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Smoother teamwork across your company</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Runs on your company's own servers</span></li>
+        </ul>
+      </div>
+    </article>
+  </div>
+  <p class="footnote reveal">Prices are in US dollars. Models, data sources and cx's computer are paid from your balance, and every charge shows in Usage.</p>
+</div>
+<div class="tabpanel" role="tabpanel" id="panel-billing" aria-labelledby="tab-billing" tabindex="0" hidden>
+  <div class="meters">
+    <article class="meter">
+      <svg class="plan-icon" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round"><path d="M7 11.5A3.5 3.5 0 0 1 10.5 8h23A3.5 3.5 0 0 1 37 11.5v14a3.5 3.5 0 0 1-3.5 3.5H20l-7 6v-6h-2.5A3.5 3.5 0 0 1 7 25.5v-14Z"/><path d="M14 16h16M14 21h10"/></g></svg>
+      <h3>Models</h3>
+      <p>Use your balance, or connect your own API key or subscription and pay the provider directly.</p>
+      <p class="meter-cost">By usage</p>
+    </article>
+    <article class="meter">
+      <svg class="plan-icon" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round"><ellipse cx="22" cy="10" rx="12" ry="4.5"/><path d="M10 10v24c0 2.5 5.4 4.5 12 4.5s12-2 12-4.5V10M10 18c0 2.5 5.4 4.5 12 4.5S34 20.5 34 18M10 26c0 2.5 5.4 4.5 12 4.5S34 28.5 34 26"/></g></svg>
+      <h3>Data sources</h3>
+      <p>What cx fetches from a paid data source is paid from your balance. It is kept as your files, and reading it again costs nothing more.</p>
+      <p class="meter-cost">Per fetch</p>
+    </article>
+    <article class="meter">
+      <svg class="plan-icon" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round"><rect x="6" y="8" width="32" height="22" rx="3"/><path d="M16 37h12M22 30v7M12 15l4 3-4 3M19 21h7"/></g></svg>
+      <h3>cx's computer</h3>
+      <p>One per account, in the cloud, used by your cx alone. Billed for its time on and its storage. It shuts down <span class="nowrap">when idle.</span></p>
+      <p class="meter-cost">By time on and storage</p>
+    </article>
+  </div>
+  <p class="meters-foot">Every charge shows in Usage, by plugin or by type, and you can download the details.</p>
+</div>
+    </div>
+  </section>
+
+  <section class="section faq-plain" id="faq" aria-labelledby="faq-title">
+    <div class="container">
+      <h2 class="section-title" id="faq-title">Frequently asked questions</h2>
+      <ul class="faq-list" role="list">
+        <li class="faq-item">
+          <h3 class="faq-q"><button class="faq-button" type="button" id="faq-1-q" aria-expanded="false" aria-controls="faq-1"><span>What can ComChatX do?</span><svg class="plus" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><svg class="chev-r" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.25 4.5 9.75 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h3>
+          <div class="faq-a" id="faq-1" role="region" aria-labelledby="faq-1-q" hidden><div class="faq-a-inner">
+            <p>cx is an operations assistant for Amazon sellers. Checking the market, comparing competitors, organising spreadsheets, working out profit or writing a weekly report takes a single instruction. On cx's computer, cx gets the data, does the calculations and writes up the results, then puts its conclusions in the chat along with the data sources and how up to date the data is. ComChatX can connect to many data sources, from the market and products to your own store, and the more complete the data, the more cx can do.</p>
+          </div></div>
+        </li>
+        <li class="faq-item">
+          <h3 class="faq-q"><button class="faq-button" type="button" id="faq-2-q" aria-expanded="false" aria-controls="faq-2"><span>How much does it cost?</span><svg class="plus" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><svg class="chev-r" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.25 4.5 9.75 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h3>
+          <div class="faq-a" id="faq-2" role="region" aria-labelledby="faq-2-q" hidden><div class="faq-a-inner">
+            <p>The trial is free, and you are not charged automatically when it ends. Signing up<span data-invited> directly</span> gives you $1.00 of trial balance, <span data-invited>and signing up with an invitation gives you $5.00, </span>good for 7&nbsp;days. Pro is $10.00 a month, all of it added to your balance for the period. You can cancel at any time, and top up when your balance runs low. See the <a href="https://www.comchatx.com/en/pricing/">pricing page</a>.</p>
+          </div></div>
+        </li>
+        <li class="faq-item">
+          <h3 class="faq-q"><button class="faq-button" type="button" id="faq-3-q" aria-expanded="false" aria-controls="faq-3"><span>Do I need to connect my Amazon store?</span><svg class="plus" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><svg class="chev-r" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.25 4.5 9.75 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h3>
+          <div class="faq-a" id="faq-3" role="region" aria-labelledby="faq-3-q" hidden><div class="faq-a-inner">
+            <p>No, it is not required. ComChatX can connect to many data sources, so you can get a wide range of market and product data without connecting a store. With your store connected, cx reads your own orders, inventory and settlements, so the data is more precise and the analysis is specific to your listings and inventory. Within the permissions you grant, cx can also carry out operations in your store directly on your behalf. Store connections are provided as plugins, and each store is authorised separately.</p>
+          </div></div>
+        </li>
+        <li class="faq-item">
+          <h3 class="faq-q"><button class="faq-button" type="button" id="faq-4-q" aria-expanded="false" aria-controls="faq-4"><span>Who can see my data?</span><svg class="plus" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><svg class="chev-r" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.25 4.5 9.75 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h3>
+          <div class="faq-a" id="faq-4" role="region" aria-labelledby="faq-4-q" hidden><div class="faq-a-inner">
+            <p>Conversations, the files you upload and the files cx makes belong to you. They are kept on cx's computer, which is dedicated to you, and in our storage. They are used only to provide and improve ComChatX. ComChatX does not use your data to train models; model providers handle it under their own terms. We keep a copy of any data you have bought.</p>
+          </div></div>
+        </li>
+        <li class="faq-item">
+          <h3 class="faq-q"><button class="faq-button" type="button" id="faq-5-q" aria-expanded="false" aria-controls="faq-5"><span>Which model does ComChatX use?</span><svg class="plus" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><svg class="chev-r" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.25 4.5 9.75 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h3>
+          <div class="faq-a" id="faq-5" role="region" aria-labelledby="faq-5-q" hidden><div class="faq-a-inner">
+            <p>You choose the model. By default, ComChatX offers leading models from several providers, paid from your balance as you use them. You can also connect your own ChatGPT or Claude subscription, or your own API key, in which case the model's provider bills you directly. You don't need Pro <span class="nowrap">to connect them.</span></p>
+          </div></div>
+        </li>
+      </ul>
+    </div>
+  </section>
+</main>
+<footer class="site-footer site-footer--light">
+<div class="container">
+  <div class="footer-grid">
+    <a class="footer-logo" href="https://www.comchatx.com/en/"><span class="wordmark">ComChatX</span></a>
+    <nav class="footer-cols" aria-label="Footer">
+  <div class="footer-col">
+    <ul role="list">
+      <li><a href="https://www.comchatx.com/en/pricing/">Pricing</a></li>
+      <li><a class="way-in" href="/login?lang=en">Log in</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <ul role="list">
+      <li><a href="https://www.comchatx.com/en/pricing/#faq">FAQ</a></li>
+      <li><a href="https://www.comchatx.com/en/contact/">Contact sales</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <ul role="list">
+      <li><a href="https://www.comchatx.com/en/terms/">Terms of Service</a></li>
+      <li><a href="https://www.comchatx.com/en/privacy/">Privacy Policy</a></li>
+    </ul>
+  </div>
+</nav>
+    <p class="footer-copy">© 2026 ComChatX</p>
+  </div>
+  <div class="footer-bar">
+    <!-- ComChatX has no X or LinkedIn account yet: the two icons stand where the links will go, and link nowhere until then. -->
+<ul class="footer-social" role="list" aria-label="Social media">
+  <li><a class="footer-social-link" role="link" aria-disabled="true" aria-label="X"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 1.5h4l9 13h-4Z" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/><path d="M14.5 1.5 9.18 6.82M6.82 9.18 1.5 14.5" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/></svg></a></li>
+  <li><a class="footer-social-link" role="link" aria-disabled="true" aria-label="LinkedIn"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M2.25.75h11.5a1.5 1.5 0 0 1 1.5 1.5v11.5a1.5 1.5 0 0 1-1.5 1.5H2.25a1.5 1.5 0 0 1-1.5-1.5V2.25a1.5 1.5 0 0 1 1.5-1.5Zm1.6 4.8a1.34 1.34 0 1 0 0-2.68 1.34 1.34 0 0 0 0 2.68ZM2.68 6.56h2.34v6.57H2.68Zm3.73 0h2.23v.95c.36-.61 1.14-1.12 2.17-1.12 1.81 0 2.51 1.17 2.51 2.96v3.78h-2.34v-3.29c0-.87-.27-1.45-1.09-1.45-.89 0-1.25.62-1.25 1.45v3.29H6.41Z"/></svg></a></li>
+</ul>
+    <div class="lang-switch">
+  <button type="button" aria-expanded="false" aria-controls="lang-menu" aria-label="Language: English"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M2.6 10h14.8M10 2.5c2 2.1 3 4.6 3 7.5s-1 5.4-3 7.5c-2-2.1-3-4.6-3-7.5s1-5.4 3-7.5Z" fill="none" stroke="currentColor" stroke-width="1.2"/></svg><span>English</span><svg class="caret" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3.5 7 10 13.5 16.5 7" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <ul class="lang-menu" id="lang-menu" role="list">
+    <li><a href="/login?lang=zh" hreflang="zh-CN" lang="zh-CN">中文</a></li>
+    <li><a href="/login?lang=en" hreflang="en" lang="en" aria-current="true">English</a></li>
+  </ul>
+</div>
+  </div>
+</div>
+</footer>
+</body>
+</html>

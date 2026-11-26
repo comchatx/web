@@ -1,0 +1,487 @@
+{
+  "money": {
+    "currency": "USD",
+    "unitsPerMinor": 10000
+  },
+  "me": {
+    "kind": "signed_in",
+    "account": "acct-preview",
+    "email": "ada@example.com",
+    "name": "Ada Lovelace",
+    "box": "provisioned",
+    "balance": {
+      "available": 74896080,
+      "open_floor": 5000000,
+      "can_open": true
+    }
+  },
+  "spending": {
+    "credited": 110000000,
+    "spent": {
+      "model": 21401500,
+      "sources": 9325680,
+      "boxTime": 4106740,
+      "boxStorage": 270000
+    }
+  },
+  "sources": [
+    {
+      "name": "keepa",
+      "supplier": "Keepa",
+      "about": {
+        "en": "Amazon product data: prices, offers, sales rank and their history.",
+        "zh": "亚马逊商品数据：价格、报价、销量排名及其历史。"
+      },
+      "description": {
+        "en": "Investigate the history of price changes, Buy Box ownership and seasonal rank movement, and assess product opportunities. Available for Amazon US, UK, DE, FR, JP, CA, IT, ES, IN, MX and BR.",
+        "zh": "查看价格变化、Buy Box 归属和季节性排名的历史记录，并评估选品机会。数据涵盖亚马逊美国、英国、德国、法国、日本、加拿大、意大利、西班牙、印度、墨西哥和巴西站。"
+      },
+      "nativeUnit": "tokens",
+      "unitsPerNative": 793,
+      "aspects": [
+        {
+          "aspect": "amazon/us/<asin>/product",
+          "native": 14
+        },
+        {
+          "aspect": "amazon/jp/<asin>/product",
+          "native": 14
+        }
+      ],
+      "enabled": true,
+      "spent": 9325680,
+      "month": {
+        "since": 1788220800000,
+        "spent": 9325680,
+        "lastAt": 1788566400000,
+        "native": {
+          "amount": 11760,
+          "unit": "tokens"
+        }
+      }
+    },
+    {
+      "name": "amazon-sp-api",
+      "supplier": "Amazon-SP-API",
+      "about": {
+        "en": "Reads and updates your own Amazon store.",
+        "zh": "读取并更新你自己的亚马逊店铺。"
+      },
+      "description": {
+        "en": "Lets cx work in your own Amazon store through Amazon's SP-API, in the marketplaces you authorise. cx can read your orders, listings, inventory and reports, and can make changes within what you authorise. Neither Amazon nor ComChatX charges for it.",
+        "zh": "授权后，cx 可以通过亚马逊 SP-API 访问你的店铺，范围以你授权的站点为限。cx 可以读取订单、listing、库存和报告，并在授权范围内进行修改。亚马逊和 ComChatX 均不为此收费。"
+      },
+      "nativeUnit": "requests",
+      "aspects": [],
+      "enabled": false,
+      "spent": 0,
+      "fields": {
+        "client_id": false,
+        "client_secret": false
+      },
+      "secretFields": [
+        "client_secret"
+      ],
+      "connections": [],
+      "connectionFields": [
+        {
+          "name": "store",
+          "secret": false
+        },
+        {
+          "name": "region",
+          "secret": false
+        },
+        {
+          "name": "refresh_token",
+          "secret": true
+        }
+      ],
+      "paired": true,
+      "pairs": [],
+      "regions": [
+        "na",
+        "eu",
+        "fe"
+      ]
+    },
+    {
+      "name": "amazon-ads",
+      "supplier": "Amazon-Ads",
+      "about": {
+        "en": "Reads and updates your own Amazon ads.",
+        "zh": "读取并更新你自己的亚马逊广告。"
+      },
+      "description": {
+        "en": "Reads and updates your own Amazon ads.",
+        "zh": "读取并更新你自己的亚马逊广告。"
+      },
+      "nativeUnit": "requests",
+      "aspects": [],
+      "enabled": false,
+      "spent": 0,
+      "fields": {
+        "client_id": false,
+        "client_secret": false
+      },
+      "secretFields": [
+        "client_secret"
+      ],
+      "connections": [],
+      "connectionFields": [
+        {
+          "name": "refresh_token",
+          "secret": true
+        }
+      ],
+      "grants": true,
+      "paired": true,
+      "pairs": [],
+      "regions": [
+        "na",
+        "eu",
+        "fe"
+      ]
+    },
+    {
+      "name": "cx-fixture",
+      "supplier": "Fixture",
+      "about": {
+        "en": "A test source with made-up ratings.",
+        "zh": "测试用数据源，返回虚构的评分。"
+      },
+      "description": {
+        "en": "A stand-in the platform's own tests use. It sells made-up product ratings, and is in the preview so a source that is switched off can be seen.",
+        "zh": "平台自身测试使用的替身数据源，出售虚构的商品评分；放在预览里，是为了展示一个未启用的数据源。"
+      },
+      "nativeUnit": "tokens",
+      "unitsPerNative": 1,
+      "aspects": [
+        {
+          "aspect": "amazon/us/<asin>/rating",
+          "native": 1
+        }
+      ],
+      "enabled": false,
+      "spent": 0,
+      "month": {
+        "since": 1788220800000,
+        "spent": 0
+      }
+    }
+  ],
+  "providers": [
+    {
+      "id": "google",
+      "name": "Google",
+      "platformKey": true,
+      "ownKey": false,
+      "rates": [
+        {
+          "model": "Gemini 3.6 Flash",
+          "input": 300000,
+          "output": 2500000
+        }
+      ]
+    },
+    {
+      "id": "anthropic",
+      "name": "Anthropic",
+      "platformKey": false,
+      "ownKey": false,
+      "rates": []
+    },
+    {
+      "id": "openai",
+      "name": "OpenAI",
+      "platformKey": false,
+      "ownKey": false,
+      "rates": []
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek",
+      "platformKey": false,
+      "ownKey": false,
+      "rates": []
+    },
+    {
+      "id": "moonshotai",
+      "name": "Moonshot AI",
+      "platformKey": false,
+      "ownKey": false,
+      "rates": []
+    },
+    {
+      "id": "moonshotai-cn",
+      "name": "Moonshot AI (CN)",
+      "platformKey": false,
+      "ownKey": false,
+      "rates": []
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter",
+      "platformKey": false,
+      "ownKey": false,
+      "rates": []
+    }
+  ],
+  "accounts": [
+    {
+      "id": "openai",
+      "name": "OpenAI (ChatGPT subscription)",
+      "signedIn": false
+    },
+    {
+      "id": "anthropic",
+      "name": "Anthropic (Claude Pro/Max)",
+      "signedIn": false
+    },
+    {
+      "id": "kimi-coding",
+      "name": "Kimi Code (subscription)",
+      "signedIn": false
+    },
+    {
+      "id": "meta",
+      "name": "Meta (Muse subscription)",
+      "signedIn": false
+    },
+    {
+      "id": "xai",
+      "name": "xAI (Grok/X subscription)",
+      "signedIn": false
+    },
+    {
+      "id": "github-copilot",
+      "name": "GitHub Copilot",
+      "signedIn": false
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter OAuth",
+      "signedIn": false
+    },
+    {
+      "id": "radius",
+      "name": "Radius",
+      "signedIn": false
+    }
+  ],
+  "packages": [
+    {
+      "name": "@comchatx/cx-assistant",
+      "version": "0.1.10",
+      "source": "npm:@comchatx/cx-assistant",
+      "about": {
+        "en": "Tells cx who it is and how it works for you.",
+        "zh": "让 cx 知道自己是谁，以及怎样为你做事。"
+      },
+      "description": {
+        "en": "Tells cx who it is and how it works for you.",
+        "zh": "让 cx 知道自己是谁，以及怎样为你做事。"
+      }
+    },
+    {
+      "name": "@comchatx/cx-topics",
+      "version": "0.1.11",
+      "source": "npm:@comchatx/cx-topics",
+      "about": {
+        "en": "Lets cx title your work in History and read the messages you quote.",
+        "zh": "让 cx 在历史里给你做的事起标题，并读取你引用的消息。"
+      },
+      "description": {
+        "en": "Lets cx title your work in History and read the messages you quote.",
+        "zh": "让 cx 在历史里给你做的事起标题，并读取你引用的消息。"
+      }
+    },
+    {
+      "name": "@comchatx/cx-board",
+      "version": "0.4.0",
+      "source": "npm:@comchatx/cx-board",
+      "about": {
+        "en": "Tells cx where the board is and what an entry holds.",
+        "zh": "告诉 cx 看板在哪里、每一条写什么。"
+      },
+      "description": {
+        "en": "A board beside the chat, where cx leaves what it found, changed, proposes and asks.",
+        "zh": "在对话旁设一块看板，cx 和插件做出的东西都放在上面。"
+      }
+    },
+    {
+      "name": "@comchatx/cx-board-tasks",
+      "version": "0.4.1",
+      "source": "npm:@comchatx/cx-board-tasks",
+      "about": {
+        "en": "Tells cx what goes in your Inbox and how your answers come back.",
+        "zh": "告诉 cx 收件箱写什么、你的回答如何传回。"
+      },
+      "description": {
+        "en": "Puts what cx found and what needs your answer in your Inbox.",
+        "zh": "cx 的发现和要你决定的事放进收件箱，在那里直接回答。"
+      }
+    },
+    {
+      "name": "pi-web-access",
+      "version": "0.42.0",
+      "source": "npm:pi-web-access",
+      "about": {
+        "en": "Web search, URL fetching, GitHub repo cloning, PDF extraction, YouTube video understanding, and local video analysis for Pi coding agent. Supports OpenAI, Brave, Parallel, TinyFish, Search1API, Searchinfinity, Querit, Tavily, Firecrawl, Crawl4AI, Jina, SE",
+        "zh": "Web search, URL fetching, GitHub repo cloning, PDF extraction, YouTube video understanding, and local video analysis for Pi coding agent. Supports OpenAI, Brave, Parallel, TinyFish, Search1API, Searchinfinity, Querit, Tavily, Firecrawl, Crawl4AI, Jina, SE"
+      },
+      "description": {
+        "en": "Web search, URL fetching, GitHub repo cloning, PDF extraction, YouTube video understanding, and local video analysis for Pi coding agent. Supports OpenAI, Brave, Parallel, TinyFish, Search1API, Searchinfinity, Querit, Tavily, Firecrawl, Crawl4AI, Jina, SE",
+        "zh": "Web search, URL fetching, GitHub repo cloning, PDF extraction, YouTube video understanding, and local video analysis for Pi coding agent. Supports OpenAI, Brave, Parallel, TinyFish, Search1API, Searchinfinity, Querit, Tavily, Firecrawl, Crawl4AI, Jina, SE"
+      }
+    },
+    {
+      "name": "billion-context",
+      "version": "0.1.212",
+      "source": "npm:billion-context",
+      "about": {
+        "en": "A context-compression plugin — small context windows (a 100K context is enough), 5x fewer tokens, month-long single sessions (billions of tokens), and compression quality — for all agents: pi, OpenCode, Codex, Claude Code, and more. billion-context is all",
+        "zh": "A context-compression plugin — small context windows (a 100K context is enough), 5x fewer tokens, month-long single sessions (billions of tokens), and compression quality — for all agents: pi, OpenCode, Codex, Claude Code, and more. billion-context is all"
+      },
+      "description": {
+        "en": "A context-compression plugin — small context windows (a 100K context is enough), 5x fewer tokens, month-long single sessions (billions of tokens), and compression quality — for all agents: pi, OpenCode, Codex, Claude Code, and more. billion-context is all",
+        "zh": "A context-compression plugin — small context windows (a 100K context is enough), 5x fewer tokens, month-long single sessions (billions of tokens), and compression quality — for all agents: pi, OpenCode, Codex, Claude Code, and more. billion-context is all"
+      }
+    },
+    {
+      "name": "cx-sources",
+      "version": "0.1.12",
+      "source": "npm:cx-sources",
+      "about": {
+        "en": "The cx command: how the session buys and reads data.",
+        "zh": "cx 命令：会话购买和读取数据的方式。"
+      },
+      "description": {
+        "en": "Installed by the platform in every session. It gives the session the cx command — get or price data by path, send a request to a data source, edit the session's data settings — and the skill that teaches the model to use it.",
+        "zh": "由平台安装在每个会话中。它为会话提供 cx 命令——按路径获取数据或询价、向数据源发送请求、编辑会话的数据设置——以及教模型使用它的技能。"
+      }
+    },
+    {
+      "name": "cx-keepa",
+      "version": "0.1.15",
+      "source": "npm:cx-keepa",
+      "about": {
+        "en": "Tracks and reviews price, BSR and Buy Box, yours and rivals'.",
+        "zh": "跟踪竞品和你的商品的价格、BSR 和 Buy Box，替你复盘。"
+      },
+      "description": {
+        "en": "A member of the Amazon Seller Bundle. cx tells you when your products and rivals' changed price, coupon, Buy&nbsp;Box or BSR, from the day-by-day history Keepa keeps for each product. It also finds products by search, best-seller list or seller. It all comes from Keepa, on 11 Amazon marketplaces.",
+        "zh": "亚马逊卖家整合包的成员。竞品和你的商品哪天调价、上了优惠券、Buy&nbsp;Box 易主、BSR 起落，cx 都能查到：Keepa 记着每个商品逐日的历史。cx 也能按搜索词、畅销榜或卖家找出商品，放在一起对比。数据来自 Keepa，覆盖亚马逊 11 个站点。"
+      }
+    },
+    {
+      "name": "cx-amazon-seller",
+      "version": "0.1.1",
+      "source": "npm:cx-amazon-seller",
+      "about": {
+        "en": "Tells cx it works for an Amazon seller.",
+        "zh": "让 cx 知道自己在为亚马逊卖家工作。"
+      },
+      "description": {
+        "en": "Tells cx it works for an Amazon seller.",
+        "zh": "让 cx 知道自己在为亚马逊卖家工作。"
+      }
+    },
+    {
+      "name": "cx-amazon-sp-api",
+      "version": "0.1.17",
+      "source": "npm:cx-amazon-sp-api",
+      "about": {
+        "en": "Lets cx work in your Amazon seller account through Amazon's Selling Partner API, on the keys you save.",
+        "zh": "让 cx 用你保存的密钥，通过亚马逊的 Selling Partner API 在你的卖家账户里做事。"
+      },
+      "description": {
+        "en": "Lets cx work in your Amazon seller account through Amazon's Selling Partner API, on the keys you save.",
+        "zh": "让 cx 用你保存的密钥，通过亚马逊的 Selling Partner API 在你的卖家账户里做事。"
+      }
+    },
+    {
+      "name": "@comchatx/cx-amazon-ads",
+      "version": "0.1.10",
+      "source": "npm:@comchatx/cx-amazon-ads",
+      "about": {
+        "en": "Pauses keywords that don't sell, and tunes budgets and bids.",
+        "zh": "暂停只花钱不出单的关键词，替你调整预算和竞价。"
+      },
+      "description": {
+        "en": "Reads and updates your own Amazon ads.",
+        "zh": "读取并更新你自己的亚马逊广告。"
+      }
+    },
+    {
+      "name": "@comchatx/cx-s3-storage",
+      "version": "0.1.4",
+      "source": "npm:@comchatx/cx-s3-storage",
+      "about": {
+        "en": "Stores your images in your own bucket, with links for listings.",
+        "zh": "把商品图片存进你自己的存储桶，生成 listing 用的链接。"
+      },
+      "description": {
+        "en": "Stores your images in your own bucket, with links for listings.",
+        "zh": "把商品图片存进你自己的存储桶，生成 listing 用的链接。"
+      }
+    }
+  ],
+  "onImage": [],
+  "registry": [
+    {
+      "name": "@comchatx/cx-assistant",
+      "source": "npm:@comchatx/cx-assistant",
+      "version": "0.1.10"
+    },
+    {
+      "name": "@comchatx/cx-topics",
+      "source": "npm:@comchatx/cx-topics",
+      "version": "0.1.11"
+    },
+    {
+      "name": "@comchatx/cx-board",
+      "source": "npm:@comchatx/cx-board",
+      "version": "0.4.0"
+    },
+    {
+      "name": "@comchatx/cx-board-tasks",
+      "source": "npm:@comchatx/cx-board-tasks",
+      "version": "0.4.1"
+    },
+    {
+      "name": "cx-sources",
+      "source": "npm:cx-sources",
+      "version": "0.1.12"
+    },
+    {
+      "name": "cx-keepa",
+      "source": "npm:cx-keepa",
+      "version": "0.1.15"
+    },
+    {
+      "name": "cx-amazon-sp-api",
+      "source": "npm:cx-amazon-sp-api",
+      "version": "0.1.17"
+    },
+    {
+      "name": "@comchatx/cx-amazon-ads",
+      "source": "npm:@comchatx/cx-amazon-ads",
+      "version": "0.1.10"
+    },
+    {
+      "name": "@comchatx/cx-s3-storage",
+      "source": "npm:@comchatx/cx-s3-storage",
+      "version": "0.1.4"
+    },
+    {
+      "name": "cx-amazon-seller",
+      "source": "npm:cx-amazon-seller",
+      "version": "0.1.9"
+    }
+  ],
+  "defaultModel": {
+    "provider": "google",
+    "id": "gemini-3.5-flash"
+  }
+}

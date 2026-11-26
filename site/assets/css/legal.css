@@ -1,0 +1,40 @@
+/*
+ * The terms and privacy pages, in the form ruled on 2026-10-30: the title, the row with the day the page takes
+ * effect, a list of the sections at the top whose entries jump to them, numbered sections, and a bold lead-in on every paragraph.
+ * No bar that follows the scroll, no PDF, no version history. One column: the contact page's room above and below the title,
+ * the FAQ's width for long text (base.css), every value by the theme's names (theme.css).
+ * Section numbers are counted, not written: the words stay as the build writes them, and the figure test reads no new figure.
+ */
+.legal { padding: clamp(5rem, 5rem + 48 * (100vw - 20rem) / 960, 8rem) 0 clamp(6rem, 6rem + 48 * (100vw - 20rem) / 960, 9rem); }
+.legal-column { max-width: 660px; margin-inline: auto; counter-reset: section; }
+.legal h1 { font-size: var(--display-2); font-weight: var(--weight-strong); line-height: var(--leading-tight); text-wrap: balance; }
+:lang(zh) .legal h1 { letter-spacing: .02em; }
+.legal-date { margin-top: var(--space-5); color: var(--quiet); font-size: var(--size-body); line-height: var(--leading-small); }
+
+/* The sections, listed once at the top. Each entry is its section's number and a link to it; two columns where two fit. */
+.legal-toc { margin-top: var(--space-8); padding-block: var(--space-6); border-block: 1px solid var(--line); }
+.legal-toc ol { margin: 0; padding: 0; list-style: none; counter-reset: entry; columns: 2 15rem; column-gap: var(--space-8); }
+.legal-toc li {
+  display: grid; grid-template-columns: 1.75rem minmax(0, 1fr); padding-block: var(--space-2); break-inside: avoid;
+  counter-increment: entry; font-size: var(--size-body); line-height: var(--leading-small);
+}
+.legal-toc li::before { content: counter(entry); color: var(--quiet); font-variant-numeric: tabular-nums; }
+.legal-toc a { justify-self: start; border-radius: var(--radius-small); color: var(--act); text-decoration: none; }
+.legal-toc a:hover { color: var(--act-hover); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+
+/* A section: its number before its title, as in the list above; then its paragraphs, each opening on its bold lead-in. A terms
+   section the page had before keeps its first id on the section itself, for links made to it then; the section and its title
+   start on one line, so the two ids land the same scroll. */
+.legal-section { margin-top: var(--space-9); counter-increment: section; scroll-margin-top: var(--space-7); }
+.legal-section h2 {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--space-5);
+  font-size: var(--size-title); font-weight: var(--weight-strong); line-height: var(--leading-tight); scroll-margin-top: var(--space-7);
+}
+/* The number keeps one gap before the title whatever its digits, and a title that wraps hangs under its first word. */
+.legal-section h2::before { content: counter(section); color: var(--quiet); font-variant-numeric: tabular-nums; }
+.legal-section p { margin-top: var(--space-5); font-size: 1rem; line-height: var(--leading-body); text-wrap: pretty; }
+.legal-section h2 + p { margin-top: var(--space-6); }
+.legal-section strong { color: var(--ink); }
+/* A link's words stay on one line: every link here is a page's name or the support address, short enough for 320 px. */
+.legal-section a { color: var(--act); text-underline-offset: 3px; text-decoration-thickness: 1px; white-space: nowrap; }
+.legal-section a:hover { color: var(--act-hover); }

@@ -1,0 +1,482 @@
+{"t":328,"scene":"hello","prompt":"Hi. I sell yoga mats on Amazon US."}
+{"t":328,"frame":{"kind":"life","epoch":"67885191bfbe75800da62753835607d9"}}
+{"t":328,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":1,"entryId":"0872e954","body":{"form":"model_change","provider":"fixture","modelId":"fixture-a"}}}
+{"t":328,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":2,"entryId":"6dce5ea5","body":{"form":"thinking_level_change","thinkingLevel":"off"}}}
+{"t":328,"frame":{"kind":"turn","running":false}}
+{"t":328,"frame":{"kind":"sleep","dueInMs":3599672}}
+{"t":328,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":330,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":330,"frame":{"kind":"turn","running":true}}
+{"t":358,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":3,"entryId":"33292aee","body":{"form":"system","counts":{"contentBlocks":0,"sections":6,"toolsAdded":5,"toolsRemoved":0}}}}
+{"t":358,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":4,"entryId":"b57356ca","body":{"form":"message","role":"user","content":[{"form":"text","text":"Hi. I sell yoga mats on Amazon US."}],"timestamp":1785774600000}}}
+{"t":657,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":657,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Hi. Tell me what you'd like to look at first."}}}
+{"t":657,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Hi. Tell me what you'd like to look at first."}}}
+{"t":658,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":658,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":5,"entryId":"af1b7ea3","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Hi. Tell me what you'd like to look at first."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1785774600013,"responseId":"completion","rawStopReason":"stop","durationMs":315,"thinkingLevel":"off"}}}
+{"t":658,"frame":{"kind":"turn","running":false}}
+{"t":1059,"scene":"what","prompt":"What can you do for me?"}
+{"t":1059,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":1060,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":1060,"frame":{"kind":"turn","running":true}}
+{"t":1064,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":6,"entryId":"5b053716","body":{"form":"message","role":"user","content":[{"form":"text","text":"What can you do for me?"}],"timestamp":1785774720000}}}
+{"t":1367,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":1367,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"I can read your files, check prices and stock on Amazon, and write listings and replies for you."}}}
+{"t":1367,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"I can read your files, check prices and stock on Amazon, and write listings and replies for you."}}}
+{"t":1367,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":1368,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":7,"entryId":"3e91e0d2","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"I can read your files, check prices and stock on Amazon, and write listings and replies for you."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1785774720003,"responseId":"completion","rawStopReason":"stop","durationMs":305,"thinkingLevel":"off"}}}
+{"t":1368,"frame":{"kind":"turn","running":false}}
+{"t":1768,"scene":"topic-1-1","prompt":"How did July go compared with June?"}
+{"t":1768,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":1769,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":1769,"frame":{"kind":"turn","running":true}}
+{"t":1773,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":8,"entryId":"7e09bb75","body":{"form":"message","role":"user","content":[{"form":"text","text":"How did July go compared with June?"}],"timestamp":1785775200000}}}
+{"t":1774,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":9,"entryId":"6e2b0f41","body":{"form":"other","entryType":"label","fields":{"targetId":"7e09bb75","label":"July sales recap"}}}}
+{"t":2075,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":2075,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"You sold 389 yoga mats in July, 41 more than in June, and sales rose 9% to $11,240."}}}
+{"t":2075,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"You sold 389 yoga mats in July, 41 more than in June, and sales rose 9% to $11,240."}}}
+{"t":2075,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":2076,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":10,"entryId":"7ee78563","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"You sold 389 yoga mats in July, 41 more than in June, and sales rose 9% to $11,240."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1785775200003,"responseId":"completion","rawStopReason":"stop","durationMs":304,"thinkingLevel":"off"}}}
+{"t":2076,"frame":{"kind":"turn","running":false}}
+{"t":2477,"scene":"topic-2-1","prompt":"Compare the two quotes for the 8 mm mat."}
+{"t":2477,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":2478,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":2478,"frame":{"kind":"turn","running":true}}
+{"t":2486,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":11,"entryId":"705782c8","body":{"form":"message","role":"user","content":[{"form":"text","text":"Compare the two quotes for the 8 mm mat."}],"timestamp":1785877500000}}}
+{"t":2486,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":12,"entryId":"d19f7422","body":{"form":"other","entryType":"label","fields":{"targetId":"705782c8","label":"Supplier quotes for the 8 mm mat"}}}}
+{"t":2785,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":2785,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Hangzhou quotes $4.60 a unit from 500, Ningbo $4.35 from 1,000. At your pace the Ningbo order lasts about 10 weeks."}}}
+{"t":2785,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Hangzhou quotes $4.60 a unit from 500, Ningbo $4.35 from 1,000. At your pace the Ningbo order lasts about 10 weeks."}}}
+{"t":2785,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":2786,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":13,"entryId":"cb8d9517","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Hangzhou quotes $4.60 a unit from 500, Ningbo $4.35 from 1,000. At your pace the Ningbo order lasts about 10 weeks."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1785877500004,"responseId":"completion","rawStopReason":"stop","durationMs":304,"thinkingLevel":"off"}}}
+{"t":2786,"frame":{"kind":"turn","running":false}}
+{"t":3186,"scene":"topic-3-1","prompt":"Should I run a coupon for back to school?"}
+{"t":3186,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":3187,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":3187,"frame":{"kind":"turn","running":true}}
+{"t":3191,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":14,"entryId":"5f61b1a4","body":{"form":"message","role":"user","content":[{"form":"text","text":"Should I run a coupon for back to school?"}],"timestamp":1786036920000}}}
+{"t":3192,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":15,"entryId":"9d581e2d","body":{"form":"other","entryType":"label","fields":{"targetId":"5f61b1a4","label":"Back-to-school coupon"}}}}
+{"t":3492,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":3492,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"A 10% coupon on the 6 mm mat costs about $1.60 a unit. Last year's coupon lifted sales 22% for two weeks."}}}
+{"t":3492,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"A 10% coupon on the 6 mm mat costs about $1.60 a unit. Last year's coupon lifted sales 22% for two weeks."}}}
+{"t":3493,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":3493,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":16,"entryId":"35917d18","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"A 10% coupon on the 6 mm mat costs about $1.60 a unit. Last year's coupon lifted sales 22% for two weeks."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1786036920002,"responseId":"completion","rawStopReason":"stop","durationMs":304,"thinkingLevel":"off"}}}
+{"t":3493,"frame":{"kind":"turn","running":false}}
+{"t":3895,"scene":"topic-4-1","prompt":"Why are people returning the mat?"}
+{"t":3895,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":3896,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":3896,"frame":{"kind":"turn","running":true}}
+{"t":3901,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":17,"entryId":"82fab7e8","body":{"form":"message","role":"user","content":[{"form":"text","text":"Why are people returning the mat?"}],"timestamp":1786146480000}}}
+{"t":3901,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":18,"entryId":"e18f06fe","body":{"form":"other","entryType":"label","fields":{"targetId":"82fab7e8","label":"Return reasons in July"}}}}
+{"t":4199,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":4199,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Of 14 returns in July, 6 said the mat smelled and 4 said it was thinner than they expected."}}}
+{"t":4199,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Of 14 returns in July, 6 said the mat smelled and 4 said it was thinner than they expected."}}}
+{"t":4200,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":4200,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":19,"entryId":"5598d9b7","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Of 14 returns in July, 6 said the mat smelled and 4 said it was thinner than they expected."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1786146480001,"responseId":"completion","rawStopReason":"stop","durationMs":302,"thinkingLevel":"off"}}}
+{"t":4200,"frame":{"kind":"turn","running":false}}
+{"t":4601,"scene":"topic-5-1","prompt":"Which main image is winning?"}
+{"t":4601,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":4602,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":4602,"frame":{"kind":"turn","running":true}}
+{"t":4606,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":20,"entryId":"0d6113b3","body":{"form":"message","role":"user","content":[{"form":"text","text":"Which main image is winning?"}],"timestamp":1786385700000}}}
+{"t":4606,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":21,"entryId":"46e9fac6","body":{"form":"other","entryType":"label","fields":{"targetId":"0d6113b3","label":"Main image test"}}}}
+{"t":4906,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":4906,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"After 2,100 impressions each, the rolled-up mat has a click rate 0.6 points higher."}}}
+{"t":4906,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"After 2,100 impressions each, the rolled-up mat has a click rate 0.6 points higher."}}}
+{"t":4906,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":4907,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":22,"entryId":"792499f9","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"After 2,100 impressions each, the rolled-up mat has a click rate 0.6 points higher."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1786385700002,"responseId":"completion","rawStopReason":"stop","durationMs":303,"thinkingLevel":"off"}}}
+{"t":4907,"frame":{"kind":"turn","running":false}}
+{"t":5308,"scene":"topic-6-1","prompt":"What will FBA storage cost me this month?"}
+{"t":5308,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":5309,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":5309,"frame":{"kind":"turn","running":true}}
+{"t":5314,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":23,"entryId":"cc2ab0c9","body":{"form":"message","role":"user","content":[{"form":"text","text":"What will FBA storage cost me this month?"}],"timestamp":1786464120000}}}
+{"t":5315,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":24,"entryId":"598f2e04","body":{"form":"other","entryType":"label","fields":{"targetId":"cc2ab0c9","label":"Storage fees for August"}}}}
+{"t":5613,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":5613,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"About $86 for 31 cubic feet. The cork blocks are a third of it."}}}
+{"t":5613,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"About $86 for 31 cubic feet. The cork blocks are a third of it."}}}
+{"t":5614,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":5614,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":25,"entryId":"6a61d6f3","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"About $86 for 31 cubic feet. The cork blocks are a third of it."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1786464120002,"responseId":"completion","rawStopReason":"stop","durationMs":304,"thinkingLevel":"off"}}}
+{"t":5614,"frame":{"kind":"turn","running":false}}
+{"t":6014,"scene":"topic-7-1","prompt":"Who is the new mat at $24.99?"}
+{"t":6014,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":6014,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":6014,"frame":{"kind":"turn","running":true}}
+{"t":6019,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":26,"entryId":"96af59a0","body":{"form":"message","role":"user","content":[{"form":"text","text":"Who is the new mat at $24.99?"}],"timestamp":1786660200000}}}
+{"t":6020,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":27,"entryId":"55a67f8c","body":{"form":"other","entryType":"label","fields":{"targetId":"96af59a0","label":"A new competitor at $24.99"}}}}
+{"t":6319,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":6319,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"B0MADEUPA2, listed on 2 August. It already has 38 reviews, most of them from Vine."}}}
+{"t":6319,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"B0MADEUPA2, listed on 2 August. It already has 38 reviews, most of them from Vine."}}}
+{"t":6319,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":6320,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":28,"entryId":"85618c25","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"B0MADEUPA2, listed on 2 August. It already has 38 reviews, most of them from Vine."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1786660200001,"responseId":"completion","rawStopReason":"stop","durationMs":303,"thinkingLevel":"off"}}}
+{"t":6320,"frame":{"kind":"turn","running":false}}
+{"t":6722,"scene":"topic-8-1","prompt":"Can I raise the cork block to $14.99?"}
+{"t":6722,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":6724,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":6724,"frame":{"kind":"turn","running":true}}
+{"t":6731,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":29,"entryId":"8d67bb80","body":{"form":"message","role":"user","content":[{"form":"text","text":"Can I raise the cork block to $14.99?"}],"timestamp":1786738320000}}}
+{"t":6732,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":30,"entryId":"10cbc69b","body":{"form":"other","entryType":"label","fields":{"targetId":"8d67bb80","label":"Cork block price"}}}}
+{"t":7031,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":7031,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"The five closest blocks sit between $12.99 and $15.99. At $14.99 you would be the second highest."}}}
+{"t":7031,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"The five closest blocks sit between $12.99 and $15.99. At $14.99 you would be the second highest."}}}
+{"t":7032,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":7032,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":31,"entryId":"9c249619","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"The five closest blocks sit between $12.99 and $15.99. At $14.99 you would be the second highest."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1786738320004,"responseId":"completion","rawStopReason":"stop","durationMs":305,"thinkingLevel":"off"}}}
+{"t":7032,"frame":{"kind":"turn","running":false}}
+{"t":7433,"scene":"topic-9-1","prompt":"Do I need more cork blocks before September?"}
+{"t":7433,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":7434,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":7434,"frame":{"kind":"turn","running":true}}
+{"t":7437,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":32,"entryId":"c90250ce","body":{"form":"message","role":"user","content":[{"form":"text","text":"Do I need more cork blocks before September?"}],"timestamp":1786988400000}}}
+{"t":7438,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":33,"entryId":"797f24dd","body":{"form":"other","entryType":"label","fields":{"targetId":"c90250ce","label":"Cork block restock"}}}}
+{"t":7738,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":7738,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"You have 210 left, about 48 days at the current pace, so not before mid-September."}}}
+{"t":7738,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"You have 210 left, about 48 days at the current pace, so not before mid-September."}}}
+{"t":7738,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":7739,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":34,"entryId":"ca6745ed","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"You have 210 left, about 48 days at the current pace, so not before mid-September."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1786988400001,"responseId":"completion","rawStopReason":"stop","durationMs":303,"thinkingLevel":"off"}}}
+{"t":7739,"frame":{"kind":"turn","running":false}}
+{"t":8140,"scene":"topic-10-1","prompt":"Write three headlines for the sponsored brand ad."}
+{"t":8140,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":8140,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":8140,"frame":{"kind":"turn","running":true}}
+{"t":8144,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":35,"entryId":"5315fcde","body":{"form":"message","role":"user","content":[{"form":"text","text":"Write three headlines for the sponsored brand ad."}],"timestamp":1787097900000}}}
+{"t":8144,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":36,"entryId":"43c8f969","body":{"form":"other","entryType":"label","fields":{"targetId":"5315fcde","label":"Sponsored brand headlines"}}}}
+{"t":8446,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":8446,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"1. Grip that stays put. 2. Thick, quiet, non-slip. 3. The mat that rolls up with its strap."}}}
+{"t":8446,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"1. Grip that stays put. 2. Thick, quiet, non-slip. 3. The mat that rolls up with its strap."}}}
+{"t":8446,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":8446,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":37,"entryId":"a7ce9f56","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"1. Grip that stays put. 2. Thick, quiet, non-slip. 3. The mat that rolls up with its strap."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1787097900001,"responseId":"completion","rawStopReason":"stop","durationMs":304,"thinkingLevel":"off"}}}
+{"t":8447,"frame":{"kind":"turn","running":false}}
+{"t":8848,"scene":"topic-11-1","prompt":"What do I need to sell the mat in Canada?"}
+{"t":8848,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":8848,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":8848,"frame":{"kind":"turn","running":true}}
+{"t":8858,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":38,"entryId":"0e21d664","body":{"form":"message","role":"user","content":[{"form":"text","text":"What do I need to sell the mat in Canada?"}],"timestamp":1787251800000}}}
+{"t":8858,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":39,"entryId":"f0ce6e28","body":{"form":"other","entryType":"label","fields":{"targetId":"0e21d664","label":"Selling in Canada"}}}}
+{"t":9153,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":9153,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"A French title and bullets and a Canadian price. The FBA labels stay the same, and the listing can be linked from the US one."}}}
+{"t":9153,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"A French title and bullets and a Canadian price. The FBA labels stay the same, and the listing can be linked from the US one."}}}
+{"t":9154,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":9155,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":40,"entryId":"d58ba5a8","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"A French title and bullets and a Canadian price. The FBA labels stay the same, and the listing can be linked from the US one."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1787251800001,"responseId":"completion","rawStopReason":"stop","durationMs":304,"thinkingLevel":"off"}}}
+{"t":9155,"frame":{"kind":"turn","running":false}}
+{"t":9554,"scene":"topic-12-1","prompt":"Would a lighter box lower my FBA fee?"}
+{"t":9554,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":9555,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":9555,"frame":{"kind":"turn","running":true}}
+{"t":9559,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":41,"entryId":"d1107220","body":{"form":"message","role":"user","content":[{"form":"text","text":"Would a lighter box lower my FBA fee?"}],"timestamp":1787347680000}}}
+{"t":9559,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":42,"entryId":"509b305d","body":{"form":"other","entryType":"label","fields":{"targetId":"d1107220","label":"A lighter box"}}}}
+{"t":9859,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":9859,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Taking 90 g off moves the mat down a size tier and saves $0.42 a unit."}}}
+{"t":9859,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Taking 90 g off moves the mat down a size tier and saves $0.42 a unit."}}}
+{"t":9859,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":9860,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":43,"entryId":"2884603f","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Taking 90 g off moves the mat down a size tier and saves $0.42 a unit."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1787347680001,"responseId":"completion","rawStopReason":"stop","durationMs":303,"thinkingLevel":"off"}}}
+{"t":9860,"frame":{"kind":"turn","running":false}}
+{"t":10261,"scene":"topic-13-1","prompt":"Which search terms are wasting money?"}
+{"t":10261,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":10262,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":10262,"frame":{"kind":"turn","running":true}}
+{"t":10267,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":44,"entryId":"4f0128a0","body":{"form":"message","role":"user","content":[{"form":"text","text":"Which search terms are wasting money?"}],"timestamp":1787589300000}}}
+{"t":10267,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":45,"entryId":"e91c2c0d","body":{"form":"other","entryType":"label","fields":{"targetId":"4f0128a0","label":"Search terms that waste money"}}}}
+{"t":10565,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":10565,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Seven terms spent $63 last week without a sale. Four of them are about kids' mats."}}}
+{"t":10565,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Seven terms spent $63 last week without a sale. Four of them are about kids' mats."}}}
+{"t":10565,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":10565,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":46,"entryId":"1c9b722e","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Seven terms spent $63 last week without a sale. Four of them are about kids' mats."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1787589300001,"responseId":"completion","rawStopReason":"stop","durationMs":302,"thinkingLevel":"off"}}}
+{"t":10565,"frame":{"kind":"turn","running":false}}
+{"t":10968,"scene":"topic-14-1","prompt":"Is the lightning deal on 3 September worth it?"}
+{"t":10968,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":10968,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":10968,"frame":{"kind":"turn","running":true}}
+{"t":10972,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":47,"entryId":"a2d7c11b","body":{"form":"message","role":"user","content":[{"form":"text","text":"Is the lightning deal on 3 September worth it?"}],"timestamp":1787699400000}}}
+{"t":10972,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":48,"entryId":"d6fd19b9","body":{"form":"other","entryType":"label","fields":{"targetId":"a2d7c11b","label":"Lightning deal on 3 September"}}}}
+{"t":11271,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":11271,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"The fee is $70 and the deal price leaves $3.10 a unit, so you need 23 sales to cover it."}}}
+{"t":11271,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"The fee is $70 and the deal price leaves $3.10 a unit, so you need 23 sales to cover it."}}}
+{"t":11271,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":11271,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":49,"entryId":"abcb7257","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"The fee is $70 and the deal price leaves $3.10 a unit, so you need 23 sales to cover it."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1787699400001,"responseId":"completion","rawStopReason":"stop","durationMs":302,"thinkingLevel":"off"}}}
+{"t":11272,"frame":{"kind":"turn","running":false}}
+{"t":11672,"scene":"topic-15-1","prompt":"Answer the question on the listing about whether the mat is latex-free."}
+{"t":11672,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":11673,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":11673,"frame":{"kind":"turn","running":true}}
+{"t":11677,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":50,"entryId":"9153228e","body":{"form":"message","role":"user","content":[{"form":"text","text":"Answer the question on the listing about whether the mat is latex-free."}],"timestamp":1787859900000}}}
+{"t":11677,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":51,"entryId":"84c7d561","body":{"form":"other","entryType":"label","fields":{"targetId":"9153228e","label":"Is the mat latex-free?"}}}}
+{"t":11977,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":11977,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Draft: Yes. The mat is TPE and contains no latex."}}}
+{"t":11977,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Draft: Yes. The mat is TPE and contains no latex."}}}
+{"t":11977,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":11977,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":52,"entryId":"442c441b","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Draft: Yes. The mat is TPE and contains no latex."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1787859900002,"responseId":"completion","rawStopReason":"stop","durationMs":303,"thinkingLevel":"off"}}}
+{"t":11977,"frame":{"kind":"turn","running":false}}
+{"t":12378,"scene":"topic-16-1","prompt":"Set next week's ad budget."}
+{"t":12378,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":12379,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":12379,"frame":{"kind":"turn","running":true}}
+{"t":12383,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":53,"entryId":"6d2391a4","body":{"form":"message","role":"user","content":[{"form":"text","text":"Set next week's ad budget."}],"timestamp":1787936700000}}}
+{"t":12383,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":54,"entryId":"0770356a","body":{"form":"other","entryType":"label","fields":{"targetId":"6d2391a4","label":"Next week's ad budget"}}}}
+{"t":12682,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":12682,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Keep it at $190: $120 on the exact terms that sell and $70 on the automatic campaign."}}}
+{"t":12682,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Keep it at $190: $120 on the exact terms that sell and $70 on the automatic campaign."}}}
+{"t":12682,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":12682,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":55,"entryId":"36bbfc52","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Keep it at $190: $120 on the exact terms that sell and $70 on the automatic campaign."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1787936700002,"responseId":"completion","rawStopReason":"stop","durationMs":302,"thinkingLevel":"off"}}}
+{"t":12683,"frame":{"kind":"turn","running":false}}
+{"t":13085,"scene":"topic-17-1","prompt":"Sum up August."}
+{"t":13085,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":13086,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":13086,"frame":{"kind":"turn","running":true}}
+{"t":13091,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":56,"entryId":"071cf10e","body":{"form":"message","role":"user","content":[{"form":"text","text":"Sum up August."}],"timestamp":1788225600000}}}
+{"t":13091,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":57,"entryId":"2e20b40e","body":{"form":"other","entryType":"label","fields":{"targetId":"071cf10e","label":"August sales recap"}}}}
+{"t":13392,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":13392,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"412 yoga mats and 77 cork blocks, $12,580 in sales, and an ACOS of 19.8%."}}}
+{"t":13392,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"412 yoga mats and 77 cork blocks, $12,580 in sales, and an ACOS of 19.8%."}}}
+{"t":13393,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":13393,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":58,"entryId":"0b6af05b","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"412 yoga mats and 77 cork blocks, $12,580 in sales, and an ACOS of 19.8%."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1788225600002,"responseId":"completion","rawStopReason":"stop","durationMs":305,"thinkingLevel":"off"}}}
+{"t":13394,"frame":{"kind":"turn","running":false}}
+{"t":13796,"scene":"topic-18-1","prompt":"Is anything close to aged inventory fees?"}
+{"t":13796,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":13796,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":13796,"frame":{"kind":"turn","running":true}}
+{"t":13802,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":59,"entryId":"e8273f67","body":{"form":"message","role":"user","content":[{"form":"text","text":"Is anything close to aged inventory fees?"}],"timestamp":1788281700000}}}
+{"t":13803,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":60,"entryId":"f3a1c6b9","body":{"form":"other","entryType":"label","fields":{"targetId":"e8273f67","label":"Aged inventory check"}}}}
+{"t":14101,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":14101,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"No. The oldest units are 74 days old, and the fee starts at 181."}}}
+{"t":14101,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"No. The oldest units are 74 days old, and the fee starts at 181."}}}
+{"t":14101,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":14101,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":61,"entryId":"f871a5d8","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"No. The oldest units are 74 days old, and the fee starts at 181."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1788281700001,"responseId":"completion","rawStopReason":"stop","durationMs":303,"thinkingLevel":"off"}}}
+{"t":14102,"frame":{"kind":"turn","running":false}}
+{"t":14503,"scene":"topic-19-1","prompt":"How did the lightning deal do?"}
+{"t":14503,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":14503,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":14503,"frame":{"kind":"turn","running":true}}
+{"t":14513,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":62,"entryId":"1fe8a41e","body":{"form":"message","role":"user","content":[{"form":"text","text":"How did the lightning deal do?"}],"timestamp":1788491700000}}}
+{"t":14514,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":63,"entryId":"65dd19f4","body":{"form":"other","entryType":"label","fields":{"targetId":"1fe8a41e","label":"How the lightning deal did"}}}}
+{"t":14809,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":14809,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"61 sold in six hours, $119 left after the fee, and the mat ranked 14th among yoga mats for a day."}}}
+{"t":14809,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"61 sold in six hours, $119 left after the fee, and the mat ranked 14th among yoga mats for a day."}}}
+{"t":14810,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":14810,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":64,"entryId":"a5501341","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"61 sold in six hours, $119 left after the fee, and the mat ranked 14th among yoga mats for a day."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1788491700002,"responseId":"completion","rawStopReason":"stop","durationMs":305,"thinkingLevel":"off"}}}
+{"t":14810,"frame":{"kind":"turn","running":false}}
+{"t":15212,"scene":"topic-20-1","prompt":"Why did returns jump this week?"}
+{"t":15212,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":15213,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":15213,"frame":{"kind":"turn","running":true}}
+{"t":15218,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":65,"entryId":"6e5e3f22","body":{"form":"message","role":"user","content":[{"form":"text","text":"Why did returns jump this week?"}],"timestamp":1788805800000}}}
+{"t":15218,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":66,"entryId":"c09a2f99","body":{"form":"other","entryType":"label","fields":{"targetId":"6e5e3f22","label":"Returns after the deal"}}}}
+{"t":15518,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":15518,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Nine of the twelve came from deal buyers, and five of those said they bought by mistake."}}}
+{"t":15519,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Nine of the twelve came from deal buyers, and five of those said they bought by mistake."}}}
+{"t":15519,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":15520,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":67,"entryId":"9e9cea99","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Nine of the twelve came from deal buyers, and five of those said they bought by mistake."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1788805800002,"responseId":"completion","rawStopReason":"stop","durationMs":305,"thinkingLevel":"off"}}}
+{"t":15520,"frame":{"kind":"turn","running":false}}
+{"t":15921,"scene":"topic-21-1","prompt":"Draft a reply to the one-star review about the smell."}
+{"t":15921,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":15922,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":15922,"frame":{"kind":"turn","running":true}}
+{"t":15927,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":68,"entryId":"9dd12f41","body":{"form":"message","role":"user","content":[{"form":"text","text":"Draft a reply to the one-star review about the smell."}],"timestamp":1788993600000}}}
+{"t":15927,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":69,"entryId":"9988894c","body":{"form":"other","entryType":"label","fields":{"targetId":"9dd12f41","label":"Reply to the one-star review"}}}}
+{"t":16227,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":16227,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Draft: Sorry about the smell. TPE can carry a light odour out of the box, and airing it for a day clears it. Message us and we will replace it."}}}
+{"t":16227,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Draft: Sorry about the smell. TPE can carry a light odour out of the box, and airing it for a day clears it. Message us and we will replace it."}}}
+{"t":16227,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":16227,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":70,"entryId":"c1a591f7","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Draft: Sorry about the smell. TPE can carry a light odour out of the box, and airing it for a day clears it. Message us and we will replace it."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1788993600001,"responseId":"completion","rawStopReason":"stop","durationMs":304,"thinkingLevel":"off"}}}
+{"t":16228,"frame":{"kind":"turn","running":false}}
+{"t":16630,"scene":"topic-22-1","prompt":"Can I get the mat into a holiday gift guide?"}
+{"t":16630,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":16630,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":16630,"frame":{"kind":"turn","running":true}}
+{"t":16637,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":71,"entryId":"c8b9649f","body":{"form":"message","role":"user","content":[{"form":"text","text":"Can I get the mat into a holiday gift guide?"}],"timestamp":1789147080000}}}
+{"t":16638,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":72,"entryId":"4b95c3d1","body":{"form":"other","entryType":"label","fields":{"targetId":"c8b9649f","label":"Holiday gift guides"}}}}
+{"t":16934,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":16934,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Amazon picks its gift guides itself. A rating of 4.4 or better and a coupon in November give the mat the best chance."}}}
+{"t":16934,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Amazon picks its gift guides itself. A rating of 4.4 or better and a coupon in November give the mat the best chance."}}}
+{"t":16934,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":16935,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":73,"entryId":"324ca534","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Amazon picks its gift guides itself. A rating of 4.4 or better and a coupon in November give the mat the best chance."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1789147080002,"responseId":"completion","rawStopReason":"stop","durationMs":302,"thinkingLevel":"off"}}}
+{"t":16935,"frame":{"kind":"turn","running":false}}
+{"t":17336,"scene":"topic-23-1","prompt":"How many days of FBA stock are left on the 6 mm yoga mat?"}
+{"t":17336,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":17337,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":17337,"frame":{"kind":"turn","running":true}}
+{"t":17342,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":74,"entryId":"c01542a0","body":{"form":"message","role":"user","content":[{"form":"text","text":"How many days of FBA stock are left on the 6 mm yoga mat?"}],"timestamp":1789405920000}}}
+{"t":17343,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":75,"entryId":"c1fc3376","body":{"form":"other","entryType":"label","fields":{"targetId":"c01542a0","label":"Yoga mat restock check"}}}}
+{"t":17641,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":17641,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"412 units are available and 96 are on their way in. At the last 30 days' pace of 14.2 a day, that lasts about 29 days, so you run out around 13 October.\n\nYour supplier needs 21 days, and FBA takes about 10 more to check the goods in, so the order should go out this week."}}}
+{"t":17641,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"412 units are available and 96 are on their way in. At the last 30 days' pace of 14.2 a day, that lasts about 29 days, so you run out around 13 October.\n\nYour supplier needs 21 days, and FBA takes about 10 more to check the goods in, so the order should go out this week."}}}
+{"t":17641,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":17642,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":76,"entryId":"267525a7","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"412 units are available and 96 are on their way in. At the last 30 days' pace of 14.2 a day, that lasts about 29 days, so you run out around 13 October.\n\nYour supplier needs 21 days, and FBA takes about 10 more to check the goods in, so the order should go out this week."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1789405920002,"responseId":"completion","rawStopReason":"stop","durationMs":302,"thinkingLevel":"off"}}}
+{"t":17642,"frame":{"kind":"turn","running":false}}
+{"t":18041,"scene":"topic-23-2","prompt":"Draft the PO for 600 units."}
+{"t":18041,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":18042,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":18042,"frame":{"kind":"turn","running":true}}
+{"t":18045,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":77,"entryId":"e05fc216","body":{"form":"message","role":"user","content":[{"form":"text","text":"Draft the PO for 600 units."}],"timestamp":1789406400000}}}
+{"t":18346,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":18346,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Saved po-2026-09-14.md: 600 units at $4.10, $2,460.00 in total, to ship by 18 September so the goods reach FBA before the stock runs out."}}}
+{"t":18346,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Saved po-2026-09-14.md: 600 units at $4.10, $2,460.00 in total, to ship by 18 September so the goods reach FBA before the stock runs out."}}}
+{"t":18347,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":18347,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":78,"entryId":"d9821c01","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Saved po-2026-09-14.md: 600 units at $4.10, $2,460.00 in total, to ship by 18 September so the goods reach FBA before the stock runs out."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1789406400001,"responseId":"completion","rawStopReason":"stop","durationMs":303,"thinkingLevel":"off"}}}
+{"t":18347,"frame":{"kind":"turn","running":false}}
+{"t":18747,"scene":"topic-24-1","prompt":"Pull the 90-day price history for competitor B0MADEUPA1."}
+{"t":18747,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":18748,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":18748,"frame":{"kind":"turn","running":true}}
+{"t":18753,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":79,"entryId":"ccc89ed8","body":{"form":"message","role":"user","content":[{"form":"text","text":"Pull the 90-day price history for competitor B0MADEUPA1."}],"timestamp":1789596120000}}}
+{"t":18753,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":80,"entryId":"179a1bca","body":{"form":"other","entryType":"label","fields":{"targetId":"ccc89ed8","label":"Price history of competitor B0MADEUPA1"}}}}
+{"t":19053,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":19053,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"They held $29.99 through July, cut to $24.99 on 2 August and have stayed there, apart from two one-day drops to $21.99 on 16 July and 6 September.\n\nTheir BSR went from about 4,100 to 2,300 after the cut. You are at $27.99, $3.00 above them."}}}
+{"t":19053,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"They held $29.99 through July, cut to $24.99 on 2 August and have stayed there, apart from two one-day drops to $21.99 on 16 July and 6 September.\n\nTheir BSR went from about 4,100 to 2,300 after the cut. You are at $27.99, $3.00 above them."}}}
+{"t":19053,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":19054,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":81,"entryId":"5d79a482","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"They held $29.99 through July, cut to $24.99 on 2 August and have stayed there, apart from two one-day drops to $21.99 on 16 July and 6 September.\n\nTheir BSR went from about 4,100 to 2,300 after the cut. You are at $27.99, $3.00 above them."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1789596120002,"responseId":"completion","rawStopReason":"stop","durationMs":304,"thinkingLevel":"off"}}}
+{"t":19054,"frame":{"kind":"turn","running":false}}
+{"t":19453,"scene":"topic-24-2","prompt":"Would matching them at $24.99 still leave me a margin?"}
+{"t":19453,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":19454,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":19454,"frame":{"kind":"turn","running":true}}
+{"t":19456,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":82,"entryId":"03ebfe2b","body":{"form":"message","role":"user","content":[{"form":"text","text":"Would matching them at $24.99 still leave me a margin?"}],"timestamp":1789596540000}}}
+{"t":19756,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":19756,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Yes, a thin one. At $24.99 you keep $3.12 a unit after the FBA fee, the referral fee and the $4.10 cost, down from $5.48 now. Your ads spend about $1.90 a unit, which leaves $1.22."}}}
+{"t":19756,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Yes, a thin one. At $24.99 you keep $3.12 a unit after the FBA fee, the referral fee and the $4.10 cost, down from $5.48 now. Your ads spend about $1.90 a unit, which leaves $1.22."}}}
+{"t":19756,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":19756,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":83,"entryId":"ed30d84f","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Yes, a thin one. At $24.99 you keep $3.12 a unit after the FBA fee, the referral fee and the $4.10 cost, down from $5.48 now. Your ads spend about $1.90 a unit, which leaves $1.22."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1789596540001,"responseId":"completion","rawStopReason":"stop","durationMs":301,"thinkingLevel":"off"}}}
+{"t":19757,"frame":{"kind":"turn","running":false}}
+{"t":20159,"scene":"topic-25-1","prompt":"Rewrite my yoga mat's listing title. Keep it under 200 characters and lead with non-slip."}
+{"t":20159,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":20159,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":20159,"frame":{"kind":"turn","running":true}}
+{"t":20163,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":84,"entryId":"5594d79b","body":{"form":"message","role":"user","content":[{"form":"text","text":"Rewrite my yoga mat's listing title. Keep it under 200 characters and lead with non-slip."}],"timestamp":1789836060000}}}
+{"t":20164,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":85,"entryId":"a793f55b","body":{"form":"other","entryType":"label","fields":{"targetId":"5594d79b","label":"New listing title for the yoga mat"}}}}
+{"t":20464,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":20464,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Two options, at 148 and 171 characters:\n\n1. Non-Slip Yoga Mat 6 mm Thick, TPE Exercise Mat with Carry Strap, for Yoga, Pilates and Floor Workouts, 183 × 61 cm\n2. Non-Slip TPE Yoga Mat, 6 mm Extra Thick Cushioned Exercise Mat with Alignment Lines and Carry Strap, Eco-Friendly, for Home Gym, 183 × 61 cm"}}}
+{"t":20464,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Two options, at 148 and 171 characters:\n\n1. Non-Slip Yoga Mat 6 mm Thick, TPE Exercise Mat with Carry Strap, for Yoga, Pilates and Floor Workouts, 183 × 61 cm\n2. Non-Slip TPE Yoga Mat, 6 mm Extra Thick Cushioned Exercise Mat with Alignment Lines and Carry Strap, Eco-Friendly, for Home Gym, 183 × 61 cm"}}}
+{"t":20465,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":20465,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":86,"entryId":"5400049e","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Two options, at 148 and 171 characters:\n\n1. Non-Slip Yoga Mat 6 mm Thick, TPE Exercise Mat with Carry Strap, for Yoga, Pilates and Floor Workouts, 183 × 61 cm\n2. Non-Slip TPE Yoga Mat, 6 mm Extra Thick Cushioned Exercise Mat with Alignment Lines and Carry Strap, Eco-Friendly, for Home Gym, 183 × 61 cm"}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1789836060001,"responseId":"completion","rawStopReason":"stop","durationMs":303,"thinkingLevel":"off"}}}
+{"t":20466,"frame":{"kind":"turn","running":false}}
+{"t":20867,"scene":"topic-25-2","prompt":"Go with the first one."}
+{"t":20867,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":20868,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":20868,"frame":{"kind":"turn","running":true}}
+{"t":20870,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":87,"entryId":"b64bf3d2","body":{"form":"message","role":"user","content":[{"form":"text","text":"Go with the first one."}],"timestamp":1789836420000}}}
+{"t":21172,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":21172,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Saved it as listing-title.txt. Paste it into the title field in Seller Central, or say so and I'll prepare the upload file."}}}
+{"t":21172,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Saved it as listing-title.txt. Paste it into the title field in Seller Central, or say so and I'll prepare the upload file."}}}
+{"t":21172,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":21173,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":88,"entryId":"0e2b3df0","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Saved it as listing-title.txt. Paste it into the title field in Seller Central, or say so and I'll prepare the upload file."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1789836420002,"responseId":"completion","rawStopReason":"stop","durationMs":303,"thinkingLevel":"off"}}}
+{"t":21173,"frame":{"kind":"turn","running":false}}
+{"t":21574,"scene":"topic-26-1","prompt":"What are the one- and two-star reviews on the cork blocks saying?"}
+{"t":21574,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":21575,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":21575,"frame":{"kind":"turn","running":true}}
+{"t":21579,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":89,"entryId":"706148ff","body":{"form":"message","role":"user","content":[{"form":"text","text":"What are the one- and two-star reviews on the cork blocks saying?"}],"timestamp":1790112600000}}}
+{"t":21579,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":90,"entryId":"5467788a","body":{"form":"other","entryType":"label","fields":{"targetId":"706148ff","label":"Cork block complaints"}}}}
+{"t":21879,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":21879,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"31 such reviews since June. 17 say the edges crumble within weeks, 8 mention a chemical smell on arrival and 6 are about the size.\n\nThe crumbling ones start after the supplier change in May."}}}
+{"t":21879,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"31 such reviews since June. 17 say the edges crumble within weeks, 8 mention a chemical smell on arrival and 6 are about the size.\n\nThe crumbling ones start after the supplier change in May."}}}
+{"t":21879,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":21880,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":91,"entryId":"14e5089d","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"31 such reviews since June. 17 say the edges crumble within weeks, 8 mention a chemical smell on arrival and 6 are about the size.\n\nThe crumbling ones start after the supplier change in May."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1790112600001,"responseId":"completion","rawStopReason":"stop","durationMs":303,"thinkingLevel":"off"}}}
+{"t":21880,"frame":{"kind":"turn","running":false}}
+{"t":22281,"scene":"topic-27-1","prompt":"Which keywords should I bid up for Q4?"}
+{"t":22281,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":22282,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":22282,"frame":{"kind":"turn","running":true}}
+{"t":22286,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":92,"entryId":"4c69a914","body":{"form":"message","role":"user","content":[{"form":"text","text":"Which keywords should I bid up for Q4?"}],"timestamp":1790608200000}}}
+{"t":22287,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":93,"entryId":"e0cd2dbf","body":{"form":"other","entryType":"label","fields":{"targetId":"4c69a914","label":"Ad keywords for Q4"}}}}
+{"t":22587,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":22587,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Three that convert well and still have room:\n\n- thick yoga mat: ACOS 18%, top of search only 22% of the time\n- non slip yoga mat: ACOS 21%, conversion 14%\n- yoga mat with strap: ACOS 16%, few competitors bid on it\n\nI'd raise each by 20% from 1 October and look again after a week."}}}
+{"t":22587,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Three that convert well and still have room:\n\n- thick yoga mat: ACOS 18%, top of search only 22% of the time\n- non slip yoga mat: ACOS 21%, conversion 14%\n- yoga mat with strap: ACOS 16%, few competitors bid on it\n\nI'd raise each by 20% from 1 October and look again after a week."}}}
+{"t":22587,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":22588,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":94,"entryId":"47019e5d","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Three that convert well and still have room:\n\n- thick yoga mat: ACOS 18%, top of search only 22% of the time\n- non slip yoga mat: ACOS 21%, conversion 14%\n- yoga mat with strap: ACOS 16%, few competitors bid on it\n\nI'd raise each by 20% from 1 October and look again after a week."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1790608200002,"responseId":"completion","rawStopReason":"stop","durationMs":304,"thinkingLevel":"off"}}}
+{"t":22588,"frame":{"kind":"turn","running":false}}
+{"t":22989,"scene":"topic-28-1","prompt":"I lost the Buy Box on the yoga mat on Sunday. Why?"}
+{"t":22989,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":22991,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":22991,"frame":{"kind":"turn","running":true}}
+{"t":22995,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":95,"entryId":"be4de3b8","body":{"form":"message","role":"user","content":[{"form":"text","text":"I lost the Buy Box on the yoga mat on Sunday. Why?"}],"timestamp":1790610720000}}}
+{"t":22995,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":96,"entryId":"00f59855","body":{"form":"other","entryType":"label","fields":{"targetId":"be4de3b8","label":"Buy Box lost on Sunday"}}}}
+{"t":23295,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":23295,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"From 09:40 to 21:15 on Sunday the Buy Box went to another seller at $25.49, $2.50 under you. It came back when they ran out of stock."}}}
+{"t":23295,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"From 09:40 to 21:15 on Sunday the Buy Box went to another seller at $25.49, $2.50 under you. It came back when they ran out of stock."}}}
+{"t":23296,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":23296,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":97,"entryId":"d31f6153","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"From 09:40 to 21:15 on Sunday the Buy Box went to another seller at $25.49, $2.50 under you. It came back when they ran out of stock."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1790610720001,"responseId":"completion","rawStopReason":"stop","durationMs":304,"thinkingLevel":"off"}}}
+{"t":23296,"frame":{"kind":"turn","running":false}}
+{"t":23697,"scene":"rename","prompt":"Was the seller who took the Buy Box on Sunday shipping it themselves?"}
+{"t":23697,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":23697,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":23697,"frame":{"kind":"turn","running":true}}
+{"t":23701,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":98,"entryId":"8e574320","body":{"form":"message","role":"user","content":[{"form":"text","text":"Was the seller who took the Buy Box on Sunday shipping it themselves?"}],"timestamp":1790610900000}}}
+{"t":23702,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":99,"entryId":"9a8f4f35","body":{"form":"other","entryType":"label","fields":{"targetId":"be4de3b8","label":"Buy Box lost to a cheaper FBM seller"}}}}
+{"t":24000,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":24000,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Yes. They ship it themselves, from a warehouse in New Jersey, with a 5 to 7 day delivery promise. Amazon still gave them the Buy Box for 11 hours on price alone."}}}
+{"t":24000,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Yes. They ship it themselves, from a warehouse in New Jersey, with a 5 to 7 day delivery promise. Amazon still gave them the Buy Box for 11 hours on price alone."}}}
+{"t":24001,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":24001,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":100,"entryId":"9f2a50a5","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Yes. They ship it themselves, from a warehouse in New Jersey, with a 5 to 7 day delivery promise. Amazon still gave them the Buy Box for 11 hours on price alone."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1790610900001,"responseId":"completion","rawStopReason":"stop","durationMs":302,"thinkingLevel":"off"}}}
+{"t":24001,"frame":{"kind":"turn","running":false}}
+{"t":24402,"scene":"topic-29-1","prompt":"Write five bullet points for the German listing, around the non-slip coating and the carry strap."}
+{"t":24402,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":24403,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":24403,"frame":{"kind":"turn","running":true}}
+{"t":24406,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":101,"entryId":"865b6766","body":{"form":"message","role":"user","content":[{"form":"text","text":"Write five bullet points for the German listing, around the non-slip coating and the carry strap."}],"timestamp":1790723880000}}}
+{"t":24407,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":102,"entryId":"d084415c","body":{"form":"other","entryType":"label","fields":{"targetId":"865b6766","label":"German bullet points on the coating and strap"}}}}
+{"t":24707,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":24707,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"1. RUTSCHFEST AUF JEDEM BODEN: Die beidseitige Noppenstruktur hält die Matte auch bei schweißtreibenden Einheiten an Ort und Stelle.\n2. 6 MM DICK: Schont Knie und Handgelenke, ohne an Stabilität zu verlieren.\n3. MIT TRAGEGURT: Aufrollen, festschnallen, mitnehmen.\n4. TPE OHNE PVC: Geruchsarm und leicht zu reinigen.\n5. 183 × 61 CM: Genug Platz für Yoga, Pilates und Bodenübungen."}}}
+{"t":24707,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"1. RUTSCHFEST AUF JEDEM BODEN: Die beidseitige Noppenstruktur hält die Matte auch bei schweißtreibenden Einheiten an Ort und Stelle.\n2. 6 MM DICK: Schont Knie und Handgelenke, ohne an Stabilität zu verlieren.\n3. MIT TRAGEGURT: Aufrollen, festschnallen, mitnehmen.\n4. TPE OHNE PVC: Geruchsarm und leicht zu reinigen.\n5. 183 × 61 CM: Genug Platz für Yoga, Pilates und Bodenübungen."}}}
+{"t":24707,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":24708,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":103,"entryId":"d3263929","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"1. RUTSCHFEST AUF JEDEM BODEN: Die beidseitige Noppenstruktur hält die Matte auch bei schweißtreibenden Einheiten an Ort und Stelle.\n2. 6 MM DICK: Schont Knie und Handgelenke, ohne an Stabilität zu verlieren.\n3. MIT TRAGEGURT: Aufrollen, festschnallen, mitnehmen.\n4. TPE OHNE PVC: Geruchsarm und leicht zu reinigen.\n5. 183 × 61 CM: Genug Platz für Yoga, Pilates und Bodenübungen."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1790723880002,"responseId":"completion","rawStopReason":"stop","durationMs":303,"thinkingLevel":"off"}}}
+{"t":24708,"frame":{"kind":"turn","running":false}}
+{"t":25107,"scene":"topic-29-2","prompt":"Make the third one say the strap is included."}
+{"t":25107,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":25108,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":25108,"frame":{"kind":"turn","running":true}}
+{"t":25110,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":104,"entryId":"6c4c55fd","body":{"form":"message","role":"user","content":[{"form":"text","text":"Make the third one say the strap is included."}],"timestamp":1790724660000}}}
+{"t":25412,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":25412,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"3. TRAGEGURT INKLUSIVE: Aufrollen, festschnallen, mitnehmen. Der Gurt liegt jeder Matte bei."}}}
+{"t":25412,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"3. TRAGEGURT INKLUSIVE: Aufrollen, festschnallen, mitnehmen. Der Gurt liegt jeder Matte bei."}}}
+{"t":25413,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":25413,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":105,"entryId":"36d7af51","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"3. TRAGEGURT INKLUSIVE: Aufrollen, festschnallen, mitnehmen. Der Gurt liegt jeder Matte bei."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1790724660001,"responseId":"completion","rawStopReason":"stop","durationMs":303,"thinkingLevel":"off"}}}
+{"t":25413,"frame":{"kind":"turn","running":false}}
+{"t":25814,"scene":"topic-30-1","prompt":"What should I price a mat and strap bundle at?"}
+{"t":25814,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":25815,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":25815,"frame":{"kind":"turn","running":true}}
+{"t":25819,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":106,"entryId":"968b383b","body":{"form":"message","role":"user","content":[{"form":"text","text":"What should I price a mat and strap bundle at?"}],"timestamp":1790787780000}}}
+{"t":25819,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":107,"entryId":"94de0b08","body":{"form":"other","entryType":"label","fields":{"targetId":"968b383b","label":"Price for a mat and strap bundle"}}}}
+{"t":26119,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":26119,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"The 20 best-selling mat and strap bundles sit between $29.99 and $36.99, most at $32.99.\n\nAt $32.99 you keep $7.84 a unit, $2.36 more than the mat alone, and you are not compared side by side with B0MADEUPA1, which sells no bundle."}}}
+{"t":26119,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"The 20 best-selling mat and strap bundles sit between $29.99 and $36.99, most at $32.99.\n\nAt $32.99 you keep $7.84 a unit, $2.36 more than the mat alone, and you are not compared side by side with B0MADEUPA1, which sells no bundle."}}}
+{"t":26119,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":26120,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":108,"entryId":"bd58efd0","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"The 20 best-selling mat and strap bundles sit between $29.99 and $36.99, most at $32.99.\n\nAt $32.99 you keep $7.84 a unit, $2.36 more than the mat alone, and you are not compared side by side with B0MADEUPA1, which sells no bundle."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1790787780002,"responseId":"completion","rawStopReason":"stop","durationMs":303,"thinkingLevel":"off"}}}
+{"t":26120,"frame":{"kind":"turn","running":false}}
+{"t":26522,"scene":"quote-two","prompt":"<quote entry=\"968b383b\" at=\"cccccccccccccccccccccccccccccccc:106\">What should I price a mat and strap bundle at?</quote>\n\n<quote entry=\"36d7af51\" at=\"cccccccccccccccccccccccccccccccc:105\">TRAGEGURT INKLUSIVE: Aufrollen, festschnallen, mitnehmen.</quote>\n\nCan the bundle say the strap is included, like the German listing does?"}
+{"t":26522,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":26522,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":26522,"frame":{"kind":"turn","running":true}}
+{"t":26525,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":109,"entryId":"40abcb87","body":{"form":"message","role":"user","content":[{"form":"text","text":"<quote entry=\"968b383b\" at=\"cccccccccccccccccccccccccccccccc:106\">What should I price a mat and strap bundle at?</quote>\n\n<quote entry=\"36d7af51\" at=\"cccccccccccccccccccccccccccccccc:105\">TRAGEGURT INKLUSIVE: Aufrollen, festschnallen, mitnehmen.</quote>\n\nCan the bundle say the strap is included, like the German listing does?"}],"timestamp":1790788800000}}}
+{"t":26826,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_start","contentIndex":0,"id":"call-1-0-1792603270644","toolName":"quoted"}}}
+{"t":26826,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_delta","contentIndex":0,"delta":"{\"entry\":\"968b383b\"}"}}}
+{"t":26826,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_start","contentIndex":1,"id":"call-1-1-1792603270644","toolName":"quoted"}}}
+{"t":26826,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_delta","contentIndex":1,"delta":"{\"entry\":\"36d7af51\"}"}}}
+{"t":26826,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_end","contentIndex":0,"toolCall":{"type":"toolCall","id":"call-1-0-1792603270644","name":"quoted","arguments":{"entry":"968b383b"}}}}}
+{"t":26826,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_end","contentIndex":1,"toolCall":{"type":"toolCall","id":"call-1-1-1792603270644","name":"quoted","arguments":{"entry":"36d7af51"}}}}}
+{"t":26831,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":110,"entryId":"fe553384","body":{"form":"message","role":"assistant","content":[{"form":"tool_call","id":"call-1-0-1792603270644","name":"quoted","arguments":{"entry":"968b383b"}},{"form":"tool_call","id":"call-1-1-1792603270644","name":"quoted","arguments":{"entry":"36d7af51"}}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"toolUse","timestamp":1790788800001,"responseId":"completion","rawStopReason":"tool_calls","durationMs":303,"thinkingLevel":"off"}}}
+{"t":26831,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":111,"entryId":"0f486e41","body":{"form":"message","role":"tool_result","toolCallId":"call-1-0-1792603270644","toolName":"quoted","content":[{"form":"text","text":"[seller · 2026-10-21 17:21 UTC]\nMake the third one say the strap is included.\n\n[cx · 2026-10-21 17:21 UTC]\n3. TRAGEGURT INKLUSIVE: Aufrollen, festschnallen, mitnehmen. Der Gurt liegt jeder Matte bei.\n\n>>> The quoted message:\n[seller · 2026-10-21 17:21 UTC]\nWhat should I price a mat and strap bundle at?\n<<<\n\n[cx · 2026-10-21 17:21 UTC]\nThe 20 best-selling mat and strap bundles sit between $29.99 and $36.99, most at $32.99.\n\nAt $32.99 you keep $7.84 a unit, $2.36 more than the mat alone, and you are not compared side by side with B0MADEUPA1, which sells no bundle.\n\n[seller · 2026-10-21 17:21 UTC]\n<quote entry=\"968b383b\" at=\"cccccccccccccccccccccccccccccccc:106\">What should I price a mat and strap bundle at?</quote>\n\n<quote entry=\"36d7af51\" at=\"cccccccccccccccccccccccccccccccc:105\">TRAGEGURT INKLUSIVE: Aufrollen, festschnallen, mitnehmen.</quote>\n\nCan the bundle say the strap is included, like the German listing does?"}],"details":{},"isError":false,"durationMs":0,"timestamp":1790788800306}}}
+{"t":26831,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":112,"entryId":"0f4b2d40","body":{"form":"message","role":"tool_result","toolCallId":"call-1-1-1792603270644","toolName":"quoted","content":[{"form":"text","text":"[cx · 2026-10-21 17:21 UTC]\n1. RUTSCHFEST AUF JEDEM BODEN: Die beidseitige Noppenstruktur hält die Matte auch bei schweißtreibenden Einheiten an Ort und Stelle.\n2. 6 MM DICK: Schont Knie und Handgelenke, ohne an Stabilität zu verlieren.\n3. MIT TRAGEGURT: Aufrollen, festschnallen, mitnehmen.\n4. TPE OHNE PVC: Geruchsarm und leicht zu reinigen.\n5. 183 × 61 CM: Genug Platz für Yoga, Pilates und Bodenübungen.\n\n[seller · 2026-10-21 17:21 UTC]\nMake the third one say the strap is included.\n\n>>> The quoted message:\n[cx · 2026-10-21 17:21 UTC]\n3. TRAGEGURT INKLUSIVE: Aufrollen, festschnallen, mitnehmen. Der Gurt liegt jeder Matte bei.\n<<<\n\n[seller · 2026-10-21 17:21 UTC]\nWhat should I price a mat and strap bundle at?\n\n[cx · 2026-10-21 17:21 UTC]\nThe 20 best-selling mat and strap bundles sit between $29.99 and $36.99, most at $32.99.\n\nAt $32.99 you keep $7.84 a unit, $2.36 more than the mat alone, and you are not compared side by side with B0MADEUPA1, which sells no bundle."}],"details":{},"isError":false,"durationMs":0,"timestamp":1790788800306}}}
+{"t":27133,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":27133,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"I've read what you quoted and what came around it. Tell me what you want to change and I'll take it from there."}}}
+{"t":27133,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"I've read what you quoted and what came around it. Tell me what you want to change and I'll take it from there."}}}
+{"t":27134,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":27134,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":113,"entryId":"f7817a07","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"I've read what you quoted and what came around it. Tell me what you want to change and I'll take it from there."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1790788800307,"responseId":"completion","rawStopReason":"stop","durationMs":304,"thinkingLevel":"off"}}}
+{"t":27134,"frame":{"kind":"turn","running":false}}
+{"t":27535,"scene":"quote-restock","prompt":"<quote entry=\"267525a7\" at=\"cccccccccccccccccccccccccccccccc:76\">412 units are available and 96 are on their way in.</quote>\n\nWill this cover the October Prime sale?"}
+{"t":27535,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":27536,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":27536,"frame":{"kind":"turn","running":true}}
+{"t":27541,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":114,"entryId":"77b8bd8c","body":{"form":"message","role":"user","content":[{"form":"text","text":"<quote entry=\"267525a7\" at=\"cccccccccccccccccccccccccccccccc:76\">412 units are available and 96 are on their way in.</quote>\n\nWill this cover the October Prime sale?"}],"timestamp":1790789460000}}}
+{"t":27541,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":115,"entryId":"4df203b0","body":{"form":"other","entryType":"label","fields":{"targetId":"77b8bd8c","label":"Stock for the October Prime sale"}}}}
+{"t":27841,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_start","contentIndex":0,"id":"call-1-0-1792603271659","toolName":"quoted"}}}
+{"t":27841,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_delta","contentIndex":0,"delta":"{\"entry\":\"267525a7\"}"}}}
+{"t":27841,"frame":{"kind":"delta","body":{"form":"message_delta","event":"toolcall_end","contentIndex":0,"toolCall":{"type":"toolCall","id":"call-1-0-1792603271659","name":"quoted","arguments":{"entry":"267525a7"}}}}}
+{"t":27844,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":116,"entryId":"a59f0703","body":{"form":"message","role":"assistant","content":[{"form":"tool_call","id":"call-1-0-1792603271659","name":"quoted","arguments":{"entry":"267525a7"}}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"toolUse","timestamp":1790789460001,"responseId":"completion","rawStopReason":"tool_calls","durationMs":304,"thinkingLevel":"off"}}}
+{"t":27844,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":117,"entryId":"ece2296b","body":{"form":"message","role":"tool_result","toolCallId":"call-1-0-1792603271659","toolName":"quoted","content":[{"form":"text","text":"[cx · 2026-10-21 17:21 UTC]\nAmazon picks its gift guides itself. A rating of 4.4 or better and a coupon in November give the mat the best chance.\n\n[seller · 2026-10-21 17:21 UTC]\nHow many days of FBA stock are left on the 6 mm yoga mat?\n\n>>> The quoted message:\n[cx · 2026-10-21 17:21 UTC]\n412 units are available and 96 are on their way in. At the last 30 days' pace of 14.2 a day, that lasts about 29 days, so you run out around 13 October.\n\nYour supplier needs 21 days, and FBA takes about 10 more to check the goods in, so the order should go out this week.\n<<<\n\n[seller · 2026-10-21 17:21 UTC]\nDraft the PO for 600 units.\n\n[cx · 2026-10-21 17:21 UTC]\nSaved po-2026-09-14.md: 600 units at $4.10, $2,460.00 in total, to ship by 18 September so the goods reach FBA before the stock runs out."}],"details":{},"isError":false,"durationMs":0,"timestamp":1790789460305}}}
+{"t":28146,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":0}}}
+{"t":28146,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":0,"delta":"Only just. The 600 on order reach FBA around 15 October, after the sale. Until then you have about 280 units, and at 14.2 a day plus the sale on 7 and 8 October, which usually triples those two days, you need about 270.\n\nThat is 10 units to spare. If the sale does better than usual you run out before the order lands, so I'd ask the supplier to send 150 of the 600 by air."}}}
+{"t":28146,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":0,"content":"Only just. The 600 on order reach FBA around 15 October, after the sale. Until then you have about 280 units, and at 14.2 a day plus the sale on 7 and 8 October, which usually triples those two days, you need about 270.\n\nThat is 10 units to spare. If the sale does better than usual you run out before the order lands, so I'd ask the supplier to send 150 of the 600 by air."}}}
+{"t":28147,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":28147,"frame":{"kind":"entry","epoch":"67885191bfbe75800da62753835607d9","seq":118,"entryId":"c472efbe","body":{"form":"message","role":"assistant","content":[{"form":"text","text":"Only just. The 600 on order reach FBA around 15 October, after the sale. Until then you have about 280 units, and at 14.2 a day plus the sale on 7 and 8 October, which usually triples those two days, you need about 270.\n\nThat is 10 units to spare. If the sale does better than usual you run out before the order lands, so I'd ask the supplier to send 150 of the 600 by air."}],"api":"openai-completions","provider":"fixture","model":"fixture-a","usage":{"input":1,"output":1,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":2,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"stop","timestamp":1790789460306,"responseId":"completion","rawStopReason":"stop","durationMs":304,"thinkingLevel":"off"}}}
+{"t":28147,"frame":{"kind":"turn","running":false}}
+{"t":28549,"frame":{"kind":"sleep","dueInMs":0}}

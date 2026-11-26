@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<script src="../../assets/js/appearance.js"></script>
+<link rel="icon" href="../../assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../../assets/brand/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../../assets/brand/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/css/theme.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/chrome.css">
+<link rel="stylesheet" href="../../assets/css/legal.css">
+<link rel="alternate" hreflang="zh-CN" href="../../privacy/">
+<link rel="alternate" hreflang="en" href="../../en/privacy/">
+<!-- Before the page draws: the script is on; ?still asks for a picture, with nothing moving; and the first page of a visit lets
+     the header come down into place (chrome.css). -->
+<script>(() => {
+  const root = document.documentElement;
+  root.classList.add("js");
+  if (new URLSearchParams(location.search).has("still")) root.classList.add("still");
+  try { if (!sessionStorage.getItem("cmx-site-entered")) { sessionStorage.setItem("cmx-site-entered", "1"); root.classList.add("enter"); } }
+  catch { root.classList.add("enter"); }
+})()</script>
+<script src="../../assets/js/chrome.js" defer></script>
+<title>Privacy policy — ComChatX</title>
+<meta name="description" content="What ComChatX collects, how it is used, who processes it, how long it is kept, and how to delete your account.">
+</head>
+<body data-page="privacy">
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="site-header">
+  <div class="container header-row">
+    <a class="brand" href="../../en/"><span class="wordmark">ComChatX</span></a>
+    <nav class="nav" aria-label="Main">
+      <ul class="nav-list" role="list">
+        <li><a class="nav-link" href="../../en/pricing/">Pricing</a></li>
+      </ul>
+      <a class="btn btn-outline" href="../../en/contact/">Contact sales</a>
+      <a class="btn btn-primary way-in" href="https://comchatx.com/login?lang=en">Try ComChatX</a>
+    </nav>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 8h16M4 16h16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+    <div class="mobile-menu-head">
+      <a class="brand" href="../../en/"><span class="wordmark">ComChatX</span></a>
+      <button class="menu-toggle menu-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    </div>
+    <ul class="mobile-menu-list" role="list">
+      <li><a class="mm-link" href="../../en/pricing/">Pricing</a></li>
+    </ul>
+    <div class="mobile-menu-actions">
+      <a class="btn btn-outline" href="../../en/contact/">Contact sales</a>
+      <a class="btn btn-primary way-in" href="https://comchatx.com/login?lang=en">Try ComChatX</a>
+    </div>
+  </div>
+</header>
+<main id="main" class="page-enter">
+<article class="legal" aria-labelledby="page-title">
+<div class="container">
+<div class="legal-column">
+<h1 id="page-title">Privacy policy</h1>
+<p class="legal-date">In effect from 3 November 2026</p>
+<nav class="legal-toc" aria-label="Contents">
+<ol role="list">
+<li><a href="#collect">What we collect</a></li>
+<li><a href="#use">How we use it</a></li>
+<li><a href="#processors">Who processes your data</a></li>
+<li><a href="#retention">How long we keep it</a></li>
+<li><a href="#deletion">Deleting your account</a></li>
+<li><a href="#cookies">Cookies</a></li>
+<li><a href="#rights">Your rights</a></li>
+<li><a href="#policy-changes">Changes to this policy</a></li>
+</ol>
+</nav>
+<section class="legal-section" aria-labelledby="collect">
+  <h2 id="collect">What we collect</h2>
+  <p><strong>Your account</strong>: the email address or Google account you sign in with, kept by Clerk and read by us when needed. We keep the account number, the internal identifiers we give your account and cx's computer, the identifier Clerk gives your sign-in, your invitation code, and when you signed up.</p>
+  <p><strong>Your content</strong>: your conversations, the files you upload, and the files cx makes for you.</p>
+  <p><strong>The accounts and keys you connect</strong>: your own model API keys and data-source credentials, stored encrypted, used only to make the calls, and never shown again.</p>
+  <p><strong>Usage and payments</strong>: the amount, time and purpose of each charge and top-up; a record of each data-source call, with what was asked and its parameters, each item's outcome, what the source said back, and the usage and price. Card and Alipay details are handled by Stripe, and we keep no card number; to stop an invitation reward being claimed twice, we keep a summary of the payment method that cannot be turned back into it.</p>
+</section>
+<section class="legal-section" aria-labelledby="use">
+  <h2 id="use">How we use it</h2>
+  <p><strong>Only to provide and improve ComChatX</strong>: to run cx and cx's computer, call the models and data sources you choose, charge for them, prevent abuse and answer your emails.</p>
+  <p><strong>What we do not do</strong>: We do not sell your personal information or use your content for advertising. ComChatX does not use your data to train models; model providers handle it under their own terms.</p>
+</section>
+<section class="legal-section" aria-labelledby="processors">
+  <h2 id="processors">Who processes your data</h2>
+  <p><strong>To provide the service, these providers process part of it</strong>: Clerk (sign-in), Stripe (payments), Fly.io (runs cx's computer and the platform, in Singapore), Cloudflare (stores your files and conversations, in Asia-Pacific) and Supabase (database, in Singapore).</p>
+  <p><strong>Models and data sources</strong>: When cx calls a model for you, what it needs is sent to that model's provider (through OpenRouter, or on your own key); when it calls a data source, the query is sent to that source, such as Keepa.</p>
+</section>
+<section class="legal-section" aria-labelledby="retention">
+  <h2 id="retention">How long we keep it</h2>
+  <p><strong>Retention</strong>: While your account exists, your content is kept.</p>
+  <p><strong>Deleting files</strong>: You can ask cx in the conversation to delete files; a deleted file cannot be recovered.</p>
+</section>
+<section class="legal-section" aria-labelledby="deletion">
+  <h2 id="deletion">Deleting your account</h2>
+  <p><strong>How to delete</strong>: To delete your account, select “Delete account” in the app's Settings and confirm.</p>
+  <p><strong>What is deleted</strong>: It stops working at once; we cancel your subscription, destroy cx's computer and its disk, delete your files, conversations, connected keys and data-source data, and last your sign-in account. The platform keeps a copy of any data you have bought. Deleting from our storage is immediate and cannot be undone.</p>
+  <p><strong>For accounting and to prevent abuse we keep</strong>: the record of each charge and top-up; the record of each data-source call (see “Usage and payments” above); the account number, the internal and sign-in identifiers, the invitation code, and when the account was made and deleted; and the payment-method summary. Database backups are kept 7 days, then deleted by themselves.</p>
+</section>
+<section class="legal-section" aria-labelledby="cookies">
+  <h2 id="cookies">Cookies</h2>
+  <p><strong>Only what is needed</strong>: The app at comchatx.com uses only the cookies sign-in and invitations need. This website uses no cookies and no tracking.</p>
+</section>
+<section class="legal-section" aria-labelledby="rights">
+  <h2 id="rights">Your rights</h2>
+  <p><strong>How to ask</strong>: Write to <a href="mailto:support@comchatx.com">support@comchatx.com</a> to see, correct or delete your personal information; we act on it once we have checked it is you.</p>
+</section>
+<section class="legal-section" aria-labelledby="policy-changes">
+  <h2 id="policy-changes">Changes to this policy</h2>
+  <p><strong>Updates and notice</strong>: When we change this policy we update this page and its date; an important change is told to you in advance, in the app or by email.</p>
+</section>
+</div>
+</div>
+</article>
+</main>
+<footer class="site-footer" data-theme="dark">
+<div class="container">
+  <div class="footer-grid">
+    <a class="footer-logo" href="../../en/"><span class="wordmark">ComChatX</span></a>
+    <nav class="footer-cols" aria-label="Footer">
+  <div class="footer-col">
+    <ul role="list">
+      <li><a href="../../en/pricing/">Pricing</a></li>
+      <li><a class="way-in" href="https://comchatx.com/login?lang=en">Log in</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <ul role="list">
+      <li><a href="../../en/pricing/#faq">FAQ</a></li>
+      <li><a href="../../en/contact/">Contact sales</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <ul role="list">
+      <li><a href="/en/terms/">Terms of Service</a></li>
+      <li><a href="/en/privacy/" aria-current="page">Privacy Policy</a></li>
+    </ul>
+  </div>
+</nav>
+    <p class="footer-copy">© 2026 ComChatX</p>
+  </div>
+  <div class="footer-bar">
+    <!-- ComChatX has no X or LinkedIn account yet: the two icons stand where the links will go, and link nowhere until then. -->
+<ul class="footer-social" role="list" aria-label="Social media">
+  <li><a class="footer-social-link" role="link" aria-disabled="true" aria-label="X"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 1.5h4l9 13h-4Z" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/><path d="M14.5 1.5 9.18 6.82M6.82 9.18 1.5 14.5" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/></svg></a></li>
+  <li><a class="footer-social-link" role="link" aria-disabled="true" aria-label="LinkedIn"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M2.25.75h11.5a1.5 1.5 0 0 1 1.5 1.5v11.5a1.5 1.5 0 0 1-1.5 1.5H2.25a1.5 1.5 0 0 1-1.5-1.5V2.25a1.5 1.5 0 0 1 1.5-1.5Zm1.6 4.8a1.34 1.34 0 1 0 0-2.68 1.34 1.34 0 0 0 0 2.68ZM2.68 6.56h2.34v6.57H2.68Zm3.73 0h2.23v.95c.36-.61 1.14-1.12 2.17-1.12 1.81 0 2.51 1.17 2.51 2.96v3.78h-2.34v-3.29c0-.87-.27-1.45-1.09-1.45-.89 0-1.25.62-1.25 1.45v3.29H6.41Z"/></svg></a></li>
+</ul>
+    <div class="lang-switch">
+  <button type="button" aria-expanded="false" aria-controls="lang-menu" aria-label="Language: English"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M2.6 10h14.8M10 2.5c2 2.1 3 4.6 3 7.5s-1 5.4-3 7.5c-2-2.1-3-4.6-3-7.5s1-5.4 3-7.5Z" fill="none" stroke="currentColor" stroke-width="1.2"/></svg><span>English</span><svg class="caret" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3.5 7 10 13.5 16.5 7" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <ul class="lang-menu" id="lang-menu" role="list">
+    <li><a href="../../privacy/" hreflang="zh-CN" lang="zh-CN">中文</a></li>
+    <li><a href="../../en/privacy/" hreflang="en" lang="en" aria-current="true">English</a></li>
+  </ul>
+</div>
+  </div>
+</div>
+</footer>
+</body>
+</html>

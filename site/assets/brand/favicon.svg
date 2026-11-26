@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-63 -63 126 126">
+  <!-- 双 C 相扣负形 X（P2 构形 · 1a 森林绿×暖沙）。
+       几何来自 claude design 参数模板（a=19 r=30 w=15 gap=12.5）；
+       深色环境经 media query 自动切亮色组（不支持时回退浅版色）。 -->
+  <style>
+    .c1 { stroke: #1E4A38 } .c1f { fill: #1E4A38 }
+    .c2 { stroke: #BE9257 } .c2f { fill: #BE9257 }
+    @media (prefers-color-scheme: dark) {
+      .c1 { stroke: #4E8B6F } .c1f { fill: #4E8B6F }
+      .c2 { stroke: #D8B183 } .c2f { fill: #D8B183 }
+    }
+  </style>
+  <defs>
+    <mask id="mx" maskUnits="userSpaceOnUse" x="-63" y="-41" width="126" height="82">
+      <rect x="-63" y="-41" width="126" height="82" fill="white"/>
+      <rect x="-23.77" y="-6.25" width="47.54" height="12.5" fill="black" transform="rotate(45)"/>
+      <rect x="-23.77" y="-6.25" width="47.54" height="12.5" fill="black" transform="rotate(-45)"/>
+    </mask>
+    <mask id="mw" maskUnits="userSpaceOnUse" x="-63" y="-41" width="126" height="82">
+      <polygon points="-70,-70 70,70 -70,70" fill="white"/>
+    </mask>
+  </defs>
+  <g mask="url(#mx)">
+    <circle class="c1" cx="-19" cy="0" r="30" fill="none" stroke-width="15"/>
+    <circle class="c2" cx="19" cy="0" r="30" fill="none" stroke-width="15"/>
+    <path class="c2f" d="M 0 -32.33 A 37.5 37.5 0 0 0 0 32.33 A 37.5 37.5 0 0 0 0 -32.33 Z"/>
+    <g mask="url(#mw)">
+      <circle class="c1" cx="-19" cy="0" r="30" fill="none" stroke-width="15"/>
+      <path class="c1f" d="M 0 -32.33 A 37.5 37.5 0 0 0 0 32.33 A 37.5 37.5 0 0 0 0 -32.33 Z"/>
+    </g>
+  </g>
+</svg>

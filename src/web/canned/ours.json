@@ -1,0 +1,1093 @@
+{
+  "packages": [
+    {
+      "name": "@comchatx/cx-assistant",
+      "description": "Does the work with your plugins, giving reasons and sources.",
+      "kinds": [
+        "extension",
+        "skill"
+      ],
+      "author": "ComChatX",
+      "updated": "2026-09-24T08:00:00.000Z",
+      "version": "0.1.10",
+      "repository": "https://github.com/comchatx/cx-assistant",
+      "readme": "This plugin sets how cx works: it works out what to do and does it with your plugins; a proposal comes with one line of reason and its source, and the whole analysis when you ask; a file is named by its title, never pasted into the conversation. The chat keeps to answers and their grounds, and the long version waits until you want it.\n\nSome things you can ask:\n\n- Why do you suggest lowering the price?\n- Show me the whole analysis.\n- What can you do for me right now?\n\ncx works on cx's computer, which is used by your cx alone, and offers only what your plugins let it do.\n\n## Plugins\n\nEach plugin gives cx one more capability, such as a data source, a model or a skill. Once you install it on the Plugins page, cx can use it, and the plugins it needs are installed with it.\n",
+      "readme_cut": false,
+      "ours": true,
+      "comchatx": {
+        "name": "cx Core",
+        "nameZh": "cx 基础功能",
+        "about": "用你装的插件把事做完，提建议时附上理由和出处。",
+        "mark": {
+          "on": "cx"
+        },
+        "section": "extensions",
+        "order": 90,
+        "skills": {
+          "comchatx-plugins": {
+            "zh": "告诉 cx 有哪些插件、各做什么、怎么安装。"
+          }
+        }
+      },
+      "shipped": {
+        "readme": "This plugin sets how cx works: it works out what to do and does it with your plugins; a proposal comes with one line of reason and its source, and the whole analysis when you ask; a file is named by its title, never pasted into the conversation. The chat keeps to answers and their grounds, and the long version waits until you want it.\n\nSome things you can ask:\n\n- Why do you suggest lowering the price?\n- Show me the whole analysis.\n- What can you do for me right now?\n\ncx works on cx's computer, which is used by your cx alone, and offers only what your plugins let it do.\n\n## Plugins\n\nEach plugin gives cx one more capability, such as a data source, a model or a skill. Once you install it on the Plugins page, cx can use it, and the plugins it needs are installed with it.\n",
+        "readme_zh": "这个插件定下 cx 做事的基本方式：自己判断该做什么，用你装的插件完成；提出建议时附一句理由和出处，你需要时再给出完整分析；提到文件只写标题，不在对话中粘贴报告。这样对话里只留结论和依据，长篇的东西你想看再展开。\n\n你可以这样问：\n\n- 你为什么建议降价？\n- 把完整的分析给我看看。\n- 你现在能帮我做哪些事？\n\ncx 在 cx 的电脑上工作，这台电脑只供你的 cx 使用；能为你做的事，以已安装的插件为准。\n\n## 插件\n\n每个插件给 cx 增加一种能力，比如数据源、模型或技能。在「插件」页安装后 cx 即可使用，它需要的插件会一并装好。\n",
+        "skills": [
+          {
+            "name": "comchatx-plugins",
+            "description": "Where the plugins a seller can install are listed, what each one says it does, and how one comes onto the seller's account. Read when the seller asks for something no tool or skill here does."
+          }
+        ],
+        "prompts": [],
+        "unread": []
+      },
+      "uses": []
+    },
+    {
+      "name": "@comchatx/cx-topics",
+      "description": "Titles each piece of work, and reads quotes in context.",
+      "kinds": [
+        "extension"
+      ],
+      "author": "ComChatX",
+      "updated": "2026-09-24T08:00:00.000Z",
+      "version": "0.1.11",
+      "repository": "https://github.com/comchatx/cx-topics",
+      "readme": "Each time you start something new, it gets a title in History, in your own words, and when the work changes, so does its title. When you quote a message, cx reads it with the ones around it before it answers.\n\n## What it costs\n\nJev tells whether a message starts something new, paid from your balance or with your own TypeSafe API key. The model you chat on writes the titles, billed as your chat is.\n",
+      "readme_cut": false,
+      "ours": true,
+      "comchatx": {
+        "name": "Chat Chapters",
+        "nameZh": "随题话章",
+        "about": "每件事都有标题，引用旧消息时 cx 连前后一起读。",
+        "mark": {
+          "on": "cx",
+          "cx": [
+            {
+              "x": 8.352,
+              "y": 15.648,
+              "size": 22.216
+            }
+          ],
+          "draw": [
+            {
+              "d": "M16.104 11.24L16.869 7.594L19.456 9.616ZM17.094 7.307L21.81 1.27L24.397 3.291L19.681 9.328ZM22.035 0.982L23.12 -0.407A0.426 0.426 308 0 1 23.718 -0.48L25.634 1.017A0.426 0.426 308 0 1 25.708 1.614L24.622 3.004Z"
+            }
+          ]
+        },
+        "section": "extensions",
+        "order": 100,
+        "builds": [
+          "jev"
+        ]
+      },
+      "shipped": {
+        "readme": "Each time you start something new, it gets a title in History, in your own words, and when the work changes, so does its title. When you quote a message, cx reads it with the ones around it before it answers.\n\n## What it costs\n\nJev tells whether a message starts something new, paid from your balance or with your own TypeSafe API key. The model you chat on writes the titles, billed as your chat is.\n",
+        "readme_zh": "你每开始一件新事，「历史」里就会多一个标题，用的是你的话，方便以后找回；事情变了，标题也跟着改。你引用一条消息时，cx 会连同它前后的几条一起读，再回答你。\n\n## 费用\n\n判断一条消息是不是一件新事，用的是 Jev，按用量从余额扣费，也可以使用你自己的 TypeSafe API Key。标题由你对话所用的模型来写，和对话一样计费。\n",
+        "skills": [],
+        "prompts": [],
+        "unread": []
+      },
+      "uses": [
+        "@comchatx/typesafe"
+      ]
+    },
+    {
+      "name": "@comchatx/cx-board",
+      "description": "Keeps cx's reports and drafts on a board beside the chat.",
+      "kinds": [
+        "skill"
+      ],
+      "author": "ComChatX",
+      "updated": "2026-09-24T08:00:00.000Z",
+      "version": "0.4.0",
+      "repository": "https://github.com/comchatx/cx-board",
+      "readme": "Reports, findings and drafts cx leaves for later go on a board beside the chat. Have cx add tabs, such as one per store.\n\nSome things you can ask:\n\n- Put this competitor analysis on the board.\n- Add a tab called \"Amazon US\" to the board, and put US reports there from now on.\n- Turn last week's report on the board into a table.\n\n## Files the board opens\n\nA file named in cx's answer opens on a tab of the board. A Word file shows its headings, text, tables and pictures in the type of cx's answers. An Excel file shows each of its sheets as Excel shows its cells, under a switch of their names, with the values the file saved; its hidden sheets are left out. A PDF shows its pages one under another at the tab's width; pictures stored as JBIG2 or JPEG 2000, and Japanese or Korean text in a font the file doesn't carry, don't show. Links in these files show as text and can't be pressed. A Word, Excel or PDF file that is locked or damaged shows “This file can't be read.”\n",
+      "readme_cut": false,
+      "ours": true,
+      "comchatx": {
+        "name": "Flex Board",
+        "nameZh": "灵动看板",
+        "about": "cx 的报告和草稿放上看板，不会淹没在对话里。",
+        "mark": {
+          "on": "board",
+          "draw": [
+            {
+              "d": "M6.6 6.1h3.1a1 1 0 0 1 1 1v3a1 1 0 0 1 -1 1h-3.1a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1zM6.6 12.9h3.1a1 1 0 0 1 1 1v3a1 1 0 0 1 -1 1h-3.1a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1zM14.3 6.1h3.1a1 1 0 0 1 1 1v5.7a1 1 0 0 1 -1 1h-3.1a1 1 0 0 1 -1 -1v-5.7a1 1 0 0 1 1 -1z",
+              "cut": true
+            }
+          ]
+        },
+        "section": "extensions",
+        "order": 110,
+        "skills": {
+          "cx-board": {
+            "about": {
+              "en": "Tells cx where the board is and what an entry holds.",
+              "zh": "告诉 cx 看板在哪里、每一条写什么。"
+            }
+          }
+        },
+        "viewers": [
+          {
+            "files": [
+              "md",
+              "markdown"
+            ],
+            "page": "viewers/markdown.html"
+          },
+          {
+            "files": [
+              "csv",
+              "tsv"
+            ],
+            "page": "viewers/table.html"
+          },
+          {
+            "files": [
+              "png",
+              "jpg",
+              "jpeg",
+              "gif",
+              "webp"
+            ],
+            "page": "viewers/picture.html",
+            "bytes": true
+          },
+          {
+            "files": [
+              "docx"
+            ],
+            "page": "viewers/word.html",
+            "bytes": true
+          },
+          {
+            "files": [
+              "xlsx"
+            ],
+            "page": "viewers/sheet.html",
+            "bytes": true
+          },
+          {
+            "files": [
+              "pdf"
+            ],
+            "page": "viewers/pdf.html",
+            "bytes": true
+          }
+        ]
+      },
+      "shipped": {
+        "readme": "Reports, findings and drafts cx leaves for later go on a board beside the chat. Have cx add tabs, such as one per store.\n\nSome things you can ask:\n\n- Put this competitor analysis on the board.\n- Add a tab called \"Amazon US\" to the board, and put US reports there from now on.\n- Turn last week's report on the board into a table.\n\n## Files the board opens\n\nA file named in cx's answer opens on a tab of the board. A Word file shows its headings, text, tables and pictures in the type of cx's answers. An Excel file shows each of its sheets as Excel shows its cells, under a switch of their names, with the values the file saved; its hidden sheets are left out. A PDF shows its pages one under another at the tab's width; pictures stored as JBIG2 or JPEG 2000, and Japanese or Korean text in a font the file doesn't carry, don't show. Links in these files show as text and can't be pressed. A Word, Excel or PDF file that is locked or damaged shows “This file can't be read.”\n",
+        "readme_zh": "cx 留给你以后再看的报告、发现和草稿放在对话旁的看板上。你可以让 cx 分页，比如每个店铺一页。\n\n你可以这样问：\n\n- 把这份竞品分析放到看板上。\n- 在看板上加一页“美国站”，以后美国站的报告都放在那里。\n- 把看板上上周的周报改成表格。\n\n## 看板能打开的文件\n\ncx 回复里提到的文件，会在看板的一页中打开。Word 文件显示标题、正文、表格和图片，字体与 cx 的回复相同。Excel 文件按工作表分页显示，单元格与 Excel 中所见相同，数值为文件保存时的结果，隐藏的工作表不显示。PDF 文件按页自上而下显示，与看板同宽；以 JBIG2 或 JPEG 2000 存储的图片，以及文件未内嵌字体的日文、韩文，不会显示。这些文件中的链接显示为文字，无法点击。加密或损坏的 Word、Excel、PDF 文件会显示“无法读取此文件。”\n",
+        "skills": [
+          {
+            "name": "cx-board",
+            "description": "The seller's board, a column beside the chat that shows Markdown files as cards, or a board's page in their place. Use when the seller asks for something to be put, changed or found on the board, or when another plugin's skill names the board."
+          }
+        ],
+        "prompts": [],
+        "unread": []
+      },
+      "uses": []
+    },
+    {
+      "name": "@comchatx/cx-board-tasks",
+      "description": "Puts what cx found and what needs your answer in your Inbox.",
+      "kinds": [
+        "skill"
+      ],
+      "author": "ComChatX",
+      "updated": "2026-09-24T08:00:00.000Z",
+      "version": "0.4.1",
+      "repository": "https://github.com/comchatx/cx-board-tasks",
+      "readme": "What cx found or changed waits in your Inbox on the board for you to mark as read, beside proposals and questions to answer. Each answer goes to cx as you send it.\n\nSome things you can ask:\n\n- Put these price proposals in my Inbox, and I'll look later.\n- How many in my Inbox are still unanswered?\n- List what I handled in my Inbox last week.\n\nWhat you've handled stays under Done, and nothing is deleted.\n",
+      "readme_cut": false,
+      "ours": true,
+      "comchatx": {
+        "name": "Board Inbox",
+        "nameZh": "看板收件箱",
+        "about": "cx 的发现和要你决定的事放进收件箱，在那里直接回答。",
+        "mark": {
+          "on": "board",
+          "draw": [
+            {
+              "d": "M6.6 6.1H17.4A1 1 0 0 1 18.4 7.1V13.4H14.6L13.4 15.8H10.6L9.4 13.4H5.6V7.1A1 1 0 0 1 6.6 6.1z",
+              "cut": true
+            }
+          ]
+        },
+        "section": "extensions",
+        "order": 111,
+        "board": {
+          "tab": "待办",
+          "page": "page/inbox.html",
+          "name": {
+            "zh": "收件箱",
+            "en": "Inbox"
+          }
+        },
+        "skills": {
+          "cx-board-tasks": {
+            "zh": "告诉 cx 收件箱写什么、你的回答如何传回。",
+            "en": "Tells cx what goes in your Inbox and how your answers come back."
+          }
+        },
+        "builds": [
+          {
+            "on": "@comchatx/cx-board",
+            "need": "required",
+            "why": {
+              "en": "Shows your Inbox beside the chat.",
+              "zh": "用于在对话旁显示收件箱。"
+            }
+          }
+        ]
+      },
+      "shipped": {
+        "readme": "What cx found or changed waits in your Inbox on the board for you to mark as read, beside proposals and questions to answer. Each answer goes to cx as you send it.\n\nSome things you can ask:\n\n- Put these price proposals in my Inbox, and I'll look later.\n- How many in my Inbox are still unanswered?\n- List what I handled in my Inbox last week.\n\nWhat you've handled stays under Done, and nothing is deleted.\n",
+        "readme_zh": "cx 查到的发现、做过的修改放在看板的「收件箱」里，看过点「已读」；要你同意、选择或填写的也在这里，直接回答，cx 接着做。\n\n你可以这样问：\n\n- 把这几条改价建议放进收件箱，我晚点看。\n- 收件箱里还有几条没回答？\n- 把上周处理过的事整理成一份清单。\n\n处理过的都留在「已处理」里，不会删掉。\n",
+        "skills": [
+          {
+            "name": "cx-board-tasks",
+            "description": "The seller's Inbox on the board, where you leave what you found, changed, propose and ask, as cards the seller marks as read or answers. With this plugin the seller reads what you have for them in the Inbox; your answer to what they asked, a small one too, a finding, a change you made, a proposal or a question is a card there, and the chat shows the card by its title and where it stands, with no copy of its words."
+          }
+        ],
+        "prompts": [],
+        "unread": []
+      },
+      "uses": []
+    },
+    {
+      "name": "cx-amazon-seller",
+      "description": "Tells cx you sell on Amazon and come to it for your store.",
+      "kinds": [
+        "extension"
+      ],
+      "author": "ComChatX",
+      "updated": "2026-09-15T08:00:00.000Z",
+      "version": "0.1.9",
+      "repository": "https://github.com/comchatx/cx-amazon-seller",
+      "readme": "Once it's installed, cx knows from your first message that you sell on Amazon and come to it for that business's work, so you never have to explain first. It reads nothing from your store itself; what cx can do for you comes from the plugins installed beside it.\n\nIt reaches no network, reads no file and holds no setting.\n",
+      "readme_cut": false,
+      "ours": true,
+      "comchatx": {
+        "name": "Amazon Core",
+        "nameZh": "亚马逊基础功能",
+        "about": "告诉 cx 你在亚马逊开店，来找它是为了店里的事。",
+        "mark": {
+          "draw": [
+            {
+              "d": "M4.4 3.5h15.2l2 5.6H2.4zM2.6 10a2.35 2.35 0 0 0 4.7 0zM7.35 10a2.35 2.35 0 0 0 4.7 0zM12.1 10a2.35 2.35 0 0 0 4.7 0zM16.85 10a2.35 2.35 0 0 0 4.7 0z"
+            },
+            {
+              "d": "M5.2 13.5h13.6a1 1 0 0 1 1 1v5.1a1 1 0 0 1 -1 1h-13.6a1 1 0 0 1 -1 -1v-5.1a1 1 0 0 1 1 -1zM9.8 15.4h4.4v5.2H9.8z",
+              "rule": "evenodd"
+            }
+          ]
+        },
+        "section": "extensions",
+        "order": 60
+      },
+      "shipped": {
+        "skills": [],
+        "prompts": [],
+        "unread": [],
+        "readme": "Once it's installed, cx knows from your first message that you sell on Amazon and come to it for that business's work, so you never have to explain first. It reads nothing from your store itself; what cx can do for you comes from the plugins installed beside it.\n\nIt reaches no network, reads no file and holds no setting.\n",
+        "readme_zh": "装上后，cx 从第一条消息起就知道你在亚马逊开店、来找它是为了店里的事，不用你每次先交代背景。它自己不读店铺的数据；cx 能为你做什么，取决于和它一起安装的插件。\n\n它不联网、不读任何文件，也不保存任何设置。\n"
+      },
+      "uses": []
+    },
+    {
+      "name": "cx-amazon-sp-api",
+      "description": "Checks orders, stock and fees, and edits listings and prices.",
+      "kinds": [
+        "skill",
+        "prompt"
+      ],
+      "author": "ComChatX",
+      "updated": "2026-09-25T08:00:00.000Z",
+      "version": "0.1.17",
+      "repository": "https://github.com/comchatx/cx-amazon-sp-api",
+      "readme": "Connect your Amazon store to cx so it can read your orders, listings, inventory, reports and finances in Seller Central, and make changes for you. cx totals orders and sales by marketplace, finds FBA stock about to run out and listings Amazon flags, breaks down each transaction's fees, and changes listings and prices. Useful for checking each day's sales, tracing fees and fixing listing problems. It connects through SP-API, Amazon's official interface for seller tools, in the regions you authorise.\n\nSome things you can ask:\n\n- What were B0EXAMPLE1's traffic and conversion rate last week?\n- Change B0EXAMPLE1's price on Amazon US to $24.99.\n- Which fees did Amazon take from last month's sales?\n\n## Connecting your store\n\nOn the plugin's Settings, connect a store for each region you sell in: North America, Europe or the Far East. Amazon's guide to self-authorisation shows where to find what Settings asks for. Your keys stay with ComChatX and are never given to cx.\n\n## What it costs\n\nNothing. Neither Amazon nor ComChatX charges for it.\n",
+      "readme_cut": false,
+      "ours": true,
+      "comchatx": {
+        "name": "Amazon SP-API",
+        "nameZh": "亚马逊卖家接口",
+        "about": "查订单、库存和费用，替你改 listing 和价格。",
+        "mark": {
+          "ground": "#000000",
+          "draw": [
+            {
+              "d": "M9.306 19.874C7.908 19.874 6.678 19.569 5.615 18.959C4.553 18.33 3.726 17.464 3.136 16.361C2.545 15.24 2.25 13.951 2.25 12.494C2.25 10.743 2.683 9.207 3.549 7.889C4.435 6.57 5.684 5.557 7.298 4.848C8.932 4.14 10.841 3.785 13.025 3.785C14.029 3.785 14.846 3.854 15.476 3.992L15.476 3.372C15.476 1.876 15.2 0.764 14.649 0.036C14.098 -0.712 13.261 -1.086 12.14 -1.086C10.329 -1.086 9.168 -0.131 8.656 1.778C8.499 2.329 8.174 2.565 7.682 2.486L3.667 1.778C3.372 1.719 3.165 1.591 3.047 1.394C2.949 1.197 2.939 0.932 3.018 0.597C3.529 -1.41 4.612 -2.965 6.265 -4.067C7.938 -5.189 10.034 -5.75 12.553 -5.75C15.544 -5.75 17.818 -4.943 19.372 -3.329C20.947 -1.715 21.734 0.636 21.734 3.726L21.734 18.576C21.734 18.792 21.655 18.979 21.498 19.136C21.36 19.274 21.183 19.343 20.966 19.343L17.129 19.343C16.656 19.343 16.361 19.087 16.243 18.576L15.653 15.801L15.416 15.801C14.885 17.099 14.088 18.103 13.025 18.812C11.982 19.52 10.742 19.874 9.306 19.874ZM8.686 11.786C8.686 12.829 8.951 13.665 9.483 14.295C10.034 14.905 10.772 15.21 11.697 15.21C12.917 15.21 13.852 14.669 14.501 13.586C15.151 12.484 15.476 10.91 15.476 8.863L15.476 7.298C14.924 7.2 14.403 7.151 13.911 7.151C12.297 7.151 11.018 7.574 10.073 8.42C9.148 9.247 8.686 10.369 8.686 11.786Z",
+              "ink": "#FFFFFF",
+              "rule": "evenodd"
+            },
+            {
+              "d": "M-2.834 22.323C-2.971 22.431 -3 22.611 -2.921 22.864C-2.849 23.087 -2.679 23.365 -2.412 23.697C-1.337 25.024 -0.057 26.127 1.429 27.007C2.914 27.887 4.505 28.536 6.2 28.955C7.902 29.38 9.64 29.593 11.415 29.593C13.687 29.593 15.851 29.261 17.906 28.598C19.962 27.941 21.678 27.018 23.056 25.828C23.539 25.402 23.781 25.063 23.781 24.811C23.781 24.717 23.741 24.623 23.662 24.53C23.554 24.422 23.424 24.385 23.273 24.422C23.121 24.458 22.908 24.548 22.634 24.692C21.314 25.384 19.706 25.936 17.809 26.347C15.919 26.766 13.946 26.975 11.891 26.975C9.345 26.975 6.885 26.629 4.512 25.936C2.139 25.244 0.037 24.162 -1.795 22.69C-2.062 22.481 -2.279 22.348 -2.445 22.29C-2.603 22.232 -2.733 22.243 -2.834 22.323ZM21.206 22.864C21.054 23.008 21.014 23.16 21.087 23.319C21.137 23.434 21.234 23.499 21.379 23.513C21.523 23.535 21.729 23.521 21.995 23.47C22.428 23.376 22.879 23.311 23.348 23.275C23.817 23.246 24.224 23.254 24.57 23.297C24.917 23.347 25.133 23.434 25.22 23.557C25.349 23.751 25.302 24.162 25.079 24.79C24.863 25.417 24.567 26.027 24.192 26.618C24.047 26.856 23.961 27.044 23.932 27.181C23.903 27.318 23.939 27.433 24.04 27.527C24.105 27.592 24.177 27.625 24.257 27.625C24.466 27.625 24.769 27.441 25.165 27.073C25.88 26.453 26.381 25.717 26.669 24.866C26.828 24.426 26.925 23.964 26.961 23.481C26.997 22.998 26.943 22.651 26.799 22.442C26.662 22.24 26.359 22.074 25.89 21.945C25.429 21.815 24.963 21.75 24.495 21.75C23.579 21.75 22.709 21.966 21.887 22.399C21.584 22.565 21.357 22.72 21.206 22.864Z",
+              "ink": "#E78D1B"
+            }
+          ]
+        },
+        "section": "data",
+        "order": 20,
+        "skills": {
+          "amazon-sp-api": {
+            "zh": "读取和修改你的亚马逊店铺：订单、listing、库存和财务。",
+            "en": "Reads and changes your Amazon store: orders, listings, stock and finances."
+          }
+        },
+        "prompts": {
+          "orders-today": {
+            "zh": "按站点查看店铺今天的订单"
+          },
+          "low-stock": {
+            "zh": "找出两周内会断货的 FBA listing"
+          },
+          "listing-check": {
+            "zh": "检查【SKU】这条 listing 上亚马逊标出的问题，并给出修复方案"
+          }
+        },
+        "builds": [
+          {
+            "on": "cx-amazon-seller",
+            "need": "optional",
+            "why": {
+              "en": "Tells cx from the start that you sell on Amazon.",
+              "zh": "用于让 cx 从第一条消息起就知道你在亚马逊开店。"
+            }
+          }
+        ],
+        "source": {
+          "name": "amazon-sp-api",
+          "help": "https://developer-docs.amazon/sp-api/docs/self-authorization",
+          "aspects": {},
+          "fields": {
+            "client_id": {
+              "label": {
+                "en": "Client identifier",
+                "zh": "Client identifier"
+              }
+            },
+            "client_secret": {
+              "label": {
+                "en": "Client secret",
+                "zh": "Client secret"
+              }
+            },
+            "refresh_token": {
+              "label": {
+                "en": "Refresh token",
+                "zh": "Refresh token"
+              }
+            }
+          },
+          "lines": {
+            "add": {
+              "en": "Add a store",
+              "zh": "添加店铺"
+            },
+            "removedWith": {
+              "en": "Its stores {names} are removed with it.",
+              "zh": "它的店铺 {names} 会一并移除。"
+            },
+            "connect": {
+              "en": "Connect your store",
+              "zh": "连接店铺"
+            },
+            "canChange": {
+              "en": "Once connected, cx can read and change your store.",
+              "zh": "连接后，cx 可以读取和修改你的店铺。"
+            },
+            "rows": {
+              "en": "Stores",
+              "zh": "店铺"
+            },
+            "checking": {
+              "en": "Checking with Amazon…",
+              "zh": "正在向亚马逊确认…"
+            },
+            "sells": {
+              "en": "Sells in {places}",
+              "zh": "在{places}销售"
+            },
+            "foundNone": {
+              "en": "Amazon found no store for this token; get a new one with the Amazon account you sell with.",
+              "zh": "亚马逊没有找到店铺，请用开店的亚马逊账号获取新的 Refresh token。"
+            },
+            "connected": {
+              "en": "Store connected.",
+              "zh": "店铺已连接。"
+            },
+            "refused": {
+              "en": "Amazon no longer accepts this refresh token. Add a new one, then remove this one.",
+              "zh": "亚马逊已不接受这个 Refresh token，请添加新的，再移除这一行。"
+            },
+            "none": {
+              "en": "Amazon listed no marketplace for this store.",
+              "zh": "亚马逊没有列出这家店铺的站点。"
+            }
+          },
+          "regions": {
+            "na": {
+              "en": "North America",
+              "zh": "北美"
+            },
+            "eu": {
+              "en": "Europe",
+              "zh": "欧洲"
+            },
+            "fe": {
+              "en": "Far East",
+              "zh": "远东"
+            }
+          }
+        }
+      },
+      "shipped": {
+        "readme": "Connect your Amazon store to cx so it can read your orders, listings, inventory, reports and finances in Seller Central, and make changes for you. cx totals orders and sales by marketplace, finds FBA stock about to run out and listings Amazon flags, breaks down each transaction's fees, and changes listings and prices. Useful for checking each day's sales, tracing fees and fixing listing problems. It connects through SP-API, Amazon's official interface for seller tools, in the regions you authorise.\n\nSome things you can ask:\n\n- What were B0EXAMPLE1's traffic and conversion rate last week?\n- Change B0EXAMPLE1's price on Amazon US to $24.99.\n- Which fees did Amazon take from last month's sales?\n\n## Connecting your store\n\nOn the plugin's Settings, connect a store for each region you sell in: North America, Europe or the Far East. Amazon's guide to self-authorisation shows where to find what Settings asks for. Your keys stay with ComChatX and are never given to cx.\n\n## What it costs\n\nNothing. Neither Amazon nor ComChatX charges for it.\n",
+        "readme_zh": "把你的亚马逊店铺连到 cx，cx 就能读你卖家后台里的订单、listing、库存、报告和财务数据，也能替你修改。它能按站点汇总订单和销售额，找出快断货的 FBA 商品和被亚马逊标出问题的 listing，查清每笔交易扣了哪些费用，并替你修改 listing 和价格。适合每天看销量、查费用、处理 listing 的问题。连接用的是 SP-API，亚马逊给卖家工具开放的官方接口，覆盖你在北美、欧洲和远东授权的站点。\n\n你可以这样问：\n\n- B0EXAMPLE1 上周的流量和转化率是多少？\n- 把 B0EXAMPLE1 在美国站的价格改成 24.99 美元。\n- 上个月的货款里，亚马逊扣了哪些费用？\n\n## 连接店铺\n\n在插件的「设置」里，为你开店的北美、欧洲或远东区域各连接一个店铺。要填的内容在哪里找，见亚马逊的自授权指南。你的密钥保存在 ComChatX，不会交给 cx。\n\n## 费用\n\n免费，亚马逊和 ComChatX 都不收费。\n",
+        "skills": [
+          {
+            "name": "amazon-sp-api",
+            "description": "The seller's own Amazon selling account through Amazon's Selling Partner API (SP-API) — orders, listings, inventory, reports, feeds, finances and every other operation Amazon's reference lists, read and write, in each region the seller authorised. Use before the first call that reads or changes the seller's own Amazon account. Needs cx-sources; if no cx-sources skill is listed, it is not installed, and the seller installs it in Plugins."
+          }
+        ],
+        "prompts": [
+          {
+            "name": "listing-check",
+            "description": "Check [SKU]'s listing for the issues Amazon flags, and propose fixes",
+            "hint": "<sku>"
+          },
+          {
+            "name": "low-stock",
+            "description": "Find the FBA listings that will run out of stock within two weeks"
+          },
+          {
+            "name": "orders-today",
+            "description": "See today's orders in my store, marketplace by marketplace"
+          }
+        ],
+        "unread": []
+      },
+      "uses": [
+        "cx-sources"
+      ]
+    },
+    {
+      "name": "@comchatx/cx-amazon-ads",
+      "description": "Pauses keywords that don't sell, and tunes budgets and bids.",
+      "kinds": [
+        "skill",
+        "prompt"
+      ],
+      "author": "ComChatX",
+      "updated": "2026-09-25T08:00:00.000Z",
+      "version": "0.1.10",
+      "repository": "https://github.com/comchatx/cx-amazon-ads",
+      "readme": "Connect your Amazon advertising account to cx so it can read your ads and change them for you. cx shows each campaign's spend, sales and ACOS, negates search terms that don't sell, adjusts budgets and bids, and creates campaigns with the keywords and bids Amazon recommends. Useful for checking each day whether your ads pay off, and stopping what spends without selling. It connects through the Ads API, Amazon's official interface for advertising, for Sponsored Products, Brands and Display.\n\nSome things you can ask:\n\n- Which search terms in B0EXAMPLE1's ads led to sales?\n- Create an automatic Sponsored Products campaign for B0EXAMPLE1 at $20 a day.\n- What was the ACOS of Sponsored Products and of Sponsored Brands last month?\n\n## Connecting your store\n\nOn the plugin's Settings, connect a store for each region you advertise in: North America, Europe or the Far East. Settings asks for your Ads API application's details and a Refresh token, and Amazon's guide to authorization grants shows how to get them. Your keys stay with ComChatX and are never given to cx.\n\n## What it costs\n\nNothing. Neither Amazon nor ComChatX charges for it. What your ads spend is between you and Amazon.\n",
+      "readme_cut": false,
+      "ours": true,
+      "comchatx": {
+        "name": "Amazon Ads API",
+        "nameZh": "亚马逊广告接口",
+        "about": "暂停只花钱不出单的关键词，替你调整预算和竞价。",
+        "mark": {
+          "ground": "#0F141A",
+          "draw": [
+            {
+              "d": "M-1.154 9.029C-1.276 9.125 -1.301 9.285 -1.231 9.509C-1.167 9.707 -1.017 9.953 -0.78 10.247C0.173 11.424 1.309 12.403 2.626 13.183C3.944 13.964 5.354 14.539 6.857 14.91C8.367 15.288 9.909 15.476 11.482 15.476C13.497 15.476 15.416 15.182 17.239 14.594C19.062 14.012 20.584 13.193 21.806 12.137C22.235 11.76 22.449 11.46 22.449 11.236C22.449 11.152 22.414 11.069 22.343 10.986C22.247 10.89 22.132 10.858 21.998 10.89C21.864 10.922 21.675 11.002 21.432 11.13C20.261 11.744 18.835 12.233 17.153 12.598C15.477 12.969 13.727 13.155 11.904 13.155C9.646 13.155 7.465 12.848 5.361 12.233C3.256 11.619 1.392 10.66 -0.233 9.355C-0.47 9.17 -0.662 9.051 -0.809 9C-0.949 8.949 -1.065 8.958 -1.154 9.029ZM20.165 9.509C20.031 9.637 19.995 9.771 20.059 9.912C20.104 10.014 20.191 10.072 20.318 10.085C20.446 10.104 20.629 10.091 20.865 10.046C21.249 9.963 21.649 9.906 22.065 9.874C22.48 9.848 22.842 9.855 23.149 9.893C23.456 9.938 23.648 10.014 23.725 10.123C23.84 10.296 23.798 10.66 23.6 11.217C23.408 11.773 23.146 12.314 22.813 12.839C22.685 13.05 22.608 13.216 22.583 13.337C22.557 13.459 22.589 13.561 22.679 13.644C22.736 13.702 22.8 13.731 22.871 13.731C23.056 13.731 23.325 13.568 23.677 13.241C24.31 12.691 24.754 12.039 25.01 11.284C25.151 10.894 25.237 10.485 25.269 10.056C25.301 9.628 25.253 9.32 25.125 9.135C25.004 8.956 24.735 8.809 24.319 8.694C23.91 8.578 23.497 8.521 23.082 8.521C22.269 8.521 21.499 8.713 20.769 9.097C20.501 9.244 20.299 9.381 20.165 9.509Z",
+              "ink": "#FFFFFF"
+            }
+          ]
+        },
+        "section": "data",
+        "order": 21,
+        "skills": {
+          "amazon-ads": {
+            "zh": "读取和调整你的亚马逊广告：活动、关键词、预算和竞价。",
+            "en": "Reads and changes your Amazon ads: campaigns, keywords, budgets and bids."
+          }
+        },
+        "prompts": {
+          "spend-this-week": {
+            "zh": "按广告活动查看最近 7 天的花费和销售额"
+          },
+          "out-of-budget": {
+            "zh": "找出预算不够用的广告活动"
+          },
+          "wasted-keywords": {
+            "zh": "找出只花钱不出单的关键词"
+          }
+        },
+        "builds": [
+          {
+            "on": "cx-amazon-seller",
+            "need": "optional",
+            "why": {
+              "en": "Tells cx from the start that you sell on Amazon.",
+              "zh": "用于让 cx 从第一条消息起就知道你在亚马逊开店。"
+            }
+          }
+        ],
+        "source": {
+          "name": "amazon-ads",
+          "help": "https://advertising.amazon.com/API/docs/en-us/guides/account-management/authorization/authorization-grants",
+          "aspects": {},
+          "fields": {
+            "client_id": {
+              "label": {
+                "en": "Client identifier",
+                "zh": "Client identifier"
+              }
+            },
+            "client_secret": {
+              "label": {
+                "en": "Client secret",
+                "zh": "Client secret"
+              }
+            },
+            "refresh_token": {
+              "label": {
+                "en": "Refresh token",
+                "zh": "Refresh token"
+              }
+            }
+          },
+          "lines": {
+            "add": {
+              "en": "Add ad accounts",
+              "zh": "添加广告账号"
+            },
+            "connected": {
+              "en": "Ad accounts connected.",
+              "zh": "广告账号已连接。"
+            },
+            "removedWith": {
+              "en": "Its ad accounts {names} are removed with it.",
+              "zh": "它的广告账号 {names} 会一并移除。"
+            },
+            "refused": {
+              "en": "Amazon no longer accepts this refresh token. Add a new one, then remove this one.",
+              "zh": "亚马逊已不接受这个 Refresh token，请添加新的，再移除这一行。"
+            },
+            "none": {
+              "en": "Amazon listed no ad account.",
+              "zh": "亚马逊没有列出广告账号。"
+            },
+            "silent": {
+              "en": "Amazon did not answer for {regions}, so this list may be incomplete.",
+              "zh": "亚马逊没有返回{regions}的广告账号，这里可能不全。"
+            },
+            "connect": {
+              "en": "Connect your ad accounts",
+              "zh": "连接广告账号"
+            },
+            "canChange": {
+              "en": "Once connected, cx can read and change your ads.",
+              "zh": "连接后，cx 可以读取和修改你的广告。"
+            },
+            "rows": {
+              "en": "Ad accounts",
+              "zh": "广告账号"
+            },
+            "foundNone": {
+              "en": "Amazon found no ad account for this token; get a new one with the Amazon account that manages your ads.",
+              "zh": "亚马逊没有找到广告账号，请用管理广告的亚马逊账号获取新的 Refresh token。"
+            },
+            "checking": {
+              "en": "Checking with Amazon…",
+              "zh": "正在向亚马逊确认…"
+            }
+          },
+          "regions": {
+            "na": {
+              "en": "North America",
+              "zh": "北美"
+            },
+            "eu": {
+              "en": "Europe",
+              "zh": "欧洲"
+            },
+            "fe": {
+              "en": "Far East",
+              "zh": "远东"
+            }
+          }
+        }
+      },
+      "shipped": {
+        "readme": "Connect your Amazon advertising account to cx so it can read your ads and change them for you. cx shows each campaign's spend, sales and ACOS, negates search terms that don't sell, adjusts budgets and bids, and creates campaigns with the keywords and bids Amazon recommends. Useful for checking each day whether your ads pay off, and stopping what spends without selling. It connects through the Ads API, Amazon's official interface for advertising, for Sponsored Products, Brands and Display.\n\nSome things you can ask:\n\n- Which search terms in B0EXAMPLE1's ads led to sales?\n- Create an automatic Sponsored Products campaign for B0EXAMPLE1 at $20 a day.\n- What was the ACOS of Sponsored Products and of Sponsored Brands last month?\n\n## Connecting your store\n\nOn the plugin's Settings, connect a store for each region you advertise in: North America, Europe or the Far East. Settings asks for your Ads API application's details and a Refresh token, and Amazon's guide to authorization grants shows how to get them. Your keys stay with ComChatX and are never given to cx.\n\n## What it costs\n\nNothing. Neither Amazon nor ComChatX charges for it. What your ads spend is between you and Amazon.\n",
+        "readme_zh": "把你的亚马逊广告账户连到 cx，cx 就能读你的广告数据，也能替你修改广告。它会查看每个广告活动的花费、销售额和 ACOS，把不出单的搜索词设为否定关键词，调整预算和竞价，也能参考亚马逊推荐的关键词和竞价，替你创建广告活动。适合每天看广告花得值不值，把只花钱不出单的地方停掉。连接用的是 Ads API，亚马逊广告的官方接口，覆盖商品推广、品牌推广和展示型推广。\n\n你可以这样问：\n\n- B0EXAMPLE1 的广告里，哪些搜索词出了单？\n- 给 B0EXAMPLE1 建一个自动投放的商品推广活动，每天预算 20 美元。\n- 上个月商品推广和品牌推广的 ACOS 各是多少？\n\n## 连接店铺\n\n在插件的「设置」里，为你投放广告的北美、欧洲或远东区域各连接一个店铺。要填的 Ads API 应用信息和 Refresh token，获取方法见亚马逊的授权指南。你的密钥保存在 ComChatX，不会交给 cx。\n\n## 费用\n\n免费，亚马逊和 ComChatX 都不收费。广告本身的花费由你和亚马逊结算。\n",
+        "skills": [
+          {
+            "name": "amazon-ads",
+            "description": "The seller's own Amazon Ads accounts through Amazon's Ads API — profiles, Sponsored Products, Sponsored Brands and Sponsored Display campaigns, ad groups, ads, keywords and targets, budgets, bids and reports, read and changed, in each region the seller authorised. Use before the first call that reads or changes the seller's own Amazon advertising. Needs cx-sources; if no cx-sources skill is listed, it is not installed, and the seller installs it in Plugins."
+          }
+        ],
+        "prompts": [
+          {
+            "name": "out-of-budget",
+            "description": "Find campaigns that run out of budget"
+          },
+          {
+            "name": "spend-this-week",
+            "description": "See ad spend and sales for the last 7 days, by campaign"
+          },
+          {
+            "name": "wasted-keywords",
+            "description": "Find keywords that spend without selling"
+          }
+        ],
+        "unread": []
+      },
+      "uses": [
+        "cx-sources"
+      ]
+    },
+    {
+      "name": "cx-feishu",
+      "description": "Sends cx's reports and check results to your Feishu group.",
+      "kinds": [
+        "skill"
+      ],
+      "author": "ComChatX",
+      "updated": "2026-09-26T08:00:00.000Z",
+      "version": "0.1.7",
+      "repository": "https://github.com/comchatx/cx-feishu",
+      "readme": "cx sends reports, reminders and check results to your Feishu group, where you and everyone in it can read them without opening ComChatX.\n\nSome things you can ask:\n\n- Send this weekly report to the Feishu group.\n- From now on, send me every check of B0EXAMPLE1 in Feishu.\n- Send a test message to Feishu to see whether the bot gets it.\n\n## What it needs\n\nA custom bot in a Feishu group, with its webhook address pasted into the plugin's Settings. The bot's security settings can use a custom keyword, but not a signature check or an IP whitelist, which stop every message.\n",
+      "readme_cut": false,
+      "ours": true,
+      "comchatx": {
+        "name": "Feishu Connector",
+        "nameZh": "飞书连接器",
+        "about": "在飞书群里收到 cx 发来的报告和检查结果。",
+        "mark": {
+          "line": "megaphone"
+        },
+        "section": "extensions",
+        "order": 40,
+        "builds": [
+          "@amaster.ai/pi-channels"
+        ],
+        "skills": {
+          "cx-feishu": {
+            "zh": "把 cx 的报告和提醒发到你的飞书群。",
+            "en": "Sends cx's reports and alerts to Feishu."
+          }
+        }
+      },
+      "shipped": {
+        "readme": "cx sends reports, reminders and check results to your Feishu group, where you and everyone in it can read them without opening ComChatX.\n\nSome things you can ask:\n\n- Send this weekly report to the Feishu group.\n- From now on, send me every check of B0EXAMPLE1 in Feishu.\n- Send a test message to Feishu to see whether the bot gets it.\n\n## What it needs\n\nA custom bot in a Feishu group, with its webhook address pasted into the plugin's Settings. The bot's security settings can use a custom keyword, but not a signature check or an IP whitelist, which stop every message.\n",
+        "readme_zh": "cx 会把报告、提醒和检查结果发到你的飞书群，你和群里的同事不打开 ComChatX 也能看到。\n\n你可以这样问：\n\n- 把这份周报发到飞书群。\n- 以后每次检查完 B0EXAMPLE1，都把结果发到飞书。\n- 发一条测试消息到飞书，看看机器人能不能收到。\n\n## 需要\n\n一个飞书群里的自定义机器人，在插件的「设置」里填入它的 Webhook 地址。机器人的安全设置只用自定义关键词；开启签名校验或 IP 白名单后，消息发不出去。\n",
+        "skills": [
+          {
+            "name": "cx-feishu",
+            "description": "Sending a message to a Feishu (飞书) group bot from a ComChatX box - a report, an alert, a heartbeat's result - with pi-channels (`@amaster.ai/pi-channels`) and its `notify` tool; what pi-channels' own words miss here. Needs @amaster.ai/pi-channels; if no notify tool is offered, it is not installed, and the seller installs it in Plugins once it is listed there, or it is installed with `pi install -l npm:@amaster.ai/pi-channels@0.1.28` run in /tenant (without -l it is gone at the box's next start). cx-feishu itself installs the same way: Plugins once listed, or `pi install -l npm:cx-feishu` in /tenant."
+          }
+        ],
+        "prompts": [],
+        "unread": []
+      },
+      "uses": []
+    },
+    {
+      "name": "@comchatx/cx-schedule",
+      "description": "Lets cx do things for you at the times you set.",
+      "kinds": [
+        "extension",
+        "skill"
+      ],
+      "author": "ComChatX",
+      "updated": "2026-09-26T08:00:00.000Z",
+      "version": "0.3.0",
+      "repository": "https://github.com/comchatx/cx-schedule",
+      "readme": "Ask cx to do something at set times, such as checking your listings' Buy Box every hour, and cx keeps it as a scheduled job, which stays after cx's computer switches off.\n\n## When jobs run\n\nJobs run only while cx's computer is on, that is, while you use cx or after you ask cx to keep it on. If cx's computer is off when a job falls due, the job doesn't run and doesn't switch it on.\n\n## What it costs\n\nYou pay for the time cx's computer is kept on, and a job that runs often keeps it on.",
+      "readme_cut": false,
+      "ours": true,
+      "comchatx": {
+        "about": "让 cx 在你设定的时间替你做事。",
+        "mark": {
+          "line": "clock"
+        },
+        "section": "extensions",
+        "order": 30,
+        "awake": true
+      },
+      "shipped": {
+        "readme": "Ask cx to do something at set times, such as checking your listings' Buy Box every hour, and cx keeps it as a scheduled job, which stays after cx's computer switches off.\n\n## When jobs run\n\nJobs run only while cx's computer is on, that is, while you use cx or after you ask cx to keep it on. If cx's computer is off when a job falls due, the job doesn't run and doesn't switch it on.\n\n## What it costs\n\nYou pay for the time cx's computer is kept on, and a job that runs often keeps it on.",
+        "readme_zh": "让 cx 在设定的时间做某件事，比如每小时检查一次 listing 的 Buy Box，cx 会把它存为定时任务，cx 的电脑关机后任务也不会丢失。\n\n## 什么时候运行\n\n任务只在 cx 的电脑开机时运行，即你正在使用 cx，或已让 cx 保持开机时。到点时如果 cx 的电脑已关机，任务不会运行，也不会让它开机。\n\n## 费用\n\n保持开机的时长需要付费，运行频繁的任务也会让 cx 的电脑保持开机。",
+        "skills": [],
+        "prompts": [],
+        "unread": []
+      },
+      "uses": [
+        "@amaster.ai/pi-task-scheduler"
+      ]
+    },
+    {
+      "name": "cx-keepa",
+      "description": "Tracks and reviews price, BSR and Buy Box, yours and rivals'.",
+      "kinds": [
+        "skill",
+        "prompt"
+      ],
+      "author": "ComChatX",
+      "updated": "2026-09-25T08:00:00.000Z",
+      "version": "0.1.15",
+      "repository": "https://github.com/comchatx/cx-keepa",
+      "readme": "cx tells you when your products and rivals' changed price, coupon, Buy&nbsp;Box or BSR, from the day-by-day history Keepa keeps for each product. It also finds products by search, best-seller list or seller. It all comes from Keepa, on 11 Amazon marketplaces.\n\nSome things you can ask:\n\n- Which of my B0EXAMPLE1 and these three rivals changed price or ran a coupon last week?\n- What else does the seller who took B0EXAMPLE1's Buy&nbsp;Box sell?\n- In this category, which products sell over 1,000 a month with under 100 reviews?\n\ncx finds a product by its ASIN or by its name.\n\n## Marketplaces\n\nAmazon US, UK, DE, FR, JP, CA, IT, ES, IN, MX and BR.\n\n## What it costs\n\nEach product cx reads, and each lookup, is billed to your ComChatX balance; once you save your own Keepa API Key, Keepa bills you for them instead. The plugin's page shows the price of one product, and Usage shows every purchase and its cost.\n",
+      "readme_cut": false,
+      "ours": true,
+      "comchatx": {
+        "name": "Keepa API",
+        "nameZh": "Keepa 数据接口",
+        "about": "跟踪竞品和你的商品的价格、BSR 和 Buy Box，替你复盘。",
+        "mark": {
+          "draw": [
+            {
+              "d": "M2.025 12A9.975 9.975 0 1 1 21.975 12A9.975 9.975 0 1 1 2.025 12Z",
+              "ink": "#FFFFFF"
+            },
+            {
+              "d": "M10.884 1.898C8.224 2.178 5.761 3.53 4.007 5.678C3.381 6.448 2.699 7.695 2.353 8.719C1.959 9.878 1.679 11.794 1.798 12.525C1.824 12.683 1.868 13.006 1.894 13.247C2.078 14.962 2.799 16.734 3.919 18.212C4.296 18.707 5.105 19.534 5.591 19.919C6.982 21.017 8.561 21.726 10.303 22.027C10.806 22.115 11.029 22.128 11.978 22.128C12.91 22.124 13.155 22.111 13.641 22.027C15.277 21.743 16.742 21.117 18.081 20.124C18.628 19.722 19.687 18.654 20.102 18.099C21.131 16.712 21.774 15.159 22.023 13.466C22.128 12.744 22.137 11.405 22.041 10.657C21.896 9.559 21.586 8.548 21.078 7.516C19.547 4.409 16.585 2.318 13.155 1.916C12.556 1.846 11.466 1.837 10.884 1.898ZM14.144 7.371L14.144 9.769L16.55 9.769L18.956 9.769L18.956 11.956L18.956 14.144L16.585 14.152L14.209 14.166L14.196 16.559L14.188 18.952L12.009 18.965C10.814 18.974 9.821 18.974 9.804 18.965C9.782 18.956 9.769 17.867 9.769 16.546L9.769 14.139L7.376 14.148L4.978 14.152L4.978 11.974L4.978 9.791L7.376 9.777L9.769 9.769L9.769 7.363L9.769 4.956L11.956 4.965L14.148 4.978L14.144 7.371Z",
+              "ink": "#256A93"
+            },
+            {
+              "d": "M10.075 11.978L10.075 13.925L11.978 13.925L13.881 13.925L13.881 11.978L13.881 10.031L11.978 10.031L10.075 10.031L10.075 11.978Z",
+              "ink": "#256A93"
+            }
+          ]
+        },
+        "section": "data",
+        "order": 10,
+        "why": {
+          "en": "Investigate the history of price changes, Buy Box ownership and seasonal rank movement, and assess product opportunities. Available for Amazon US, UK, DE, FR, JP, CA, IT, ES, IN, MX and BR.",
+          "zh": "查看价格变化、Buy Box 归属和季节性排名的历史记录，并评估选品机会。数据涵盖亚马逊美国、英国、德国、法国、日本、加拿大、意大利、西班牙、印度、墨西哥和巴西站。"
+        },
+        "skills": {
+          "keepa": {
+            "zh": "查商品的价格、排名、Buy Box 和销量历史，也能查卖家。",
+            "en": "Looks up a product's price, rank, Buy Box and sales history, and sellers."
+          }
+        },
+        "prompts": {
+          "rank-drop": {
+            "zh": "从价格、Buy Box 和库存记录中，找出【ASIN】在美国站排名开始变化的那一天"
+          },
+          "top-ten": {
+            "zh": "把亚马逊美国站【搜索词】的十款畅销商品放进一张表格对比"
+          },
+          "year-on-year": {
+            "zh": "查看【ASIN】在美国站的销量比去年同期高还是低"
+          }
+        },
+        "builds": [
+          {
+            "on": "@comchatx/cx-schedule",
+            "need": "optional",
+            "why": {
+              "en": "Reviews your products and rivals' on a schedule.",
+              "zh": "用于按你定的时间，替你复盘竞品和你的商品。"
+            }
+          },
+          {
+            "on": "cx-amazon-seller",
+            "need": "optional",
+            "why": {
+              "en": "Tells cx from the start that you sell on Amazon.",
+              "zh": "用于让 cx 从第一条消息起就知道你在亚马逊开店。"
+            }
+          }
+        ],
+        "source": {
+          "name": "keepa",
+          "ownKey": {
+            "en": "Usage is billed to your balance. You can also use your own Keepa API Key.",
+            "zh": "按用量从余额扣费，也可以使用你自己的 Keepa API Key。"
+          },
+          "aspects": {
+            "amazon/us/<asin>/product": {
+              "en": "A product on Amazon US",
+              "zh": "亚马逊美国站的单个商品"
+            },
+            "amazon/jp/<asin>/product": {
+              "en": "A product on Amazon JP",
+              "zh": "亚马逊日本站的单个商品"
+            },
+            "raw": {
+              "en": "A product on any other marketplace, or any other lookup (a search, a seller, a best sellers list)",
+              "zh": "其他亚马逊站点的商品，或其他查询（搜索、卖家、畅销榜等）"
+            }
+          }
+        },
+        "mcp": "keepa"
+      },
+      "shipped": {
+        "readme": "cx tells you when your products and rivals' changed price, coupon, Buy&nbsp;Box or BSR, from the day-by-day history Keepa keeps for each product. It also finds products by search, best-seller list or seller. It all comes from Keepa, on 11 Amazon marketplaces.\n\nSome things you can ask:\n\n- Which of my B0EXAMPLE1 and these three rivals changed price or ran a coupon last week?\n- What else does the seller who took B0EXAMPLE1's Buy&nbsp;Box sell?\n- In this category, which products sell over 1,000 a month with under 100 reviews?\n\ncx finds a product by its ASIN or by its name.\n\n## Marketplaces\n\nAmazon US, UK, DE, FR, JP, CA, IT, ES, IN, MX and BR.\n\n## What it costs\n\nEach product cx reads, and each lookup, is billed to your ComChatX balance; once you save your own Keepa API Key, Keepa bills you for them instead. The plugin's page shows the price of one product, and Usage shows every purchase and its cost.\n",
+        "readme_zh": "竞品和你的商品哪天调价、上了优惠券、Buy&nbsp;Box 易主、BSR 起落，cx 都能查到：Keepa 记着每个商品逐日的历史。cx 也能按搜索词、畅销榜或卖家找出商品，放在一起对比。数据来自 Keepa，覆盖亚马逊 11 个站点。\n\n你可以这样问：\n\n- 我的 B0EXAMPLE1 和这三个竞品，上周谁调了价、谁上了优惠券？\n- 抢走 B0EXAMPLE1 Buy&nbsp;Box 的卖家，店里还在卖哪些商品？\n- 这个类目里，哪些商品月销量过千、评论却不到 100 条？\n\ncx 可以按 ASIN 或商品名称查找商品。\n\n## 站点\n\n美国、英国、德国、法国、日本、加拿大、意大利、西班牙、印度、墨西哥和巴西。\n\n## 费用\n\ncx 每读取一个商品或做一次查询，都会从你的 ComChatX 余额扣费；保存了你自己的 Keepa API Key 后，改由 Keepa 收费，不再从余额扣。插件页面会显示读取一个商品的价格，「用量」页列出每一笔购买和费用。\n",
+        "skills": [
+          {
+            "name": "keepa",
+            "description": "Amazon product facts from Keepa — current price and price history, coupons, sales rank, monthly sales, offers and Buy Box, listing and release dates — by ASIN or by product name, and a seller's profile by seller id, on Amazon US, UK, DE, FR, JP, CA, IT, ES, IN, MX or BR. Use for any question about a product or a seller on Amazon, including whether a product can be fetched or looked up, before the first data call. Needs cx-sources; if no cx-sources skill is listed, it is not installed, and the seller installs it in Plugins."
+          }
+        ],
+        "prompts": [
+          {
+            "name": "rank-drop",
+            "description": "Find the day [ASIN]'s rank turned on Amazon US, from its price, Buy Box and stock history",
+            "hint": "<asin> [marketplace]"
+          },
+          {
+            "name": "top-ten",
+            "description": "Compare the ten best sellers for [search term] on Amazon US in one table"
+          },
+          {
+            "name": "year-on-year",
+            "description": "See whether [ASIN] sells more or less on Amazon US than at this time last year",
+            "hint": "<asin> [marketplace]"
+          }
+        ],
+        "unread": []
+      },
+      "uses": [
+        "cx-sources"
+      ]
+    },
+    {
+      "name": "cx-listing-playbook",
+      "description": "Lets cx review your listings, log each change and tell whether it worked.",
+      "kinds": [
+        "skill",
+        "prompt"
+      ],
+      "author": "ComChatX",
+      "updated": "2026-09-15T08:00:00.000Z",
+      "version": "0.1.1",
+      "repository": "https://github.com/comchatx/cx-listing-playbook",
+      "readme": "Lets cx look after your Amazon listings and keep a record of every change made to them.\n\n## What cx can do with it\n\n- Give cx an ASIN, and it reads that listing and what Amazon reports on it, says what holds it back, and proposes changes with its reasons.\n- For each change, cx writes down the listing before and after, what the change was meant to do, and when Amazon accepted it.\n- Some time after a change, cx compares the listing before and after, and tells you whether the change worked, did not, or cannot be told yet.\n- Tell cx in your own words how to look after a listing, such as “check it every day and tell me only when something needs changing”, and cx keeps to it.\n\nIt reads your listings and Amazon's reports through Amazon SP-API, and uses Keepa's history where it compares a listing with the market.",
+      "readme_cut": false,
+      "ours": true,
+      "comchatx": {
+        "about": "让 cx 检查 listing、记录每次修改，并判断修改是否见效。",
+        "mark": {
+          "line": "chart"
+        },
+        "section": "extensions",
+        "order": 50
+      },
+      "shipped": {
+        "readme": "Lets cx look after your Amazon listings and keep a record of every change made to them.\n\n## What cx can do with it\n\n- Give cx an ASIN, and it reads that listing and what Amazon reports on it, says what holds it back, and proposes changes with its reasons.\n- For each change, cx writes down the listing before and after, what the change was meant to do, and when Amazon accepted it.\n- Some time after a change, cx compares the listing before and after, and tells you whether the change worked, did not, or cannot be told yet.\n- Tell cx in your own words how to look after a listing, such as “check it every day and tell me only when something needs changing”, and cx keeps to it.\n\nIt reads your listings and Amazon's reports through Amazon SP-API, and uses Keepa's history where it compares a listing with the market.",
+        "readme_zh": "让 cx 帮你照看亚马逊 listing，并记下每一次修改。\n\n## cx 能用它做什么\n\n- 给 cx 一个 ASIN，它会读取这个 listing 和亚马逊的相关报告，指出问题所在，并给出修改建议和理由。\n- 每次修改，cx 都会记下改前改后的内容、这次修改想达到的效果，以及亚马逊接受修改的时间。\n- 修改一段时间后，cx 会对比修改前后的表现，告诉你这次修改见效了、没见效，还是暂时无法判断。\n- 用你自己的话告诉 cx 怎样照看某个 listing，比如“每天帮我看一下，有需要改的再告诉我”，cx 会照此执行。\n\n它通过亚马逊 SP-API 读取你的 listing 和亚马逊的报告，需要和市场对比时会用到 Keepa 的历史数据。",
+        "skills": [],
+        "prompts": [],
+        "unread": []
+      },
+      "uses": []
+    },
+    {
+      "name": "cx-sources",
+      "description": "Buys only the data cx needs, and quotes first if you ask.",
+      "kinds": [
+        "skill",
+        "prompt"
+      ],
+      "author": "ComChatX",
+      "updated": "2026-09-20T08:00:00.000Z",
+      "version": "0.1.12",
+      "repository": "https://github.com/comchatx/cx-sources",
+      "readme": "This is the base every data-source plugin stands on: it comes with each of them, and you never install it yourself. It sets how cx gets data from the sources you install: cx reads each source's own guide first and buys only what the answer needs; it quotes the price first when you ask; and data it paid for but did not receive, it fetches again without paying twice. The raw files it buys are kept in one fixed place in your files, so reading them again costs nothing, and the dates and figures in them are worked out by code, not guessed. It also handles changes to your data settings, and the plugins you ask cx to install or remove. Each purchase is charged to your balance and listed in Settings › Usage.\n\n## What it costs\n\nData Source Core itself is free and needs no setup. Each source you install charges for the data cx buys from it, at the price its own page shows.\n\n## How it installs\n\nIt installs with each data source that needs it.\n",
+      "readme_cut": false,
+      "ours": true,
+      "comchatx": {
+        "name": "Data Source Core",
+        "nameZh": "数据源基础功能",
+        "about": "替 cx 买数据，只买用得到的，可以先报价。",
+        "mark": {
+          "draw": [
+            {
+              "d": "M6 2.5h12v18.8l-2-2.2-2 2.2-2-2.2-2 2.2-2-2.2-2 2.2zM9.65 6.3h4.7a0.95 0.95 0 0 1 0.95 0.95v0a0.95 0.95 0 0 1 -0.95 0.95h-4.7a0.95 0.95 0 0 1 -0.95 -0.95v0a0.95 0.95 0 0 1 0.95 -0.95zM9.65 10.1h4.7a0.95 0.95 0 0 1 0.95 0.95v0a0.95 0.95 0 0 1 -0.95 0.95h-4.7a0.95 0.95 0 0 1 -0.95 -0.95v0a0.95 0.95 0 0 1 0.95 -0.95zM9.65 13.9h2.3a0.95 0.95 0 0 1 0.95 0.95v0a0.95 0.95 0 0 1 -0.95 0.95h-2.3a0.95 0.95 0 0 1 -0.95 -0.95v0a0.95 0.95 0 0 1 0.95 -0.95z",
+              "rule": "evenodd"
+            }
+          ]
+        },
+        "section": "extensions",
+        "order": 80,
+        "skills": {
+          "cx-sources": {
+            "zh": "购买和读取数据，查数据费用，修改数据设置。",
+            "en": "Buys and reads data, says what it costs, and changes data settings."
+          }
+        },
+        "prompts": {
+          "data-costs": {
+            "zh": "查看每个数据源的价格，以及本月在它上面的花费"
+          },
+          "cost-first": {
+            "zh": "先估算这个问题要花多少数据费，等我同意再买：【问题】"
+          }
+        }
+      },
+      "shipped": {
+        "readme": "This is the base every data-source plugin stands on: it comes with each of them, and you never install it yourself. It sets how cx gets data from the sources you install: cx reads each source's own guide first and buys only what the answer needs; it quotes the price first when you ask; and data it paid for but did not receive, it fetches again without paying twice. The raw files it buys are kept in one fixed place in your files, so reading them again costs nothing, and the dates and figures in them are worked out by code, not guessed. It also handles changes to your data settings, and the plugins you ask cx to install or remove. Each purchase is charged to your balance and listed in Settings › Usage.\n\n## What it costs\n\nData Source Core itself is free and needs no setup. Each source you install charges for the data cx buys from it, at the price its own page shows.\n\n## How it installs\n\nIt installs with each data source that needs it.\n",
+        "readme_zh": "这是所有数据源插件的基础，安装任何一个数据源插件都会一起装上它，你不用单独安装。它规定 cx 怎样从你装的数据源取数据：先读这个数据源自己的说明，只买回答用得到的部分；你想先知道价钱，cx 会先报价；付过钱却没拿到的数据，cx 会取回来，不会再付一次钱。买来的原始文件统一存在你文件里的固定位置，再读不花钱；里面的日期和数字由代码换算，不靠估计。数据设置的修改，以及你让 cx 安装、移除的插件，也都由它来管。每一笔购买都从你的余额扣费，记在「设置」的「用量」里。\n\n## 费用\n\n数据源基础功能本身免费，无需设置。每个数据源按自己页面上的价格，对 cx 从它买的数据收费。\n\n## 安装\n\n它会随每个需要它的数据源一起安装。\n",
+        "skills": [
+          {
+            "name": "cx-sources",
+            "description": "Buying and reading data from your sources. Use beside a source's own skill before the first data call, for a question about what data costs, for the data settings, and for a package the seller asks you to install."
+          }
+        ],
+        "prompts": [
+          {
+            "name": "cost-first",
+            "description": "Before buying any data, tell me what this question costs and wait for my go-ahead: [question]",
+            "hint": "<question>"
+          },
+          {
+            "name": "data-costs",
+            "description": "See what each of my data sources costs, and what I spent on it this month"
+          }
+        ],
+        "unread": []
+      },
+      "uses": []
+    },
+    {
+      "name": "@comchatx/cx-s3-storage",
+      "description": "Stores your images in your own bucket, with links for listings.",
+      "kinds": [
+        "skill"
+      ],
+      "author": "ComChatX",
+      "updated": "2026-09-25T08:00:00.000Z",
+      "version": "0.1.4",
+      "repository": "https://github.com/comchatx/cx-s3-storage",
+      "readme": "To change a listing's main image, Amazon needs a link to the picture that anyone can open. Connect your own cloud storage to cx, and cx stores images and other files there, each with a public link a listing can use as its main image; it can also list, read, copy and delete them. Useful for keeping and sorting product images. Amazon S3, Cloudflare R2 and other S3-compatible storage all work; providers call the place a bucket.\n\nSome things you can ask:\n\n- Store these images in my bucket's listings folder, and give me each one's link.\n- Which images are in my bucket's listings folder?\n- Copy last year's images in listings to an archive folder, then delete the originals.\n\n## Connecting your bucket\n\nOn the plugin's Settings, enter the endpoint, bucket, region, Access key ID, Secret access key and public address. Your provider's guide shows where to find each one. A key limited to one bucket keeps cx to that bucket. Your keys stay with ComChatX and are never given to cx.\n\n## What it costs\n\nNothing on ComChatX. Your provider bills your own account as usual.\n",
+      "readme_cut": false,
+      "ours": true,
+      "comchatx": {
+        "name": "S3 File Storage",
+        "nameZh": "S3 文件存储",
+        "about": "把商品图片存进你自己的存储桶，生成 listing 用的链接。",
+        "mark": {
+          "draw": [
+            {
+              "d": "M3.7 8.5c0-1.45 3.7-2.6 8.3-2.6s8.3 1.15 8.3 2.6-3.7 2.6-8.3 2.6-8.3-1.15-8.3-2.6zM5.7 8.5c0 .8 2.8 1.5 6.3 1.5s6.3-.7 6.3-1.5-2.8-1.5-6.3-1.5-6.3.7-6.3 1.5z",
+              "rule": "evenodd"
+            },
+            {
+              "d": "M3.9 11c1.9 1 4.8 1.6 8.1 1.6s6.2-.6 8.1-1.6l-1.6 8.6c-.3 1.5-3 2.6-6.5 2.6s-6.2-1.1-6.5-2.6z",
+              "rule": "evenodd"
+            },
+            {
+              "d": "M4.4 8.2C5 4.6 8.2 2.6 12 2.6s7 2 7.6 5.6",
+              "width": 1.6
+            }
+          ]
+        },
+        "section": "data",
+        "order": 22,
+        "skills": {
+          "s3": {
+            "zh": "读写存储桶里的文件，给出图片等文件的公开地址。",
+            "en": "Reads and writes files in your bucket, and gives a file's public address."
+          }
+        },
+        "source": {
+          "name": "s3-storage",
+          "help": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html",
+          "aspects": {},
+          "fields": {
+            "endpoint": {
+              "label": {
+                "en": "Endpoint",
+                "zh": "端点"
+              },
+              "help": {
+                "en": "For example https://s3.us-east-1.amazonaws.com.",
+                "zh": "例如 https://s3.us-east-1.amazonaws.com。"
+              }
+            },
+            "bucket": {
+              "label": {
+                "en": "Bucket",
+                "zh": "存储桶"
+              }
+            },
+            "region": {
+              "label": {
+                "en": "Region",
+                "zh": "区域"
+              },
+              "help": {
+                "en": "For example us-east-1, or auto for Cloudflare R2.",
+                "zh": "例如 us-east-1，Cloudflare R2 填 auto。"
+              }
+            },
+            "key_id": {
+              "label": {
+                "en": "Access key ID",
+                "zh": "Access key ID"
+              },
+              "help": {
+                "en": "cx can use only the buckets this key reaches.",
+                "zh": "cx 只能使用这个密钥能访问的存储桶。"
+              }
+            },
+            "secret_key": {
+              "label": {
+                "en": "Secret access key",
+                "zh": "Secret access key"
+              }
+            },
+            "public_base": {
+              "label": {
+                "en": "Public address",
+                "zh": "公开地址"
+              },
+              "help": {
+                "en": "Where anyone can open your bucket's files, for example https://images.example.com.",
+                "zh": "存储桶文件对外公开的网址，例如 https://images.example.com。"
+              }
+            }
+          }
+        }
+      },
+      "shipped": {
+        "readme": "To change a listing's main image, Amazon needs a link to the picture that anyone can open. Connect your own cloud storage to cx, and cx stores images and other files there, each with a public link a listing can use as its main image; it can also list, read, copy and delete them. Useful for keeping and sorting product images. Amazon S3, Cloudflare R2 and other S3-compatible storage all work; providers call the place a bucket.\n\nSome things you can ask:\n\n- Store these images in my bucket's listings folder, and give me each one's link.\n- Which images are in my bucket's listings folder?\n- Copy last year's images in listings to an archive folder, then delete the originals.\n\n## Connecting your bucket\n\nOn the plugin's Settings, enter the endpoint, bucket, region, Access key ID, Secret access key and public address. Your provider's guide shows where to find each one. A key limited to one bucket keeps cx to that bucket. Your keys stay with ComChatX and are never given to cx.\n\n## What it costs\n\nNothing on ComChatX. Your provider bills your own account as usual.\n",
+        "readme_zh": "改 listing 的主图时，亚马逊要的是一个谁都能打开的图片链接。这个插件把 cx 连到你自己的云存储，cx 把图片和其他文件存进去，每个文件都有公开链接，可以直接填作 listing 的主图；也能列出、读取、复制和删除里面的文件。适合存放和整理商品图片。Amazon S3、Cloudflare R2 等兼容 S3 的云存储都能用，服务商把存文件的地方叫「存储桶」。\n\n你可以这样问：\n\n- 把这几张图存进存储桶的 listings 文件夹，再告诉我每张的链接。\n- 存储桶的 listings 文件夹里有哪些图片？\n- 把 listings 里去年的旧图复制到 archive 文件夹，再删掉原图。\n\n## 连接存储桶\n\n在插件的「设置」里填写端点、存储桶、区域、Access key ID、Secret access key 和公开地址，各项的获取方法见服务商的指南。密钥只能访问一个存储桶时，cx 也只能用这一个。你的密钥保存在 ComChatX，不会交给 cx。\n\n## 费用\n\nComChatX 不收费，服务商照常向你自己的账号收费。\n",
+        "skills": [
+          {
+            "name": "s3",
+            "description": "The seller's own S3-compatible object storage (Amazon S3, Cloudflare R2, Backblaze B2, Wasabi or any provider that serves the S3 API) through the S3 REST API, signed with the seller's key — list, read, write, copy and delete objects, multipart uploads, and the public address of a stored object, such as an image's URL for a listing. Use before the first call that reads or changes the seller's own bucket. Needs cx-sources; if no cx-sources skill is listed, it is not installed, and the seller installs it in Plugins."
+          }
+        ],
+        "prompts": [],
+        "unread": []
+      },
+      "uses": [
+        "cx-sources"
+      ]
+    },
+    {
+      "name": "@comchatx/providers",
+      "description": "The shared core of ComChatX's vendor packages: points a pi provider at the box's loopback model proxy.",
+      "kinds": [],
+      "author": "ComChatX",
+      "updated": "2026-11-03T01:31:22.054Z",
+      "version": "0.1.0",
+      "repository": "https://github.com/comchatx/providers",
+      "readme": "",
+      "readme_cut": false,
+      "ours": true,
+      "library": true,
+      "shipped": {
+        "skills": [],
+        "prompts": [],
+        "unread": []
+      },
+      "uses": []
+    }
+  ]
+}

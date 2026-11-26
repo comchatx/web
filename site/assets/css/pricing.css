@@ -1,0 +1,200 @@
+/*
+ * ComChatX's site, drawn the way Claude's public site is drawn (claude.com and claude.ai/login, read 2026-10-22), in the product's
+ * theme (brief 2026-10-22-57, correction 2). Claude gives the layout, the spacing, the type scale and the motion (read live on both
+ * pages, 2026-10-23), and those values keep the names Claude's own stylesheet gives them; theme.css gives the faces, the colours by
+ * their jobs, the weights and the radii, and a control the product also draws takes the product's colours, edges and icons.
+ * This file holds the plans block, which the login page shows too, and the pricing page: its tabs, compare table and FAQ topics; the
+ * module pricing keeps it. The pages load theme.css, then base, chrome, sign-in and pricing (README.md, "Modules").
+ */
+
+/* The segmented toggle, in the colours of the product's views switch. Each tab fades its ground and its words as claude.com/pricing's
+   tabs do. */
+.tabs { display: flex; justify-content: safe center; max-width: 100%; margin-top: 48px; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tablist { position: relative; display: inline-flex; flex: none; gap: 2px; padding: 4px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--hover); }
+.tab {
+  position: relative; height: 36px; padding: 0 24px; border: 0; border-radius: var(--radius-small); background: transparent; color: var(--quiet);
+  font-size: .875rem; line-height: 20px; white-space: nowrap; transition: background-color .2s ease-in-out, color .1s ease-in-out;
+}
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { background: var(--wash); color: var(--ink); font-weight: var(--weight-strong); }
+/* When the topics don't fit (pricing's FAQ on a narrow screen), Claude keeps the chosen one and puts the rest behind a button; the
+   button is the product's ⋮ and the list its menu, and the list opens at once, as both open theirs. */
+.tabs-more { position: relative; display: none; }
+.tabs.is-collapsed { justify-content: stretch; gap: 2px; padding: 4px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--hover); overflow: visible; }
+.tabs.is-collapsed .tablist { flex: 1; padding: 0; border: 0; background: none; }
+.tabs.is-collapsed [role="tab"]:not([aria-selected="true"]) { display: none; }
+.tabs.is-collapsed [role="tab"][aria-selected="true"] { flex: 1; }
+.tabs.is-collapsed .tabs-more { display: flex; }
+.tabs-more-button.tab { display: inline-flex; align-items: center; justify-content: center; width: 36px; padding: 0; color: var(--ink); font-size: 1.0625rem; line-height: 1; }
+.tabs-more-menu {
+  position: absolute; right: 0; top: calc(100% + 8px); z-index: 6; display: none; min-width: 12rem; margin: 0; padding: 6px; list-style: none;
+  border: 1px solid var(--line); border-radius: var(--radius-large); background: var(--hover);
+}
+.tabs-more-menu.is-open { display: block; }
+.tabs-more-menu button {
+  display: block; width: 100%; padding: 8px 10px; border: 0; border-radius: var(--radius-small); background: none; color: var(--ink); font-size: .875rem;
+  text-align: left; white-space: nowrap; transition: background-color .2s ease-in-out, color .1s ease-in-out;
+}
+.tabs-more-menu button:hover { background: var(--float-hover); }
+.tabpanel[hidden] { display: none; }
+.tabpanel:focus-visible { outline-offset: 8px; }
+
+/* ── Plans ───────────────────────────────────────────────────────────── */
+/* The trial is the account's, not a plan's: one line over the cards, with its way in. */
+.trial { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px 24px; margin-top: 48px; text-align: center; }
+.trial-words { color: var(--ink); font-size: 1rem; line-height: 1.5; text-wrap: pretty; }
+/* Two cards, each as wide as one of three on a wide window. */
+.plans { margin: 32px auto 0; max-width: 54rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(8, auto); column-gap: 2rem; }
+.plan {
+  display: grid; grid-row: span 8; grid-template-rows: subgrid; align-content: start; padding: 32px; border-radius: var(--radius-large); background: var(--raised);
+  border: 1px solid var(--line);
+}
+.plan-icon { width: 44px; height: 44px; margin-bottom: 28px; color: var(--ink); }
+/* The plans keep Claude's way of naming them, in Latin letters in both languages, so a name is set the same in each. */
+.plan-name { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-bottom: 16px; font-size: 1.875rem; font-weight: var(--weight-strong); line-height: 1.2; }
+.chip { display: inline-flex; align-items: center; height: 20px; padding: 0 6px; border-radius: var(--radius-small); background: var(--raised); box-shadow: inset 0 0 0 1px var(--line); font-size: .6875rem; font-weight: var(--weight-strong); line-height: 1; color: var(--ink); white-space: nowrap; }
+/* A price is a figure, set in the theme's face for figures; a price in words keeps the words' face. */
+.plan-price { font-family: var(--font-mono); font-size: 1.5rem; font-weight: var(--weight-strong); line-height: 1.33; font-variant-numeric: tabular-nums; }
+.plan-price.in-words { font-family: var(--font-ui); }
+/* A card's headline says what its price buys, so it is text to read, not a caption: the body's size, in ink. */
+.plan-note { margin: 4px 0 24px; color: var(--ink); font-size: var(--body-3); line-height: 1.43; text-wrap: pretty; }
+/* Chinese may break between any two characters, so pretty wrapping splits a word such as 余额 to lengthen a short last
+   line. The Chinese note and trial line wrap plainly, and keep their last clause whole instead. */
+:is(.plan-note, .trial-words):lang(zh) { text-wrap: wrap; }
+:is(.plan, .trial) .btn { height: 40px; font-size: 1rem; }
+.plan-fine { margin-top: 8px; min-height: 16px; color: var(--quiet); font-size: .75rem; line-height: 1.33; text-align: center; }
+/* Claude prints a line under the plan buttons on its home and login pages, and none on its pricing page. */
+[data-page="pricing"] .plan-fine { display: none; }
+.plan-rule { height: 1px; margin: 24px 0; background: var(--line); border: 0; }
+.plan-lead { margin-bottom: 8px; font-size: 1rem; font-weight: var(--weight-strong); line-height: 1.5; }
+.plan-list + .plan-lead { margin-top: 24px; }
+.plan-list { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; list-style: none; }
+/* A card's list is what the plan gives, set as Claude sets its plans' lists: the body's size at the strong weight. */
+.plan-list li { display: grid; grid-template-columns: 16px 1fr; gap: 12px; color: var(--ink); font-size: var(--body-3); font-weight: var(--weight-strong); line-height: 1.625; text-wrap: pretty; }
+/* The product's tick, drawn as the product draws its icons, centred on the first line. */
+.plan-list svg { width: 16px; height: 16px; margin-top: 4px; color: var(--ink); fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+:lang(zh) .plan-list li { line-height: 1.7; }
+:lang(zh) .plan-list svg { margin-top: 5px; }
+.footnote { margin-top: 32px; color: var(--quiet); font-size: .75rem; line-height: 1.6; text-align: center; text-wrap: pretty; }
+.footnote a { text-underline-offset: 3px; }
+@media (max-width: 1023px) {
+  .plans { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; row-gap: 24px; max-width: 30rem; margin-inline: auto; }
+  .plan { grid-row: auto; grid-template-rows: none; display: flex; flex-direction: column; }
+}
+@media (max-width: 767px) {
+  .plan { padding: 32px 20px; }
+  .plan-name { font-size: 1.5rem; }
+}
+
+/* The billing panel: what draws from the balance, three side by side, each closing on how it is charged as the feature cards
+   under Claude's API prices close on their cost. */
+.meters { margin-top: 48px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; }
+.meter { display: flex; flex-direction: column; gap: 12px; padding: 32px; border-radius: var(--radius-large); background: var(--raised); border: 1px solid var(--line); }
+.meter h3 { font-size: 1.5rem; font-weight: var(--weight-strong); line-height: 1.25; }
+:lang(zh) .meter h3 { font-size: 1.375rem; }
+.meter p { color: var(--ink); font-size: 1rem; line-height: 1.6; text-wrap: pretty; }
+.meter .plan-icon { margin-bottom: 12px; }
+.meter-cost { margin: auto 0 0; padding-top: 12px; font-weight: var(--weight-strong); }
+.meters-foot { margin-top: 32px; color: var(--quiet); font-size: .875rem; text-align: center; }
+@media (max-width: 1023px) { .meters { grid-template-columns: minmax(0, 1fr); max-width: 30rem; margin-inline: auto; gap: 24px; } }
+@media (max-width: 767px) { .meter { padding: 28px 20px; } .meter p { font-size: .9375rem; } }
+
+/* The pricing page's FAQ: icon and topics over the list, which the chosen topic names. */
+.faq-tabs .faq-list { margin-top: 48px; }
+
+/* ── Pricing page ────────────────────────────────────────────────────── */
+.pricing-hero { padding: 96px 0 0; }
+.pricing-hero h1 { font-size: var(--display-2); font-weight: var(--weight-strong); line-height: 1.1; text-align: center; }
+:lang(zh) .pricing-hero h1 { letter-spacing: .02em; }
+.compare { margin-top: 56px; }
+.compare-head { position: sticky; top: 0; z-index: 5; display: grid; grid-template-columns: var(--compare-cols); align-items: start; gap: 16px; padding: 16px 0; background: var(--ground); border-bottom: 1px solid var(--line); }
+:root { --compare-cols: minmax(0, 2.2fr) repeat(3, minmax(0, 1fr)); }
+/* The search, in the colours of the product's plugin search and with its icon. */
+.compare-search { align-self: center; display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--hover); color: var(--quiet); }
+.compare-search svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.compare-search input { flex: 1; min-width: 0; border: 0; background: none; color: var(--ink); font-size: .875rem; }
+.compare-search input::placeholder { color: var(--quiet); opacity: 1; }
+.compare-search input:focus { outline: none; }
+.compare-search:focus-within { outline: 2px solid var(--act); outline-offset: 2px; }
+.compare-plan { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+.compare-plan b { font-size: 1.125rem; font-weight: var(--weight-strong); line-height: 1.2; }
+.compare-plan .btn-xs { height: 24px; }
+.compare-group { border-bottom: 1px solid var(--line); }
+/* A group's name heads its rows at Claude's size for it, at the strong weight, the heaviest any Chinese system face draws. */
+.compare-group-head { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 22px 8px; border: 0; background: none; color: var(--ink); font-size: var(--headline-5); font-weight: var(--weight-strong); line-height: 1.3; text-align: left; }
+/* Claude's plus that folds a group: its upright stroke turns flat as the group opens and stands again as it closes. */
+.compare-group-head .pm { width: 16px; height: 16px; color: var(--quiet); }
+.compare-group-head .pm-v { transform-origin: 8px 8px; transform: rotate(90deg); transition: transform .5s var(--ease-out-expo); }
+.compare-group-head[aria-expanded="false"] .pm-v { transform: none; }
+.compare-rows[hidden] { display: none; }
+/* A row's name and its cells are text, not captions: the body's size, in ink. */
+.compare-row { display: grid; grid-template-columns: var(--compare-cols); align-items: center; gap: 16px; min-height: 52px; padding: 8px 8px; border-top: 1px solid var(--line); font-size: var(--body-3); }
+.compare-row[hidden] { display: none; }
+.compare-row > :first-child { display: flex; align-items: center; gap: 6px; color: var(--ink); line-height: 1.45; }
+.compare-cell { display: flex; justify-content: center; align-items: center; color: var(--ink); text-align: center; }
+.compare-cell svg { width: 18px; height: 18px; }
+/* Yes is the product's tick cut out of a disc; no is the product's cross. */
+.compare-cell .yes path { fill: none; stroke: var(--ground); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.compare-cell .no { width: 12px; height: 12px; color: var(--quiet); fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+/* A cell's words wrap as one line of text, so a held phrase stays whole inside it. */
+.compare-cell .chip { display: inline-block; height: auto; min-height: 20px; padding: 4px 8px; white-space: normal; font-size: inherit; line-height: 1.3; font-weight: var(--weight-regular); color: var(--ink); }
+/* A term that does not apply is a bare dash, not a chip, so it cannot pass for the minus that folds a group. */
+.compare-cell .na { color: var(--quiet); font-size: .875rem; line-height: 1; }
+.info { position: relative; display: inline-flex; }
+.info > button { display: inline-flex; width: 18px; height: 18px; padding: 0; align-items: center; justify-content: center; border: 0; border-radius: var(--radius-round); background: none; color: var(--quiet); }
+.info > button svg { width: 13px; height: 13px; }
+/* A note opens at once, as Claude's and the product's do, drawn as the product draws its tips; its foot bridges the gap to the button,
+   so the pointer can cross onto it. */
+.info [role="tooltip"] {
+  position: absolute; left: -6px; bottom: calc(100% + 8px); z-index: 10; display: none; width: 16rem; padding: 8px 12px; border: 1px solid var(--float-edge);
+  border-radius: var(--radius); background: var(--raised); color: var(--ink); font-size: .75rem; line-height: 1.5;
+}
+.info [role="tooltip"]::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 9px; }
+.info:hover > [role="tooltip"], .info > button:focus-visible + [role="tooltip"], .info.is-open [role="tooltip"] { display: block; }
+.compare-empty { padding: 24px 8px; color: var(--quiet); font-size: .875rem; }
+/* The first column is no plan of ours: its name carries a note instead of a button, which opens downward from the sticky head. */
+.compare-plan .info [role="tooltip"] { top: calc(100% + 8px); bottom: auto; }
+.compare-plan .info [role="tooltip"]::after { top: auto; bottom: 100%; }
+.compare-empty[hidden] { display: none; }
+/* Claude's narrow table: no search, the plans in equal columns, each feature's name on a line of its own above its marks. */
+@media (max-width: 767px) {
+  :root { --compare-cols: repeat(3, minmax(0, 1fr)); }
+  .compare-head { gap: 6px; }
+  .compare-search { display: none; }
+  .compare-row { row-gap: 14px; column-gap: 6px; padding: 16px 8px; }
+  .compare-row > :first-child { grid-column: 1 / -1; }
+  .compare-group-head { padding-inline: 16px 8px; }
+  .compare-plan b { font-size: 1rem; }
+  .compare-plan .btn-xs { display: none; }
+  /* Three plan columns of a phone are too narrow for a cell's phrase at the body's size; they keep Claude's narrow size. */
+  .compare-cell .chip { font-size: .75rem; padding: 2px 6px; }
+  .compare-row > :first-child { position: relative; }
+  .info { position: static; }
+  .info [role="tooltip"] { left: 0; right: 0; bottom: calc(100% - 4px); width: auto; }
+}
+/* The FAQ follows the compare table without a gap of its own; with no table built, it keeps its own. */
+#compare + #faq { padding-top: 0; }
+
+/* ── Motion, read from Claude's two pages ────────────────────────────── */
+/* claude.com/pricing raises each plan card as its panel shows, on load and on every switch of tab, 80 ms apart. */
+@keyframes plan-raise { from { opacity: 0; transform: translateY(16px); } }
+[data-page="pricing"] :is(.plans, .meters) > * { animation: plan-raise .4s var(--ease-out-expo) backwards; }
+[data-page="pricing"] :is(.plans, .meters) > :nth-child(2) { animation-delay: 80ms; }
+[data-page="pricing"] :is(.plans, .meters) > :nth-child(3) { animation-delay: .16s; }
+/* claude.ai/login slides one thumb under its plan tabs to the tab chosen (pricing.js), its words changing at once. It lifts a card
+   under the pointer with a shadow; the theme draws what lifts by its outline, so the card's outline darkens instead, on Claude's timing. */
+.tab-thumb { position: absolute; top: 4px; left: 0; height: 36px; border-radius: var(--radius-small); background: var(--wash); transform-origin: left; pointer-events: none; }
+.has-thumb .tab { z-index: 1; transition: none; }
+.has-thumb .tab[aria-selected="true"] { background: none; }
+[data-page="login"] .plan { transition: border-color .2s cubic-bezier(.4, 0, .2, 1); }
+@media (hover: hover) { [data-page="login"] .plan:hover { border-color: var(--float-edge); } }
+@media (prefers-reduced-motion: reduce) {
+  [data-page="pricing"] :is(.plans, .meters) > * { animation: none; }
+  .tab, .tabs-more-menu button, .compare-group-head .pm-v, [data-page="login"] .plan { transition: none; }
+}
+/* Where the system draws its own colours, the chosen tab keeps an outline of its own. */
+@media (forced-colors: active) {
+  .tab-thumb { display: none; }
+  .tab[aria-selected="true"] { outline: 2px solid Highlight; outline-offset: -2px; }
+}

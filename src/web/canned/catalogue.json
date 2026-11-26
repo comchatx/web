@@ -1,0 +1,789 @@
+{
+ "plugins": [
+  {
+   "id": "amazon-analysis",
+   "name": "Amazon analysis",
+   "author": "ComChatX",
+   "mark": {
+    "line": "analysis"
+   },
+   "section": "extensions",
+   "about": {
+    "en": "Placeholder: Compares competitors, summarises price moves and audits a listing.",
+    "zh": "占位示例：对比竞品、总结价格变动、诊断 listing。"
+   },
+   "description": {
+    "en": "Compares a product with its competitors, explains its price and BSR moves, and audits its listing, with data bought from Keepa.\n\nA listing page shows where a product stands today. With it, cx answers the questions a seller loses a week to: which competitor's move cost you rank, whether a niche still has room at your price, and what the best sellers' listings say that yours doesn't, with numbers you can check.",
+    "zh": "用从 Keepa 购买的数据对比商品和竞品，解释价格和 BSR 的变化，并诊断 listing。\n\nlisting 页面只告诉你商品现在的位置。有了它，cx 能回答那些卖家要花一周才查得清的问题：是哪个竞品的动作让你掉了排名，以你的价格这个细分市场还有没有空间，畅销品的 listing 写了哪些你没写的，而且每个结论都有可以核对的数字。"
+   },
+   "builds": [
+    {
+     "on": "keepa",
+     "need": "required",
+     "why": {
+      "en": "the prices, offers and rank it compares",
+      "zh": "提供对比用的价格、报价和排名"
+     }
+    },
+    {
+     "on": "review-lens",
+     "need": "optional",
+     "why": {
+      "en": "puts what buyers say into a comparison",
+      "zh": "在对比中加入买家评论"
+     }
+    },
+    {
+     "on": "charts",
+     "need": "optional",
+     "why": {
+      "en": "draws its comparisons as charts",
+      "zh": "把对比画成图表"
+     }
+    }
+   ],
+   "box": {
+    "package": "@comchatx/amazon-analysis",
+    "skills": [
+     {
+      "name": "competitor-scan",
+      "about": {
+       "en": "Sets a product beside its closest competitors and says where it stands.",
+       "zh": "把商品和最接近的竞品放在一起对比，指出它处在什么位置。"
+      }
+     },
+     {
+      "name": "price-moves",
+      "about": {
+       "en": "Reads a product's price, Buy Box and BSR history, and says what changed and why.",
+       "zh": "查看商品价格、Buy Box 和 BSR 的历史数据，说明变了什么、为什么变。"
+      }
+     },
+     {
+      "name": "listing-audit",
+      "about": {
+       "en": "Checks a listing's title, bullet points and images against the best sellers in its category, and lists what is missing, most important first.",
+       "zh": "对照同类目的畅销商品，检查 listing 的标题、五点描述和图片，按重要程度列出缺了什么。"
+      }
+     }
+    ],
+    "prompts": [
+     {
+      "name": "rank-fell",
+      "about": {
+       "en": "A product's rank fell by half this month: check whether a competitor cut its price, ran a coupon or took the Buy Box, and say what to change this week",
+       "zh": "一个商品这个月排名掉了一半：查一下是不是竞品降价、上了优惠券或抢了 Buy Box，说明这周该调整什么"
+      },
+      "hint": "<asin>"
+     },
+     {
+      "name": "room-to-launch",
+      "about": {
+       "en": "I want to launch a 20,000 mAh power bank at $39.99 on Amazon US. Compare the top ten on price, rating, reviews and monthly sales, and tell me where there is room for a new one.",
+       "zh": "我想在美国站以 $39.99 上架一款 20000 mAh 充电宝。对比一下排名前十的价格、评分、评论数和月销量，告诉我新品还有没有空间、空间在哪里。"
+      }
+     },
+     {
+      "name": "listing-audit",
+      "about": {
+       "en": "Audit a listing against the three best sellers in its category: what their titles and bullets say that it doesn't, and which images it is missing",
+       "zh": "对照类目前三名诊断一个 listing：它们的标题和五点描述写了哪些它没写的，它还缺哪些图片"
+      },
+      "hint": "<asin>"
+     }
+    ]
+   }
+  },
+  {
+   "id": "charts",
+   "name": "Charts",
+   "author": "ComChatX",
+   "mark": {
+    "line": "chart"
+   },
+   "section": "extensions",
+   "about": {
+    "en": "Placeholder: Draws cx's charts in the chat.",
+    "zh": "占位示例：把 cx 做的图表直接画在对话里。"
+   },
+   "description": {
+    "en": "Draws the charts cx makes right in the chat. The chart file stays in your files.\n\nA trend is easier to see than to read. Price, rank and sales over months become one chart you can take in at a glance, and share or drop into a report as it is.",
+    "zh": "把 cx 做的图表直接画在对话里，图表文件仍留在你的文件里。\n\n趋势看比读更容易。几个月的价格、排名和销量变成一张图，一眼就能看懂，也可以直接分享或放进报告。"
+   },
+   "builds": [],
+   "box": {
+    "package": "@comchatx/charts",
+    "skills": [
+     {
+      "name": "charts",
+      "about": {
+       "en": "Makes line, bar and scatter charts.",
+       "zh": "制作折线图、柱状图和散点图。"
+      }
+     }
+    ],
+    "prompts": [
+     {
+      "name": "price-chart",
+      "about": {
+       "en": "Chart a product's price and BSR over the last 90 days on one chart, marking the days a competitor changed its price",
+       "zh": "把一个商品过去 90 天的价格和 BSR 画在同一张图上，并标出竞品调价的日子"
+      },
+      "hint": "<asin>"
+     },
+     {
+      "name": "top-ten-chart",
+      "about": {
+       "en": "Draw the top ten power banks as a scatter chart: price against monthly sales, sized by review count.",
+       "zh": "把排名前十的充电宝画成散点图：横轴价格、纵轴月销量，点的大小表示评论数。"
+      }
+     }
+    ]
+   },
+   "page": {
+    "changes": [
+     {
+      "en": "cx's charts are drawn right in the chat.",
+      "zh": "cx 做的图表直接画在对话里。"
+     },
+     {
+      "en": "Each chart keeps a Download link for its file.",
+      "zh": "每张图表下方仍有“下载”链接。"
+     }
+    ],
+    "undo": {
+     "en": "Charts go back to download links at once.",
+     "zh": "图表立即恢复为下载链接。"
+    }
+   }
+  },
+  {
+   "id": "review-lens",
+   "name": "Review Lens",
+   "author": "ComChatX",
+   "mark": {
+    "line": "review"
+   },
+   "section": "data",
+   "about": {
+    "en": "Placeholder: Review digests for Amazon products.",
+    "zh": "占位示例：亚马逊商品的评论摘要。"
+   },
+   "description": {
+    "en": "Review Lens reads a product's reviews and sells a digest of what buyers praise and complain about.\n\nReviews say what buyers like and what they return; a digest of them lets cx compare products on more than price and rank, on Amazon US, UK, DE and JP.",
+    "zh": "Review Lens 读取商品评论，把买家称赞和抱怨的地方整理成摘要出售。\n\n评论里写着买家喜欢什么、为什么退货；有了评论摘要，cx 对比商品时就不只看价格和排名。覆盖美国、英国、德国和日本站。"
+   },
+   "builds": [
+    {
+     "on": "cx-sources",
+     "need": "required"
+    }
+   ],
+   "box": {
+    "package": "cx-review-lens",
+    "skills": [
+     {
+      "name": "review-lens",
+      "about": {
+       "en": "Buys and reads a product's review digest.",
+       "zh": "购买并解读商品的评论摘要。"
+      }
+     }
+    ],
+    "prompts": [
+     {
+      "name": "complaints",
+      "about": {
+       "en": "What buyers complain about most in a product's one- and two-star reviews, and whether any complaint grew in the last three months",
+       "zh": "一个商品的一星和二星评论里买家最常抱怨什么，过去三个月有没有哪类抱怨在变多"
+      },
+      "hint": "<asin>"
+     },
+     {
+      "name": "praise",
+      "about": {
+       "en": "Compare what buyers praise in my product and in my two closest competitors, and tell me which strength of theirs my listing should answer.",
+       "zh": "对比买家对我的商品和两个最接近的竞品分别称赞什么，告诉我 listing 应该回应对手的哪项优势。"
+      }
+     }
+    ]
+   },
+   "source": {
+    "name": "cx-review-lens",
+    "aspects": {
+     "amazon/<market>/<asin>/reviews": {
+      "en": "A product's review digest",
+      "zh": "每个商品的评论摘要"
+     }
+    }
+   }
+  },
+  {
+   "id": "listing-writer",
+   "name": "Listing writer",
+   "author": "ComChatX",
+   "mark": {
+    "line": "pen"
+   },
+   "section": "extensions",
+   "about": {
+    "en": "Placeholder: Writes and translates titles, bullet points and descriptions.",
+    "zh": "占位示例：写 listing 的标题、五点描述和商品描述，也能翻译到其他站点。"
+   },
+   "description": {
+    "en": "Writes a listing's title, bullet points and description from what you tell cx about the product, within each marketplace's length rules, and translates a listing for another marketplace.\n\nBuyers decide from the title and the first bullet. It writes those from what buyers actually say in reviews, inside each marketplace's rules, so a listing is ready to publish, and a second marketplace takes minutes.",
+    "zh": "根据你告诉 cx 的商品信息，按各站点的长度规则撰写标题、五点描述和商品描述，并把 listing 翻译到其他站点。\n\n买家看标题和第一条五点描述就做决定。它根据买家在评论里真正说的话来写，并遵守各站点的规则，写出来的 listing 可以直接发布，上架到另一个站点也只需几分钟。"
+   },
+   "builds": [
+    {
+     "on": "review-lens",
+     "need": "optional",
+     "why": {
+      "en": "writes from what buyers say in their reviews",
+      "zh": "根据买家评论来写"
+     }
+    }
+   ],
+   "box": {
+    "package": "@comchatx/listing-writer",
+    "skills": [
+     {
+      "name": "listing-copy",
+      "about": {
+       "en": "Writes a title, five bullet points and a description within the marketplace's length and style rules, leading with what buyers search for.",
+       "zh": "按站点的长度和风格规则撰写标题、五点描述和商品描述，把买家常搜的词放在前面。"
+      }
+     },
+     {
+      "name": "listing-translate",
+      "about": {
+       "en": "Translates a listing for another marketplace, keeping the search terms buyers there actually use.",
+       "zh": "把 listing 翻译到另一个站点，保留那里的买家实际会搜的词。"
+      }
+     }
+    ],
+    "prompts": [
+     {
+      "name": "listing-copy",
+      "about": {
+       "en": "Write a title and five bullet points for my 20,000 mAh power bank: 65 W USB-C, charges a laptop, 380 g, airline safe. Lead with what buyers in this category search for.",
+       "zh": "为我的 20000 mAh 充电宝写标题和五点描述：65W USB-C、能给笔记本充电、380 克、可带上飞机。把这个类目买家常搜的词放在前面。"
+      }
+     },
+     {
+      "name": "listing-translate",
+      "about": {
+       "en": "Translate my Amazon US listing for Amazon DE, keeping the search terms German buyers use rather than a word-for-word translation.",
+       "zh": "把我的美国站 listing 翻译成德国站的，保留德国买家实际会搜的词，而不是逐字直译。"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "id": "xlsx",
+   "name": "Spreadsheet export",
+   "author": "sheetkit",
+   "mark": {
+    "line": "table"
+   },
+   "section": "extensions",
+   "about": {
+    "en": "Placeholder: Saves a table from the chat as an Excel file.",
+    "zh": "占位示例：把对话里的表格存成 Excel 文件。"
+   },
+   "description": {
+    "en": "Turns a table cx has made into an Excel workbook in your files, one sheet per table, with its number formats kept.\n\nYour supplier, accountant or partner works in Excel. Any table cx makes leaves the chat as a file they can open, sort and edit, with nothing to copy by hand.",
+    "zh": "把 cx 做好的表格存成 Excel 工作簿，放在你的文件里，每个表格一个工作表，保留数字格式。\n\n你的供应商、会计或合伙人用的是 Excel。cx 做的任何表格都能导出成他们可以打开、排序和编辑的文件，不用手工复制。"
+   },
+   "builds": [],
+   "box": {
+    "package": "pi-xlsx-export",
+    "skills": [
+     {
+      "name": "xlsx",
+      "about": {
+       "en": "Writes an Excel workbook from tables in the chat, one sheet per table, with number formats kept.",
+       "zh": "把对话里的表格写成 Excel 工作簿，每个表格一个工作表，保留数字格式。"
+      }
+     }
+    ],
+    "prompts": [
+     {
+      "name": "save-sheet",
+      "about": {
+       "en": "Save the competitor comparison above as a spreadsheet, one sheet for the table and one for the price history, with prices formatted as dollars.",
+       "zh": "把上面的竞品对比存成电子表格：一个工作表放对比表，一个放历史价格，价格按美元格式显示。"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "id": "keyword-planner",
+   "name": "Keyword planner",
+   "author": "ComChatX",
+   "mark": {
+    "line": "hash"
+   },
+   "section": "extensions",
+   "about": {
+    "en": "Placeholder: Finds the search terms a listing should carry, from what ranks in its category.",
+    "zh": "占位示例：从同类目排名靠前的商品里，找出你的 listing 该用的关键词。"
+   },
+   "description": {
+    "en": "Reads the listings that rank best in a product's category and the terms they share, and says which your listing lacks. It buys product data from Keepa when it needs the category's leaders.\n\nAds and listings win or lose on a few search terms. It finds the terms the top sellers in your category share and your listing lacks, so your budget goes where buyers already search.",
+    "zh": "分析商品所在类目排名最好的 listing，找出它们共同使用的词，指出你的 listing 缺了哪些。需要头部商品的数据时，会向 Keepa 购买。\n\n广告和 listing 的成败取决于几个搜索词。它找出类目头部卖家都在用、而你的 listing 缺少的词，让你的预算花在买家已经在搜的地方。"
+   },
+   "builds": [
+    {
+     "on": "keepa",
+     "need": "required",
+     "why": {
+      "en": "what ranks in a category",
+      "zh": "类目里哪些商品排名靠前"
+     }
+    }
+   ],
+   "box": {
+    "package": "@comchatx/keyword-planner",
+    "skills": [
+     {
+      "name": "keyword-planner",
+      "about": {
+       "en": "Reads the leading listings in a category and the search terms they share, and says which your listing lacks.",
+       "zh": "分析类目头部的 listing，找出它们共同使用的搜索词，指出你的 listing 缺了哪些。"
+      }
+     }
+    ],
+    "prompts": [
+     {
+      "name": "missing-terms",
+      "about": {
+       "en": "The search terms the top ten listings in a product's category share that its title and bullets never use",
+       "zh": "一个商品所在类目前十名的 listing 共同用了、而它的标题和五点描述里完全没有的搜索词"
+      },
+      "hint": "<asin>"
+     }
+    ]
+   }
+  },
+  {
+   "id": "ad-copy",
+   "name": "Ad copy",
+   "author": "ComChatX",
+   "mark": {
+    "line": "megaphone"
+   },
+   "section": "extensions",
+   "about": {
+    "en": "Placeholder: Writes headlines and copy for Sponsored Products and Sponsored Brands.",
+    "zh": "占位示例：为商品推广和品牌推广广告撰写标题和文案。"
+   },
+   "description": {
+    "en": "Writes ad headlines and copy within Amazon's length and wording rules, in several variants to test, from the listing you give it.\n\nA good ad is found by testing. It gives you several variants that already fit Amazon's rules, built on the terms that rank, so the first test starts from strong copy.",
+    "zh": "根据你给的 listing，按亚马逊的长度和用语规则撰写广告标题和文案，给出多个版本供测试。\n\n好广告是测出来的。它一次给出多个已经符合亚马逊规则、围绕排名靠前的词写成的版本，第一轮测试就从好文案开始。"
+   },
+   "builds": [
+    {
+     "on": "keyword-planner",
+     "need": "required",
+     "why": {
+      "en": "the search terms its copy is written around",
+      "zh": "文案围绕的搜索词"
+     }
+    }
+   ],
+   "box": {
+    "package": "@comchatx/ad-copy",
+    "skills": [
+     {
+      "name": "ad-copy",
+      "about": {
+       "en": "Writes Sponsored Products and Sponsored Brands copy within Amazon's rules, in variants to test.",
+       "zh": "按亚马逊的规则撰写商品推广和品牌推广文案，给出多个版本供测试。"
+      }
+     }
+    ],
+    "prompts": [
+     {
+      "name": "headlines",
+      "about": {
+       "en": "Write five Sponsored Brands headlines for my power bank, each built around a different search term from my keyword plan, so I can test which one sells.",
+       "zh": "为我的充电宝写五条品牌推广标题，每条各围绕关键词规划里的一个搜索词，方便我测试哪条效果好。"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "id": "pdf-reader",
+   "name": "PDF reader",
+   "author": "docworks",
+   "mark": {
+    "line": "document"
+   },
+   "section": "extensions",
+   "about": {
+    "en": "Placeholder: Reads the PDFs in your files, tables included.",
+    "zh": "占位示例：读取你文件里的 PDF，表格也能读。"
+   },
+   "description": {
+    "en": "Lets cx read a PDF in your files, such as a supplier's catalogue or an invoice, keeping its tables as tables. Where the layout matters, cx reads the page as an image.\n\nSupplier catalogues, price lists and invoices arrive as PDFs. With it, cx reads them with their tables intact, so a quote comparison or a cost check starts from the real numbers.",
+    "zh": "让 cx 读取你文件里的 PDF，比如供应商目录或发票，表格按原样读出；版面重要时，把整页当作图像来读。\n\n供应商目录、报价单和发票通常是 PDF。有了它，cx 读取时表格保持原样，比价和核算成本都从真实数字开始。"
+   },
+   "builds": [],
+   "box": {
+    "package": "pi-pdf-reader",
+    "skills": [
+     {
+      "name": "pdf",
+      "about": {
+       "en": "Reads a PDF's text, its tables as tables, and a page as an image where the layout matters.",
+       "zh": "读取 PDF 的文字，表格按原样读出，版面重要时把整页当作图像来读。"
+      }
+     }
+    ],
+    "prompts": [
+     {
+      "name": "supplier-catalogue",
+      "about": {
+       "en": "Read the supplier catalogue in my files, list every power bank with its unit price at 500 and 1,000 pieces, and flag any without a battery safety certificate.",
+       "zh": "读取我文件里的供应商目录，列出每款充电宝在 500 件和 1000 件起订时的单价，并标出没有电池安全认证的型号。"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "id": "web-reader",
+   "name": "Web reader",
+   "author": "mdfetch",
+   "mark": {
+    "line": "globe"
+   },
+   "section": "extensions",
+   "about": {
+    "en": "Placeholder: Fetches a web page and reads it as plain text.",
+    "zh": "占位示例：抓取网页，转成纯文本给 cx 读。"
+   },
+   "description": {
+    "en": "Leaves out a page's menus and adverts, so cx reads only its text.\n\nPages are mostly menus and adverts. Reading only the text keeps cx on what the page says and spends fewer tokens doing it.",
+    "zh": "去掉网页的菜单和广告，让 cx 只读正文。\n\n网页大部分是菜单和广告。只读正文，cx 能专注在页面真正写了什么，也用更少的 token。"
+   },
+   "builds": [],
+   "box": {
+    "package": "pi-web-reader",
+    "skills": [
+     {
+      "name": "web-reader",
+      "about": {
+       "en": "Fetches a web page and turns it into plain text, leaving out menus and adverts.",
+       "zh": "抓取网页并转成纯文本，去掉菜单和广告。"
+      }
+     }
+    ],
+    "prompts": [
+     {
+      "name": "supplier-terms",
+      "about": {
+       "en": "Read this supplier's terms page and tell me the minimum order, lead time, and who pays for a defective batch.",
+       "zh": "读一下这个供应商的条款页面，告诉我最小起订量、交货周期，以及出现次品批次时由谁承担。"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "id": "launch-planner",
+   "name": "Launch planner",
+   "author": "ComChatX",
+   "mark": {
+    "line": "rocket"
+   },
+   "section": "extensions",
+   "about": {
+    "en": "Placeholder: Plans a product launch, from the niche to the first ads.",
+    "zh": "占位示例：规划新品上架，从评估细分市场到首批广告。"
+   },
+   "description": {
+    "en": "Takes a product idea through a launch as a seasoned seller would, from sizing the niche to the first ad campaign.\n\nA launch goes wrong in the order of its steps: a listing written before the niche was checked, ads bought before the keywords. It walks the steps in a seasoned seller's order, using the plugins it depends on at each one, so nothing is skipped.",
+    "zh": "像资深卖家一样，把一个产品想法从评估细分市场一路做到首批广告。\n\n新品上市往往错在顺序：还没评估市场就写了 listing，还没定关键词就买了广告。它按资深卖家的顺序一步步来，每一步用上它依赖的插件，不会漏掉任何一步。"
+   },
+   "builds": [
+    {
+     "on": "amazon-analysis",
+     "need": "required",
+     "why": {
+      "en": "sizing the niche and its competitors",
+      "zh": "评估细分市场和竞品"
+     }
+    },
+    {
+     "on": "keyword-planner",
+     "need": "required",
+     "why": {
+      "en": "the search terms the listing is built around",
+      "zh": "listing 围绕的搜索词"
+     }
+    },
+    {
+     "on": "listing-writer",
+     "need": "required",
+     "why": {
+      "en": "drafting the listing",
+      "zh": "起草 listing"
+     }
+    },
+    {
+     "on": "ad-copy",
+     "need": "optional",
+     "why": {
+      "en": "sketches the first ads",
+      "zh": "草拟首批广告"
+     }
+    },
+    {
+     "on": "xlsx",
+     "need": "optional",
+     "why": {
+      "en": "saves the plan as a spreadsheet",
+      "zh": "把计划存成电子表格"
+     }
+    }
+   ],
+   "box": {
+    "package": "@comchatx/launch-planner",
+    "skills": [
+     {
+      "name": "launch-plan",
+      "about": {
+       "en": "Turns a product idea into a launch plan.",
+       "zh": "把产品想法变成上架计划。"
+      }
+     }
+    ],
+    "prompts": [
+     {
+      "name": "launch-plan",
+      "about": {
+       "en": "I'm launching a 20,000 mAh power bank on Amazon US next month with a $12 landed cost. Work out the price, draft the listing, and plan the first two weeks of ads.",
+       "zh": "我下个月要在美国站上架一款 20000 mAh 充电宝，到岸成本 12 美元。帮我定价、起草 listing，并规划头两周的广告。"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "id": "google",
+   "name": "Gemini",
+   "author": "ComChatX",
+   "mark": {
+    "logo": "google"
+   },
+   "section": "models",
+   "about": {
+    "en": "Models from Google.",
+    "zh": "Google 提供的模型。"
+   },
+   "description": {
+    "en": "Gemini is Google's family of models. 3.5 Pro takes the longest inputs on this page; 3.5 Flash is among the fastest. Both read images, audio and video.\n\nLongest context on this page: whole catalogues and review dumps in one go. Flash is the fastest cheap model here.",
+    "zh": "Gemini 是 Google 的模型系列。3.5 Pro 能接受这个页面上最长的输入；3.5 Flash 是最快的之一。两者都能读图片、音频和视频。\n\n这个页面上上下文最长：整份目录或整批评论一次读完。Flash 是这里最快的便宜模型。"
+   },
+   "builds": [],
+   "model": {
+    "vendor": "Google",
+    "chat": true,
+    "ways": [
+     "platform",
+     "key"
+    ]
+   }
+  },
+  {
+   "id": "x-ai",
+   "name": "Grok",
+   "author": "ComChatX",
+   "mark": {
+    "logo": "xai"
+   },
+   "section": "models",
+   "about": {
+    "en": "Models from xAI.",
+    "zh": "xAI 提供的模型。"
+   },
+   "description": {
+    "en": "Grok is xAI's family of models. Grok 5 is the flagship; Grok 5 Fast trades some ability for speed and price.\n\nSellers running ads report it writes sharper ad copy; Fast is quick enough for live back-and-forth over keyword lists.",
+    "zh": "Grok 是 xAI 的模型系列。Grok 5 是旗舰；Grok 5 Fast 用一些能力换来速度和价格。\n\n投广告的卖家反映它写的广告文案更犀利；Fast 快到可以边聊边改关键词表。"
+   },
+   "builds": [],
+   "model": {
+    "vendor": "xAI",
+    "chat": true,
+    "ways": [
+     "platform",
+     "account",
+     "key"
+    ]
+   }
+  },
+  {
+   "id": "openai",
+   "name": "GPT",
+   "author": "ComChatX",
+   "mark": {
+    "logo": "openai"
+   },
+   "section": "models",
+   "about": {
+    "en": "Models from OpenAI.",
+    "zh": "OpenAI 提供的模型。"
+   },
+   "description": {
+    "en": "GPT is OpenAI's model family. GPT-6 Sol is designed for reasoning over long documents and tables, while GPT-6 Luna prioritises speed and lower cost. Both can read images and files.\n\nChoose Sol for long reports and multi-step instructions. Choose Luna for everyday questions and summaries.",
+    "zh": "GPT 是 OpenAI 的模型系列。GPT-6 Sol 适合分析长文档和表格；GPT-6 Luna 响应更快、价格更低。两者都能读取图片和文件。\n\n长报告和多步骤任务可选 Sol；日常提问和摘要可选 Luna。"
+   },
+   "builds": [],
+   "model": {
+    "vendor": "OpenAI",
+    "chat": true,
+    "ways": [
+     "platform",
+     "account",
+     "key"
+    ],
+    "subscription": [
+     "ChatGPT"
+    ]
+   }
+  },
+  {
+   "id": "anthropic",
+   "name": "Claude",
+   "author": "ComChatX",
+   "mark": {
+    "logo": "anthropic"
+   },
+   "section": "models",
+   "about": {
+    "en": "Models from Anthropic.",
+    "zh": "Anthropic 提供的模型。"
+   },
+   "description": {
+    "en": "Claude is Anthropic's model family. Opus 5.5 is intended for demanding work, Sonnet 5 balances capability and cost, and Haiku 4.5 prioritises speed and lower cost. All three can read images and files.\n\nSuitable for long analyses, detailed instructions and work where accuracy matters more than model cost.",
+    "zh": "Claude 是 Anthropic 的模型系列。Opus 5.5 适合要求较高的任务；Sonnet 5 兼顾能力和价格；Haiku 4.5 响应更快、价格更低。三者都能读取图片和文件。\n\n适合长篇分析、详细指令，以及准确性比模型费用更重要的任务。"
+   },
+   "builds": [],
+   "model": {
+    "vendor": "Anthropic",
+    "chat": true,
+    "ways": [
+     "platform",
+     "account",
+     "key"
+    ],
+    "subscription": [
+     "Claude"
+    ]
+   }
+  },
+  {
+   "id": "moonshotai",
+   "name": "Kimi",
+   "author": "ComChatX",
+   "mark": {
+    "logo": "moonshot"
+   },
+   "section": "models",
+   "about": {
+    "en": "Models from Moonshot AI.",
+    "zh": "Moonshot AI 提供的模型。"
+   },
+   "description": {
+    "en": "Kimi K3 is Moonshot AI's open-weights model for long documents and work that takes many steps.\n\nSuitable for long Chinese or English documents and tasks that take several steps in sequence.",
+    "zh": "Kimi K3 是 Moonshot AI 的开放权重模型，适合处理长文档和需要很多步骤的工作。\n\n适合处理中英文长文档，以及需要连续完成多个步骤的任务。"
+   },
+   "builds": [],
+   "model": {
+    "vendor": "Moonshot AI",
+    "chat": true,
+    "ways": [
+     "platform",
+     "account",
+     "key"
+    ],
+    "subscription": [
+     "Kimi Code"
+    ]
+   }
+  }
+ ],
+ "bundles": [
+  {
+   "id": "amazon-seller",
+   "name": "Amazon seller",
+   "author": "ComChatX",
+   "mark": {
+    "line": "bag"
+   },
+   "art": "amazon-seller",
+   "about": {
+    "en": "Placeholder: Research Amazon products and their competitors, with charts.",
+    "zh": "占位示例：分析亚马逊商品和竞品，并把结果画成图表。"
+   },
+   "description": {
+    "en": "Research Amazon products and their competitors, with charts.\n\nResearch is where a seller's week goes: pulling prices, reading competitors, building the same charts again. Together these answer \"where does my product stand and why\" from real price and rank history, and show it as a chart you can take to a partner or a supplier.\n\n- Find where my best seller stands against its three closest competitors on price and rank this quarter, and chart it.",
+    "zh": "分析亚马逊商品和竞品，并把结果画成图表。\n\n卖家一周的时间大多花在调研上：查价格、看竞品、一遍遍做同样的图。装上这一套，cx 能用真实的价格和排名历史回答「我的商品处在什么位置、为什么」，并画成可以直接拿给合伙人或供应商看的图。\n\n- 看看我卖得最好的商品本季度在价格和排名上和最接近的三个竞品相比处在什么位置，并画成图表。"
+   },
+   "members": [
+    "cx-sources",
+    "keepa",
+    "amazon-analysis",
+    "charts"
+   ]
+  },
+  {
+   "id": "listing-studio",
+   "name": "Listing studio",
+   "author": "ComChatX",
+   "mark": {
+    "line": "layout"
+   },
+   "about": {
+    "en": "Placeholder: Write listings from what buyers say in their reviews, and translate them for other marketplaces.",
+    "zh": "占位示例：参考买家评论写 listing，并翻译到其他站点。"
+   },
+   "description": {
+    "en": "Write listings from what buyers say in their reviews, and translate them for other marketplaces.\n\nA listing sells when it says what buyers already care about. These read what buyers praise and complain about in reviews, turn it into a title and bullets that fit each marketplace, and chart what changed, so a new marketplace takes a day.",
+    "zh": "参考买家评论写 listing，并翻译到其他站点。\n\nlisting 能卖出去，是因为它说中了买家本来就在意的点。这一套先读买家在评论里夸什么、抱怨什么，再写成符合各站点规则的标题和五点描述，并把变化画成图；上一个新站点只要一天。"
+   },
+   "members": [
+    "listing-writer",
+    "review-lens",
+    "charts"
+   ]
+  },
+  {
+   "id": "amazon-ads-bundle",
+   "name": "Amazon ads",
+   "author": "ComChatX",
+   "mark": {
+    "line": "target"
+   },
+   "about": {
+    "en": "Placeholder: Plan search terms and write ad copy from what ranks.",
+    "zh": "占位示例：参考排名靠前的商品，规划搜索词、写广告文案。"
+   },
+   "description": {
+    "en": "Plan search terms and write ad copy from what ranks.\n\nAd money is lost on terms nobody searches and copy nobody tests. These find the terms your category's leaders win on, write variants built around them, and recommend a model sellers report writes sharper ad copy, so the first campaign starts where the budget pays.",
+    "zh": "参考排名靠前的商品，规划搜索词、写广告文案。\n\n广告费常常浪费在没人搜的词和没测过的文案上。这一套先找出类目头部卖家靠哪些词赢，围绕这些词写出多个版本，并推荐一个卖家反映广告文案写得更犀利的模型，第一批广告就从最值得花钱的地方开始。"
+   },
+   "members": [
+    "ad-copy",
+    "keyword-planner",
+    "keepa",
+    "x-ai"
+   ]
+  }
+ ]
+}

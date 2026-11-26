@@ -1,0 +1,131 @@
+/*
+ * The sign-in door: the official site's homepage, which the product serves at its sign-in address, with the vendor's card where the site drew
+ * one. First ours: the column around the card, in the theme's names. Then the controls the card builds on. Then the vendor's card: each .cl-*
+ * rule draws one of its elements. The vendor's own styles sit in a cascade layer and its "simple" theme leaves them at layout, so these
+ * unlayered rules win without !important; where the vendor still sets a size or an alignment, a rule here sets it back to the column's.
+ */
+
+/* ---- Ours ---- */
+/* The door is the official site's homepage (its stylesheets come first); the door's column stands where the site's drawn card stood,
+   a dialog's width (app.css dialog.confirm), since the theme holds no widths. */
+.door-column { width: 100%; max-width: 30rem; display: flex; flex-direction: column; gap: var(--space-7); }
+.door-card { text-align: start; }
+.door-note { display: flex; flex-direction: column; gap: var(--space-2); }
+/* An inviter's address may hold nothing to break at. */
+.door-note p { margin: 0; overflow-wrap: anywhere; text-wrap: pretty; }
+.door-note-lead { font-size: var(--size-lead); font-weight: var(--weight-strong); line-height: var(--leading-tight); }
+.door-under { display: flex; flex-direction: column; gap: var(--space-4); }
+.door-under p { margin: 0; text-wrap: pretty; }
+.door-legal { color: var(--quiet); font-size: var(--size-caption); line-height: var(--leading-small); }
+/* What a person acts on takes the action colour, as the site's fine links do; each link is kept whole on its line. */
+.door-legal a { color: var(--link-fine); white-space: nowrap; text-decoration: none; }
+.door-legal a:hover { border-radius: var(--radius-small); background: var(--float-hover); box-shadow: 0 0 0 var(--space-1) var(--float-hover); color: var(--act-hover); }
+.door-unseen { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.door-help { font-size: var(--size-small); line-height: var(--leading-small); }
+/* The help line's address and the foot's 获取帮助 read as every link does: no underline, the page's ground under the pointer (below). */
+.door-help a, .cl-footerActionLink { text-decoration: none; }
+/* Said under Google's button when its window was refused or closed, drawn as the card's own lines for a refused field. */
+.door-slot:empty { display: none; }
+/* On a phone the note over the card takes less room, so the card's press stays in the window with an invitation's note over it, and its second line. */
+@media (max-width: 30rem) {
+  .door-column { gap: var(--space-5); }
+  .door-note p { line-height: var(--leading-small); }
+  .door-note p:not(.door-note-lead) { font-size: var(--size-small); }
+}
+.door-failed { margin: 0; }
+
+/* ---- The controls the card builds on ---- */
+/* The site's base.css leaves a control bare; inside the column a control takes the product's base (app.css), at an element's weight, so the
+   card's own rules below still win. A link takes the action colour under the card; in the card the vendor colours its own links. */
+:where(.door-under) a { color: var(--act); }
+:where(.door-column) button { padding: var(--space-2) var(--space-5); border: 1px solid var(--edge); border-radius: var(--radius); background: var(--raised); font-size: var(--size-small); line-height: var(--leading-small); cursor: pointer; }
+:where(.door-column) button:hover:not(:disabled) { background: var(--float-hover); }
+:where(.door-column) button:disabled { border-color: var(--line); background: var(--wash); color: var(--quiet); cursor: default; }
+:where(.door-column) input { padding: var(--space-2) var(--space-4); border: 1px solid var(--edge); border-radius: var(--radius); background: var(--raised); }
+
+/* ---- The vendor's card ---- */
+.cl-rootBox { width: 100%; }
+/* Clipped, never scrolled: the code field's hidden input runs past its boxes, and a box that can scroll is moved by a focus. */
+.cl-cardBox { width: 100%; max-width: none; display: flex; flex-direction: column; overflow: clip; border: 1px solid var(--line); border-radius: var(--radius-large); background: var(--raised); }
+/* The vendor draws the card's body as a card of its own, edged and rounded, and tucks the foot up under its edge: the box around them is
+   the one card, and the foot a line inside it. */
+.cl-card { display: flex; flex-direction: column; gap: var(--space-7); margin: 0; padding: var(--space-8); border: none; border-radius: 0; box-shadow: none; }
+.cl-header { display: flex; text-align: start; flex-direction: column; gap: var(--space-2); }
+.cl-headerTitle { margin: 0; font-size: var(--size-display); font-weight: var(--weight-strong); line-height: var(--leading-tight); }
+.cl-headerSubtitle { margin: 0; color: var(--quiet); font-size: inherit; line-height: inherit; }
+.cl-headerSubtitle:empty { display: none; }
+/* No display of ours: the vendor's own flex stands, and so does its `display: none` on the form while Cloudflare's check waits for a tick. */
+.cl-main, .cl-form { flex-direction: column; align-items: stretch; gap: var(--space-6); }
+.cl-formField { display: flex; flex-direction: column; gap: var(--space-3); }
+.cl-formFieldLabelRow { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
+.cl-formFieldLabel { font-size: var(--size-small); font-weight: var(--weight-strong); line-height: var(--leading-small); }
+/* The vendor caps the field at its own control height; the field is a body line in a control's padding, as the buttons are. */
+.cl-formFieldInput { box-sizing: border-box; width: 100%; max-height: none; padding: var(--space-4) var(--space-5); font-size: var(--size-body); line-height: var(--leading-small); }
+/* A field the browser filled keeps the theme's ground and ink, as the site's fields do. */
+.cl-formFieldInput:autofill { box-shadow: 0 0 0 100vmax var(--raised) inset; -webkit-text-fill-color: var(--ink); caret-color: var(--ink); }
+/* The help screen's one button, which the vendor names by no class of its own, is drawn as the card's other buttons. */
+.cl-formButtonPrimary, .cl-socialButtonsBlockButton, .cl-alternativeMethodsBlockButton, .cl-signIn-havingTrouble .cl-main > .cl-button {
+  position: relative; display: flex; align-items: center; justify-content: center; gap: var(--space-4); width: 100%;
+  padding: var(--space-4) var(--space-5); font-size: var(--size-body); line-height: var(--leading-small);
+}
+.cl-formButtonPrimary { border-color: var(--act); background: var(--act); color: var(--act-ink); font-weight: var(--weight-strong); }
+.cl-formButtonPrimary:hover:not(:disabled) { border-color: var(--act-hover); background: var(--act-hover); }
+/* A press gives, as the site's buttons do: in quickly, out slowly, never past the button's size. */
+.cl-socialButtonsBlockButton, .cl-formButtonPrimary { transition: background-color var(--dur-fast) var(--ease-out-quart), transform var(--dur-slow) var(--ease-out-quart); }
+.cl-socialButtonsBlockButton:active:not(:disabled), .cl-formButtonPrimary:active:not(:disabled) { transform: scale(.975); transition: background-color var(--dur-fast) var(--ease-out-quart), transform var(--dur-fast) ease-out; }
+/* The vendor fades a button that is off; the page draws it off as the controls above draw every button. */
+.cl-button:disabled, .cl-button:disabled .cl-socialButtonsProviderIcon, .cl-formFieldInput:disabled { opacity: 1; }
+.cl-formButtonPrimary.cl-loading { border-color: var(--act); background: var(--act); color: var(--act-ink); cursor: default; }
+/* A press waiting is off by `aria-disabled`, so it keeps the keyboard, and drawn as an off button: the road's (road.ts) and the door's 继续 while the vendor has an address (door.ts). */
+.cl-formButtonPrimary[aria-disabled="true"], .cl-formButtonPrimary[aria-disabled="true"]:hover, .cl-formButtonPrimary[aria-disabled="true"]:active { border-color: var(--line); background: var(--wash); color: var(--quiet); cursor: default; transform: none; }
+.cl-buttonArrowIcon { display: none; }
+.cl-socialButtons { display: flex; flex-direction: column; gap: var(--space-4); }
+/* The vendor sets the label's own smaller type, which sets the button's height too; it takes the button's. */
+.cl-socialButtonsBlockButtonText { font-size: inherit; font-weight: inherit; line-height: inherit; }
+.cl-socialButtonsProviderIcon { display: inline-flex; }
+.cl-socialButtonsProviderIcon svg { width: var(--space-6); height: var(--space-6); }
+.cl-lastAuthenticationStrategyBadge { padding: 0 var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-small); color: var(--quiet); font-size: var(--size-caption); font-weight: var(--weight-regular); line-height: var(--leading-small); }
+.cl-socialButtonsBlockButton .cl-lastAuthenticationStrategyBadge { position: absolute; top: 50%; right: var(--space-5); transform: translateY(-50%); }
+.cl-dividerRow { display: flex; align-items: center; gap: var(--space-5); }
+.cl-dividerLine { flex: 1; height: 1px; background: var(--line); }
+.cl-dividerText { margin: 0; color: var(--quiet); font-size: var(--size-small); line-height: var(--leading-small); }
+.cl-alert { padding: var(--space-4) var(--space-5); border: 1px solid var(--bad-line); border-radius: var(--radius); color: var(--bad); }
+.cl-alertText { margin: 0; font-size: var(--size-small); line-height: var(--leading-small); }
+/* The address stands on one line beside the pencil, cut at its end where it does not fit; the cut is the drawing's, and a screen reader reads it whole. */
+.cl-identityPreview { display: flex; align-items: center; margin-top: var(--space-2); }
+.cl-identityPreviewText { min-width: 0; margin: 0; color: inherit; font-size: inherit; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: var(--weight-strong); }
+.cl-identityPreviewEditButton { position: relative; flex: none; display: inline-flex; margin-inline-start: var(--space-1); padding: var(--space-2); border: none; background: none; color: var(--act); }
+.cl-identityPreviewEditButtonIcon { width: var(--space-6); height: var(--space-6); }
+/* The pencil's word stands over it while the pointer or the focus is on it, in the set's tip's form (`.f-tip`): the sign-in's own markup
+   draws the pencil, so its word is drawn here, from its name, and takes no keys of its own. */
+.cl-identityPreviewEditButton::after {
+  content: attr(aria-label); position: absolute; z-index: 2; bottom: calc(100% + var(--space-3)); right: 0; display: none; width: max-content; max-width: min(20rem, 70vw);
+  padding: var(--space-1) var(--space-4); border: 1px solid var(--float-edge); border-radius: var(--radius); background: var(--raised); box-shadow: var(--float-shadow);
+  color: var(--ink); font-size: var(--size-small); font-weight: var(--weight-regular); line-height: var(--leading-small); white-space: normal; pointer-events: none;
+}
+.cl-identityPreviewEditButton:hover::after, .cl-identityPreviewEditButton:focus-visible::after { display: block; }
+.cl-otpCodeField { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-4); }
+/* The six boxes share the column: at their own width where it holds them, narrower where a phone's does not, so nothing scrolls in the card. */
+.cl-otpCodeFieldInputContainer { align-self: stretch; }
+.cl-otpCodeFieldInputs { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, calc(var(--space-8) + var(--space-5)))); gap: var(--space-4); }
+.cl-otpCodeFieldInput {
+  position: relative; margin: 0; padding: 0; max-height: none; display: flex; align-items: center; justify-content: center; box-sizing: border-box;
+  width: 100%; min-width: 0; height: var(--space-9); font-family: var(--font-mono); font-size: var(--size-title); line-height: var(--leading-glyph);
+}
+.cl-otpCodeFieldInput[data-feedback="success"] { border-color: var(--ink); }
+/* The vendor sets the resend line beside the boxes in the form, not inside the field; it stands as close under them as the field's own gap. */
+.cl-formResendCodeLink { align-self: flex-start; justify-content: flex-start; margin-top: calc(var(--space-4) - var(--space-6)); text-align: start; }
+.cl-otpCodeFieldErrorText { margin: 0; color: var(--bad); font-size: var(--size-small); line-height: var(--leading-small); }
+.cl-formResendCodeLink, .cl-backLink { padding: 0; border: none; background: none; color: var(--act); font-size: var(--size-small); line-height: var(--leading-small); text-decoration: none; }
+.cl-formResendCodeLink:hover:not(:disabled), .cl-backLink:hover, .cl-footerActionLink:hover, .door-help a:hover { border-radius: var(--radius-small); background: var(--float-hover); box-shadow: 0 0 0 var(--space-1) var(--float-hover); color: var(--act-hover); }
+.cl-formResendCodeLink:disabled { border: none; background: none; color: var(--quiet); }
+/* 返回 stands at the start of the line on every screen, as the help screen draws it; the foot's ways are set through the vendor's option (door.ts). */
+.cl-backRow { display: flex; align-self: stretch; width: auto; margin-inline: 0; justify-content: flex-start; }
+/* The vendor marks a working button and the code field it is checking .cl-loading too; these draw only the card's own wait. */
+.cl-loading:not(.cl-button, .cl-otpCodeField, .cl-otpCodeFieldInputs) { display: flex; justify-content: center; padding: var(--space-9) 0; color: var(--quiet); }
+.cl-loading:not(.cl-button, .cl-otpCodeField, .cl-otpCodeFieldInputs) .cl-spinner { width: var(--space-8); height: var(--space-8); }
+.cl-spinner { flex: none; box-sizing: border-box; width: var(--space-6); height: var(--space-6); border: 2px solid currentColor; border-bottom-color: transparent; border-left-color: transparent; border-radius: var(--radius-round); animation: cl-spin 400ms linear infinite; }
+@keyframes cl-spin { to { transform: rotate(1turn); } }
+.cl-formFieldCheckboxInput { flex: none; width: var(--space-6); height: var(--space-6); margin: var(--space-1) 0 0; }
+.cl-formFieldCheckboxLabel { font-size: var(--size-small); line-height: var(--leading-small); }
+@media (prefers-reduced-motion: reduce) { .cl-spinner { animation: none; } }

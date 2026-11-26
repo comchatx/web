@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<script src="../../assets/js/appearance.js"></script>
+<link rel="icon" href="../../assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../../assets/brand/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../../assets/brand/apple-touch-icon.png">
+<link rel="stylesheet" href="../../assets/css/theme.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/chrome.css">
+<link rel="stylesheet" href="../../assets/css/sign-in.css">
+<link rel="stylesheet" href="../../assets/css/pricing.css">
+<link rel="alternate" hreflang="zh-CN" href="../../pricing/">
+<link rel="alternate" hreflang="en" href="../../en/pricing/">
+<!-- Before the page draws: the script is on; ?still asks for a picture, with nothing moving; and the first page of a visit lets
+     the header come down into place (chrome.css). -->
+<script>(() => {
+  const root = document.documentElement;
+  root.classList.add("js");
+  if (new URLSearchParams(location.search).has("still")) root.classList.add("still");
+  try { if (!sessionStorage.getItem("cmx-site-entered")) { sessionStorage.setItem("cmx-site-entered", "1"); root.classList.add("enter"); } }
+  catch { root.classList.add("enter"); }
+})()</script>
+<script src="../../assets/js/chrome.js" defer></script>
+<script src="../../assets/js/sign-in.js" defer></script>
+<script src="../../assets/js/pricing.js" defer></script>
+<title>Pricing — ComChatX</title>
+<meta name="description" content="$1.00 of trial balance when you sign up directly, or $5.00 through an invitation link, good for 7 days. Pro is $10.00 a month, all of it added to your balance for the period. Enterprise is built around your company's needs and priced on its own.">
+</head>
+<body data-page="pricing">
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="site-header">
+  <div class="container header-row">
+    <a class="brand" href="../../en/"><span class="wordmark">ComChatX</span></a>
+    <nav class="nav" aria-label="Main">
+      <ul class="nav-list" role="list">
+        <li><a class="nav-link" href="../../en/pricing/" aria-current="page">Pricing</a></li>
+      </ul>
+      <a class="btn btn-outline" href="../../en/contact/">Contact sales</a>
+      <a class="btn btn-primary way-in" href="https://comchatx.com/login?lang=en">Try ComChatX</a>
+    </nav>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 8h16M4 16h16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+    <div class="mobile-menu-head">
+      <a class="brand" href="../../en/"><span class="wordmark">ComChatX</span></a>
+      <button class="menu-toggle menu-close" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    </div>
+    <ul class="mobile-menu-list" role="list">
+      <li><a class="mm-link" href="../../en/pricing/" aria-current="page">Pricing</a></li>
+    </ul>
+    <div class="mobile-menu-actions">
+      <a class="btn btn-outline" href="../../en/contact/">Contact sales</a>
+      <a class="btn btn-primary way-in" href="https://comchatx.com/login?lang=en">Try ComChatX</a>
+    </div>
+  </div>
+</header>
+<main id="main" class="page-enter">
+  <section class="pricing-hero" id="plans" aria-labelledby="pricing-title">
+    <div class="container">
+      <h1 id="pricing-title" data-words>Pricing</h1>
+      <div class="tabs reveal">
+  <div class="tablist" role="tablist" aria-label="Plans and costs">
+    <button class="tab" role="tab" type="button" id="tab-plans" aria-selected="true" aria-controls="panel-plans">Plans</button>
+    <button class="tab" role="tab" type="button" id="tab-billing" aria-selected="false" aria-controls="panel-billing" tabindex="-1">Costs</button>
+  </div>
+</div>
+<div class="tabpanel" role="tabpanel" id="panel-plans" aria-labelledby="tab-plans" tabindex="0">
+  <div class="trial">
+    <p class="trial-words">$1.00 of trial balance when you sign up directly, <span class="nowrap">or $5.00</span> through an invitation link, <span class="nowrap">good for 7 days,</span> <span class="nowrap">once per account</span></p>
+    <a class="btn btn-primary way-in" href="https://comchatx.com/login?lang=en">Try ComChatX</a>
+  </div>
+  <div class="plans">
+    <article class="plan" aria-labelledby="plan-pro">
+      <svg class="plan-icon" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round"><path d="M6 25.5 16 21l10 4.5v10L16 40 6 35.5v-10Z"/><path d="M6 25.5 16 30l10-4.5M16 30v10"/><path d="M18 14.5 28 10l10 4.5v10L28 29l-10-4.5v-10Z"/><path d="M18 14.5 28 19l10-4.5M28 19v10"/><path d="M28 6V3"/><path d="M23.5 4.5 25 6M32.5 4.5 31 6"/></g></svg>
+      <h3 class="plan-name" id="plan-pro">Pro</h3>
+      <p class="plan-price">$10.00</p>
+      <p class="plan-note">Per month, all $10.00 added to your balance, <span class="nowrap">valid for the period</span></p>
+      <a class="btn btn-primary btn-block way-in" href="https://comchatx.com/login?lang=en">Subscribe</a>
+      <p class="plan-fine">Cancel auto-renewal anytime</p>
+      <hr class="plan-rule">
+      <div>
+        <ul class="plan-list" role="list">
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Every data source</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>The leading models on the market</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>An isolated, secure environment</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Every plugin you can install</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Top up as you need</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Invite friends; your first 3 each get <span class="nowrap">$5.00 of trial balance</span></span></li>
+        </ul>
+        <p class="plan-lead">Any account can:</p>
+        <ul class="plan-list" role="list">
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Connect your store</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Connect your own model API key or subscription</span></li>
+        </ul>
+      </div>
+    </article>
+    <article class="plan" aria-labelledby="plan-enterprise">
+      <svg class="plan-icon" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round"><path d="M22 6 34 11.5v22L22 39l-12-5.5v-22L22 6Z"/><path d="M10 11.5 22 17l12-5.5M22 17v22"/><path d="M10 18.8 22 24.3l12-5.5M10 26.2 22 31.7l12-5.5"/></g></svg>
+      <h3 class="plan-name" id="plan-enterprise">Enterprise</h3>
+      <p class="plan-price in-words">Custom pricing</p>
+      <p class="plan-note">Built and delivered to order for your company</p>
+      <a class="btn btn-primary btn-block" href="../../en/contact/">Contact sales</a>
+      <p class="plan-fine"></p>
+      <hr class="plan-rule">
+      <div>
+        <p class="plan-lead">Everything in Pro, plus:</p>
+        <ul class="plan-list" role="list">
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>cx configured around your workflows and rules</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>AI across your operations, sooner</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Your data stays inside your company network</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Data fetching and access set to <span class="nowrap">your company's security rules</span></span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Smoother teamwork across your company</span></li>
+          <li><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg><span>Runs on your company's own servers</span></li>
+        </ul>
+      </div>
+    </article>
+  </div>
+  <p class="footnote reveal">Prices are in US dollars. Models, data sources and cx's computer are paid from your balance, and every charge shows in Usage.</p>
+</div>
+<div class="tabpanel" role="tabpanel" id="panel-billing" aria-labelledby="tab-billing" tabindex="0" hidden>
+  <div class="meters">
+    <article class="meter">
+      <svg class="plan-icon" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round"><path d="M7 11.5A3.5 3.5 0 0 1 10.5 8h23A3.5 3.5 0 0 1 37 11.5v14a3.5 3.5 0 0 1-3.5 3.5H20l-7 6v-6h-2.5A3.5 3.5 0 0 1 7 25.5v-14Z"/><path d="M14 16h16M14 21h10"/></g></svg>
+      <h3>Models</h3>
+      <p>Use your balance, or connect your own API key or subscription and pay the provider directly.</p>
+      <p class="meter-cost">By usage</p>
+    </article>
+    <article class="meter">
+      <svg class="plan-icon" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round"><ellipse cx="22" cy="10" rx="12" ry="4.5"/><path d="M10 10v24c0 2.5 5.4 4.5 12 4.5s12-2 12-4.5V10M10 18c0 2.5 5.4 4.5 12 4.5S34 20.5 34 18M10 26c0 2.5 5.4 4.5 12 4.5S34 28.5 34 26"/></g></svg>
+      <h3>Data sources</h3>
+      <p>What cx fetches from a paid data source is paid from your balance. It is kept as your files, and reading it again costs nothing more.</p>
+      <p class="meter-cost">Per fetch</p>
+    </article>
+    <article class="meter">
+      <svg class="plan-icon" viewBox="0 0 44 44" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round"><rect x="6" y="8" width="32" height="22" rx="3"/><path d="M16 37h12M22 30v7M12 15l4 3-4 3M19 21h7"/></g></svg>
+      <h3>cx's computer</h3>
+      <p>One per account, in the cloud, used by your cx alone. Billed for its time on and its storage. It shuts down <span class="nowrap">when idle.</span></p>
+      <p class="meter-cost">By time on and storage</p>
+    </article>
+  </div>
+  <p class="meters-foot">Every charge shows in Usage, by plugin or by type, and you can download the details.</p>
+</div>
+    </div>
+  </section>
+
+  <section class="section" id="compare" aria-labelledby="compare-title">
+    <div class="container">
+      <svg class="section-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><rect x="8" y="12" width="34" height="30" rx="3"/><path d="M8 21h34M8 31.5h34M20 12v30M31 12v30"/><circle cx="43" cy="42" r="9"/><path d="m49.5 48.5 7 7"/></g></svg>
+      <h2 class="section-title" id="compare-title" data-words>Compare features</h2>
+      <div class="compare" data-compare>
+        <div class="compare-head">
+          <label class="compare-search"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"/></svg><span class="visually-hidden">Search features</span><input type="search" data-filter placeholder="Search"></label>
+          <div class="compare-plan"><b>General AI assistants</b><span class="info"><button type="button" aria-label="About general AI assistants" aria-describedby="tip-0"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="M8 7.25v4M8 4.9v.2" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button><span role="tooltip" id="tip-0">General-purpose AI assistants on the market. Each one's features are as its own website states.</span></span></div>
+          <div class="compare-plan"><b>Pro</b><a class="btn btn-primary btn-xs" href="https://comchatx.com/login?lang=en">Subscribe</a></div>
+          <div class="compare-plan"><b>Enterprise</b><a class="btn btn-primary btn-xs" href="../../en/contact/">Contact sales</a></div>
+        </div>
+
+        <div class="compare-group">
+          <button class="compare-group-head" type="button" aria-expanded="true" aria-controls="cg-1"><span>Basics</span><svg class="pm" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="pm-v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg></button>
+          <div class="compare-rows" id="cg-1">
+            <div class="compare-row"><span>Chat</span><span class="compare-cell"><svg class="yes" viewBox="0 0 18 18" focusable="false" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="currentColor"/><path d="M4.5 9.5l3 3 6-7"/></svg><span class="visually-hidden">Included</span></span><span class="compare-cell"><svg class="yes" viewBox="0 0 18 18" focusable="false" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="currentColor"/><path d="M4.5 9.5l3 3 6-7"/></svg><span class="visually-hidden">Included</span></span><span class="compare-cell"><svg class="yes" viewBox="0 0 18 18" focusable="false" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="currentColor"/><path d="M4.5 9.5l3 3 6-7"/></svg><span class="visually-hidden">Included</span></span></div>
+            <div class="compare-row"><span>File uploads</span><span class="compare-cell"><svg class="yes" viewBox="0 0 18 18" focusable="false" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="currentColor"/><path d="M4.5 9.5l3 3 6-7"/></svg><span class="visually-hidden">Included</span></span><span class="compare-cell"><svg class="yes" viewBox="0 0 18 18" focusable="false" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="currentColor"/><path d="M4.5 9.5l3 3 6-7"/></svg><span class="visually-hidden">Included</span></span><span class="compare-cell"><svg class="yes" viewBox="0 0 18 18" focusable="false" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="currentColor"/><path d="M4.5 9.5l3 3 6-7"/></svg><span class="visually-hidden">Included</span></span></div>
+          </div>
+        </div>
+
+        <div class="compare-group">
+          <button class="compare-group-head" type="button" aria-expanded="true" aria-controls="cg-2"><span>Data</span><svg class="pm" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="pm-v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg></button>
+          <div class="compare-rows" id="cg-2">
+            <div class="compare-row"><span>Data sources<span class="info"><button type="button" aria-label="About data sources" aria-describedby="tip-1"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="M8 7.25v4M8 4.9v.2" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button><span role="tooltip" id="tip-1">The data comes from the providers' records: every figure can be traced, and it does not change with search results.</span></span></span><span class="compare-cell"><span class="chip">Web search</span></span><span class="compare-cell"><span class="chip">Multiple <span class="nowrap">data providers</span></span></span><span class="compare-cell"><span class="chip">Multiple <span class="nowrap">data providers</span></span></span></div>
+            <div class="compare-row"><span>Store connection</span><span class="compare-cell"><span class="chip">Needs a <span class="nowrap">third-party tool</span></span></span><span class="compare-cell"><svg class="yes" viewBox="0 0 18 18" focusable="false" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="currentColor"/><path d="M4.5 9.5l3 3 6-7"/></svg><span class="visually-hidden">Included</span></span><span class="compare-cell"><span class="chip">Set to <span class="nowrap">security rules</span></span></span></div>
+          </div>
+        </div>
+
+        <div class="compare-group">
+          <button class="compare-group-head" type="button" aria-expanded="true" aria-controls="cg-3"><span>Models</span><svg class="pm" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="pm-v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg></button>
+          <div class="compare-rows" id="cg-3">
+            <div class="compare-row"><span>Models available</span><span class="compare-cell"><span class="chip">Chosen by <span class="nowrap">the provider</span></span></span><span class="compare-cell"><span class="chip">Leading models</span></span><span class="compare-cell"><span class="chip">Leading models</span></span></div>
+            <div class="compare-row"><span>Own model API key or subscription</span><span class="compare-cell"><svg class="no" viewBox="0 0 16 16" focusable="false" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg><span class="visually-hidden">Not included</span></span><span class="compare-cell"><svg class="yes" viewBox="0 0 18 18" focusable="false" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="currentColor"/><path d="M4.5 9.5l3 3 6-7"/></svg><span class="visually-hidden">Included</span></span><span class="compare-cell"><svg class="yes" viewBox="0 0 18 18" focusable="false" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="currentColor"/><path d="M4.5 9.5l3 3 6-7"/></svg><span class="visually-hidden">Included</span></span></div>
+          </div>
+        </div>
+
+        <div class="compare-group">
+          <button class="compare-group-head" type="button" aria-expanded="true" aria-controls="cg-4"><span>Cost</span><svg class="pm" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="pm-v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg></button>
+          <div class="compare-rows" id="cg-4">
+            <div class="compare-row"><span>Billing<span class="info"><button type="button" aria-label="About billing" aria-describedby="tip-2"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="M8 7.25v4M8 4.9v.2" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button><span role="tooltip" id="tip-2">Pro is $10.00 a month, all of it added to your balance for the period.</span></span></span><span class="compare-cell"><span class="chip">Monthly fee, <span class="nowrap">fixed allowance</span></span></span><span class="compare-cell"><span class="chip">Monthly fee, all added <span class="nowrap">to balance</span></span></span><span class="compare-cell"><span class="chip">Custom pricing</span></span></div>
+          </div>
+        </div>
+
+        <div class="compare-group">
+          <button class="compare-group-head" type="button" aria-expanded="true" aria-controls="cg-5"><span>Deployment</span><svg class="pm" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="pm-v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg></button>
+          <div class="compare-rows" id="cg-5">
+            <div class="compare-row"><span>Runs on</span><span class="compare-cell"><span class="chip">Provider's cloud</span></span><span class="compare-cell"><span class="chip">ComChatX's <span class="nowrap">cloud</span></span></span><span class="compare-cell"><span class="chip">Company's <span class="nowrap">own servers</span></span></span></div>
+            <div class="compare-row"><span>Data stays inside the company network</span><span class="compare-cell"><svg class="no" viewBox="0 0 16 16" focusable="false" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg><span class="visually-hidden">Not included</span></span><span class="compare-cell"><svg class="no" viewBox="0 0 16 16" focusable="false" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg><span class="visually-hidden">Not included</span></span><span class="compare-cell"><svg class="yes" viewBox="0 0 18 18" focusable="false" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="currentColor"/><path d="M4.5 9.5l3 3 6-7"/></svg><span class="visually-hidden">Included</span></span></div>
+            <div class="compare-row"><span>cx configured around workflows and rules</span><span class="compare-cell"><svg class="no" viewBox="0 0 16 16" focusable="false" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg><span class="visually-hidden">Not included</span></span><span class="compare-cell"><svg class="no" viewBox="0 0 16 16" focusable="false" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg><span class="visually-hidden">Not included</span></span><span class="compare-cell"><svg class="yes" viewBox="0 0 18 18" focusable="false" aria-hidden="true"><circle cx="9" cy="9" r="8" fill="currentColor"/><path d="M4.5 9.5l3 3 6-7"/></svg><span class="visually-hidden">Included</span></span></div>
+          </div>
+        </div>
+        <p class="compare-empty" data-empty hidden>Nothing matches that.</p>
+        <p class="visually-hidden" role="status" data-found></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section faq-tabs" id="faq" aria-labelledby="faq-title">
+    <div class="container">
+      <svg class="section-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><circle cx="32" cy="32" r="22"/><path d="M25.5 26a6.5 6.5 0 1 1 9.4 5.8c-1.8.9-2.9 2.4-2.9 4.4v1.3"/><path d="M32 44v.4"/></g></svg>
+      <h2 class="section-title" id="faq-title" data-words>FAQ</h2>
+      <div class="tabs">
+        <div class="tablist" role="tablist" aria-label="Question topics">
+          <button class="tab" role="tab" type="button" id="ft-1" aria-selected="true" aria-controls="fp-1">Plans and usage</button>
+          <button class="tab" role="tab" type="button" id="ft-2" aria-selected="false" aria-controls="fp-2" tabindex="-1">Payment</button>
+          <button class="tab" role="tab" type="button" id="ft-3" aria-selected="false" aria-controls="fp-3" tabindex="-1">Managing your plan</button>
+        </div>
+        <div class="tabs-more" data-more>
+          <button class="tab tabs-more-button" type="button" aria-expanded="false" aria-controls="faq-more" aria-label="Other topics"><span aria-hidden="true">⋮</span></button>
+          <ul class="tabs-more-menu" id="faq-more" role="list"></ul>
+        </div>
+      </div>
+
+      <div class="tabpanel" role="tabpanel" id="fp-1" aria-labelledby="ft-1" tabindex="0">
+        <ul class="faq-list" role="list">
+          <li class="faq-item">
+            <h3 class="faq-q"><button class="faq-button" type="button" id="q11-q" aria-expanded="false" aria-controls="q11"><span>How long does the trial last?</span><svg class="plus" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><svg class="chev-r" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.25 4.5 9.75 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h3>
+            <div class="faq-a" id="q11" role="region" aria-labelledby="q11-q" hidden><div class="faq-a-inner"><p>Signing up directly gives you $1.00 of trial balance, and signing up through an invitation link gives you $5.00, good for 7&nbsp;days and given once per account. It pays for every model, data sources and cx's computer.</p></div></div>
+          </li>
+          <li class="faq-item">
+            <h3 class="faq-q"><button class="faq-button" type="button" id="q12-q" aria-expanded="false" aria-controls="q12"><span>What comes with Pro?</span><svg class="plus" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><svg class="chev-r" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.25 4.5 9.75 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h3>
+            <div class="faq-a" id="q12" role="region" aria-labelledby="q12-q" hidden><div class="faq-a-inner"><p>Pro is $10.00 a month and brings $10.00 of included credit each month, which expires when the period ends and can't pay for Pro itself. Once you subscribe you can top up and invite friends.</p></div></div>
+          </li>
+          <li class="faq-item">
+            <h3 class="faq-q"><button class="faq-button" type="button" id="q13-q" aria-expanded="false" aria-controls="q13"><span>How is usage billed?</span><svg class="plus" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><svg class="chev-r" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.25 4.5 9.75 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h3>
+            <div class="faq-a" id="q13" role="region" aria-labelledby="q13-q" hidden><div class="faq-a-inner"><p>The models, data sources and cx's computer that cx uses are paid from your balance as they're used. Every charge shows in Usage, where you can view it by plugin or by type and download the details.</p></div></div>
+          </li>
+          <li class="faq-item">
+            <h3 class="faq-q"><button class="faq-button" type="button" id="q14-q" aria-expanded="false" aria-controls="q14"><span>What happens when my balance runs out?</span><svg class="plus" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><svg class="chev-r" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.25 4.5 9.75 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h3>
+            <div class="faq-a" id="q14" role="region" aria-labelledby="q14-q" hidden><div class="faq-a-inner"><p>A turn that has started runs to its end. When your balance runs out, cx stops and tells you; subscribe or top up to carry on.</p></div></div>
+          </li>
+          <li class="faq-item">
+            <h3 class="faq-q"><button class="faq-button" type="button" id="q15-q" aria-expanded="false" aria-controls="q15"><span>And when the trial ends?</span><svg class="plus" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><svg class="chev-r" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.25 4.5 9.75 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h3>
+            <div class="faq-a" id="q15" role="region" aria-labelledby="q15-q" hidden><div class="faq-a-inner"><p>Once the trial balance is used up or expires, you can still log in, and subscribing lets you carry on.</p></div></div>
+          </li>
+          <li class="faq-item">
+            <h3 class="faq-q"><button class="faq-button" type="button" id="q16-q" aria-expanded="false" aria-controls="q16"><span>How much does Enterprise cost?</span><svg class="plus" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><svg class="chev-r" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.25 4.5 9.75 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h3>
+            <div class="faq-a" id="q16" role="region" aria-labelledby="q16-q" hidden><div class="faq-a-inner"><p>Enterprise is built around your company's needs and priced on its own. Tell us what you need on the <a href="../../en/contact/">contact sales</a> page.</p></div></div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="tabpanel" role="tabpanel" id="fp-2" aria-labelledby="ft-2" tabindex="0" hidden>
+        <ul class="faq-list" role="list">
+          <li class="faq-item">
+            <h3 class="faq-q"><button class="faq-button" type="button" id="q21-q" aria-expanded="false" aria-controls="q21"><span>How can I pay?</span><svg class="plus" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><svg class="chev-r" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.25 4.5 9.75 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h3>
+            <div class="faq-a" id="q21" role="region" aria-labelledby="q21-q" hidden><div class="faq-a-inner"><p>Renewing monthly is by card, on the same date each month; one month can be paid with Alipay or a card.</p></div></div>
+          </li>
+          <li class="faq-item">
+            <h3 class="faq-q"><button class="faq-button" type="button" id="q22-q" aria-expanded="false" aria-controls="q22"><span>What are the top-up terms?</span><svg class="plus" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><svg class="chev-r" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.25 4.5 9.75 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h3>
+            <div class="faq-a" id="q22" role="region" aria-labelledby="q22-q" hidden><div class="faq-a-inner"><p>You can top up once you subscribe. Each top-up is at least $10.00, carries no fee and lasts 12 months.</p></div></div>
+          </li>
+          <li class="faq-item">
+            <h3 class="faq-q"><button class="faq-button" type="button" id="q23-q" aria-expanded="false" aria-controls="q23"><span>What is renewal from balance?</span><svg class="plus" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><svg class="chev-r" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.25 4.5 9.75 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h3>
+            <div class="faq-a" id="q23" role="region" aria-labelledby="q23-q" hidden><div class="faq-a-inner"><p>When you buy one month at a time, it is on by default, and it can be turned off at any time. When the month ends, if your top-up and reward balance together hold $10.00, $10.00 is taken from them for one more month.</p></div></div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="tabpanel" role="tabpanel" id="fp-3" aria-labelledby="ft-3" tabindex="0" hidden>
+        <ul class="faq-list" role="list">
+          <li class="faq-item">
+            <h3 class="faq-q"><button class="faq-button" type="button" id="q31-q" aria-expanded="false" aria-controls="q31"><span>How do I cancel auto-renewal?</span><svg class="plus" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><svg class="chev-r" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.25 4.5 9.75 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h3>
+            <div class="faq-a" id="q31" role="region" aria-labelledby="q31-q" hidden><div class="faq-a-inner"><p>Whenever you like. Nothing is then charged on its own, and renewal from balance is turned off with it.</p></div></div>
+          </li>
+          <li class="faq-item">
+            <h3 class="faq-q"><button class="faq-button" type="button" id="q33-q" aria-expanded="false" aria-controls="q33"><span>What do I get for inviting a friend?</span><svg class="plus" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><svg class="chev-r" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.25 4.5 9.75 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h3>
+            <div class="faq-a" id="q33" role="region" aria-labelledby="q33-q" hidden><div class="faq-a-inner"><p>A Pro account can invite any number of friends. The first 3 friends who sign up with your invitation link get $5.00 of trial balance, and friends after them get $1.00, each good for 7&nbsp;days. If a friend first subscribes within 30 days of signing up, you get $5.00 of reward balance, valid for 12 months. The same card or Alipay account earns a reward only once.</p></div></div>
+          </li>
+          <li class="faq-item">
+            <h3 class="faq-q"><button class="faq-button" type="button" id="q34-q" aria-expanded="false" aria-controls="q34"><span>Do I pay to use my own model API key or subscription?</span><svg class="plus" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><path class="v" d="M8 2.5v11" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg><svg class="chev-r" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6.25 4.5 9.75 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg></button></h3>
+            <div class="faq-a" id="q34" role="region" aria-labelledby="q34-q" hidden><div class="faq-a-inner"><p>The provider bills you for the model, so that usage does not come from your balance. Data sources and cx's computer still do. You don't need Pro to connect your own subscription or key.</p></div></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="site-footer" data-theme="dark">
+<div class="container">
+  <div class="footer-grid">
+    <a class="footer-logo" href="../../en/"><span class="wordmark">ComChatX</span></a>
+    <nav class="footer-cols" aria-label="Footer">
+  <div class="footer-col">
+    <ul role="list">
+      <li><a href="../../en/pricing/">Pricing</a></li>
+      <li><a class="way-in" href="https://comchatx.com/login?lang=en">Log in</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <ul role="list">
+      <li><a href="../../en/pricing/#faq">FAQ</a></li>
+      <li><a href="../../en/contact/">Contact sales</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <ul role="list">
+      <li><a href="/en/terms/">Terms of Service</a></li>
+      <li><a href="/en/privacy/">Privacy Policy</a></li>
+    </ul>
+  </div>
+</nav>
+    <p class="footer-copy">© 2026 ComChatX</p>
+  </div>
+  <div class="footer-bar">
+    <!-- ComChatX has no X or LinkedIn account yet: the two icons stand where the links will go, and link nowhere until then. -->
+<ul class="footer-social" role="list" aria-label="Social media">
+  <li><a class="footer-social-link" role="link" aria-disabled="true" aria-label="X"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 1.5h4l9 13h-4Z" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/><path d="M14.5 1.5 9.18 6.82M6.82 9.18 1.5 14.5" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/></svg></a></li>
+  <li><a class="footer-social-link" role="link" aria-disabled="true" aria-label="LinkedIn"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M2.25.75h11.5a1.5 1.5 0 0 1 1.5 1.5v11.5a1.5 1.5 0 0 1-1.5 1.5H2.25a1.5 1.5 0 0 1-1.5-1.5V2.25a1.5 1.5 0 0 1 1.5-1.5Zm1.6 4.8a1.34 1.34 0 1 0 0-2.68 1.34 1.34 0 0 0 0 2.68ZM2.68 6.56h2.34v6.57H2.68Zm3.73 0h2.23v.95c.36-.61 1.14-1.12 2.17-1.12 1.81 0 2.51 1.17 2.51 2.96v3.78h-2.34v-3.29c0-.87-.27-1.45-1.09-1.45-.89 0-1.25.62-1.25 1.45v3.29H6.41Z"/></svg></a></li>
+</ul>
+    <div class="lang-switch">
+  <button type="button" aria-expanded="false" aria-controls="lang-menu" aria-label="Language: English"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M2.6 10h14.8M10 2.5c2 2.1 3 4.6 3 7.5s-1 5.4-3 7.5c-2-2.1-3-4.6-3-7.5s1-5.4 3-7.5Z" fill="none" stroke="currentColor" stroke-width="1.2"/></svg><span>English</span><svg class="caret" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3.5 7 10 13.5 16.5 7" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <ul class="lang-menu" id="lang-menu" role="list">
+    <li><a href="../../pricing/" hreflang="zh-CN" lang="zh-CN">中文</a></li>
+    <li><a href="../../en/pricing/" hreflang="en" lang="en" aria-current="true">English</a></li>
+  </ul>
+</div>
+  </div>
+</div>
+</footer>
+</body>
+</html>

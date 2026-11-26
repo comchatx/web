@@ -1,0 +1,113 @@
+{"t":280,"scene":"stop-two-waiting","prompt":"Write a long note on returns."}
+{"t":281,"frame":{"kind":"life","epoch":"42673fd74afc5f814a78fed703b2f5cc"}}
+{"t":281,"frame":{"kind":"entry","epoch":"42673fd74afc5f814a78fed703b2f5cc","seq":1,"entryId":"a5b26878","body":{"form":"model_change","provider":"google","modelId":"gemini-3.6-flash"}}}
+{"t":281,"frame":{"kind":"entry","epoch":"42673fd74afc5f814a78fed703b2f5cc","seq":2,"entryId":"acecf350","body":{"form":"thinking_level_change","thinkingLevel":"low"}}}
+{"t":281,"frame":{"kind":"turn","running":false}}
+{"t":281,"frame":{"kind":"sleep","dueInMs":3599720}}
+{"t":281,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":284,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":284,"frame":{"kind":"turn","running":true}}
+{"t":317,"frame":{"kind":"entry","epoch":"42673fd74afc5f814a78fed703b2f5cc","seq":3,"entryId":"042a05e6","body":{"form":"system","counts":{"contentBlocks":0,"sections":5,"toolsAdded":4,"toolsRemoved":0}}}}
+{"t":317,"frame":{"kind":"entry","epoch":"42673fd74afc5f814a78fed703b2f5cc","seq":4,"entryId":"259a7e49","body":{"form":"message","role":"user","content":[{"form":"text","text":"Write a long note on returns."}],"timestamp":1791535034177}}}
+{"t":423,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_start","contentIndex":0}}}
+{"t":423,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_delta","contentIndex":0,"delta":"Planning the note."}}}
+{"t":520,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_end","contentIndex":0,"content":"Planning the note."}}}
+{"t":520,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":1}}}
+{"t":520,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 1. "}}}
+{"t":621,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 2. "}}}
+{"t":722,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 3. "}}}
+{"t":822,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 4. "}}}
+{"t":923,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 5. "}}}
+{"t":1022,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 6. "}}}
+{"t":1124,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 7. "}}}
+{"t":1221,"command":"prompt","message":"Keep it short."}
+{"t":1221,"command":"prompt","message":"Add a title."}
+{"t":1224,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 8. "}}}
+{"t":1427,"command":"clear_queue"}
+{"t":1429,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 9. "}}}
+{"t":1433,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Point 10. "}}}
+{"t":1433,"command":"abort"}
+{"t":1452,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":1452,"answered":"abort"}
+{"t":1454,"frame":{"kind":"entry","epoch":"42673fd74afc5f814a78fed703b2f5cc","seq":5,"entryId":"c1984b58","body":{"form":"message","role":"assistant","content":[{"form":"thinking","thinking":"Planning the note."},{"form":"text","text":"Point 1. Point 2. Point 3. Point 4. Point 5. Point 6. Point 7. Point 8. Point 9. Point 10. "}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"aborted","timestamp":1791535034196,"errorMessage":"This operation was aborted","durationMs":1149,"thinkingLevel":"low"}}}
+{"t":1455,"frame":{"kind":"turn","running":false}}
+{"t":1455,"command":"steer","message":"Add a title."}
+{"t":1455,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":1456,"command":"prompt","message":"Keep it short."}
+{"t":1457,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":1459,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":1459,"frame":{"kind":"turn","running":true}}
+{"t":1468,"frame":{"kind":"entry","epoch":"42673fd74afc5f814a78fed703b2f5cc","seq":6,"entryId":"c1015117","body":{"form":"message","role":"user","content":[{"form":"text","text":"Keep it short."}],"timestamp":1791535035352}}}
+{"t":1468,"frame":{"kind":"entry","epoch":"42673fd74afc5f814a78fed703b2f5cc","seq":7,"entryId":"302c770a","body":{"form":"message","role":"user","content":[{"form":"text","text":"Add a title."}],"timestamp":1791535035350}}}
+{"t":1572,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_start","contentIndex":0}}}
+{"t":1572,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_delta","contentIndex":0,"delta":"Short, with a title."}}}
+{"t":1671,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_end","contentIndex":0,"content":"Short, with a title."}}}
+{"t":1672,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":1}}}
+{"t":1672,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Returns\n\n"}}}
+{"t":1771,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Rule 1. "}}}
+{"t":1871,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Rule 2. "}}}
+{"t":1972,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Rule 3. "}}}
+{"t":2073,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Rule 4. "}}}
+{"t":2173,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Rule 5. "}}}
+{"t":2273,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Rule 6. "}}}
+{"t":2373,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Rule 7. "}}}
+{"t":2473,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Rule 8. "}}}
+{"t":2575,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Rule 9. "}}}
+{"t":2676,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Rule 10. "}}}
+{"t":2775,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Rule 11. "}}}
+{"t":2875,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Rule 12. "}}}
+{"t":2978,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_end","contentIndex":1,"content":"Returns\n\nRule 1. Rule 2. Rule 3. Rule 4. Rule 5. Rule 6. Rule 7. Rule 8. Rule 9. Rule 10. Rule 11. Rule 12. "}}}
+{"t":2979,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":2980,"frame":{"kind":"entry","epoch":"42673fd74afc5f814a78fed703b2f5cc","seq":8,"entryId":"aa53ed88","body":{"form":"message","role":"assistant","content":[{"form":"thinking","thinking":"Short, with a title."},{"form":"text","text":"Returns\n\nRule 1. Rule 2. Rule 3. Rule 4. Rule 5. Rule 6. Rule 7. Rule 8. Rule 9. Rule 10. Rule 11. Rule 12. "}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":20,"output":10,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":30,"cost":{"input":0.000015,"output":0.000037500000000000003,"cacheRead":0,"cacheWrite":0,"total":0.0000525}},"stopReason":"stop","timestamp":1791535035356,"rawStopReason":"STOP","durationMs":1517,"thinkingLevel":"low"}}}
+{"t":2981,"frame":{"kind":"turn","running":false}}
+{"t":4486,"scene":"stop-two-waiting-twice","prompt":"Write a long note on shipping."}
+{"t":4486,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":4492,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":4492,"frame":{"kind":"turn","running":true}}
+{"t":4504,"frame":{"kind":"entry","epoch":"42673fd74afc5f814a78fed703b2f5cc","seq":9,"entryId":"2ae9f994","body":{"form":"message","role":"user","content":[{"form":"text","text":"Write a long note on shipping."}],"timestamp":1791535038383}}}
+{"t":4609,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_start","contentIndex":0}}}
+{"t":4609,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_delta","contentIndex":0,"delta":"Planning the note."}}}
+{"t":4708,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_end","contentIndex":0,"content":"Planning the note."}}}
+{"t":4708,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":1}}}
+{"t":4708,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 1. "}}}
+{"t":4807,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 2. "}}}
+{"t":4908,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 3. "}}}
+{"t":5008,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 4. "}}}
+{"t":5108,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 5. "}}}
+{"t":5210,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 6. "}}}
+{"t":5310,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 7. "}}}
+{"t":5409,"command":"prompt","message":"Keep it short."}
+{"t":5410,"command":"prompt","message":"List the carriers."}
+{"t":5410,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 8. "}}}
+{"t":5511,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 9. "}}}
+{"t":5612,"command":"clear_queue"}
+{"t":5612,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Line 10. "}}}
+{"t":5613,"command":"abort"}
+{"t":5614,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":5614,"answered":"abort"}
+{"t":5615,"frame":{"kind":"entry","epoch":"42673fd74afc5f814a78fed703b2f5cc","seq":10,"entryId":"bacc78b5","body":{"form":"message","role":"assistant","content":[{"form":"thinking","thinking":"Planning the note."},{"form":"text","text":"Line 1. Line 2. Line 3. Line 4. Line 5. Line 6. Line 7. Line 8. Line 9. Line 10. "}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"aborted","timestamp":1791535038395,"errorMessage":"This operation was aborted","durationMs":1113,"thinkingLevel":"low"}}}
+{"t":5615,"frame":{"kind":"turn","running":false}}
+{"t":5615,"command":"steer","message":"List the carriers."}
+{"t":5615,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":5616,"command":"prompt","message":"Keep it short."}
+{"t":5616,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":5616,"frame":{"kind":"sleep","dueInMs":null}}
+{"t":5616,"frame":{"kind":"turn","running":true}}
+{"t":5619,"frame":{"kind":"entry","epoch":"42673fd74afc5f814a78fed703b2f5cc","seq":11,"entryId":"94c1ec11","body":{"form":"message","role":"user","content":[{"form":"text","text":"Keep it short."}],"timestamp":1791535039511}}}
+{"t":5619,"frame":{"kind":"entry","epoch":"42673fd74afc5f814a78fed703b2f5cc","seq":12,"entryId":"f013a73c","body":{"form":"message","role":"user","content":[{"form":"text","text":"List the carriers."}],"timestamp":1791535039511}}}
+{"t":5722,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_start","contentIndex":0}}}
+{"t":5722,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_delta","contentIndex":0,"delta":"Short, by carrier."}}}
+{"t":5822,"frame":{"kind":"delta","body":{"form":"message_delta","event":"thinking_end","contentIndex":0,"content":"Short, by carrier."}}}
+{"t":5822,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_start","contentIndex":1}}}
+{"t":5822,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Carrier 1. "}}}
+{"t":5923,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Carrier 2. "}}}
+{"t":6023,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Carrier 3. "}}}
+{"t":6123,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Carrier 4. "}}}
+{"t":6224,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Carrier 5. "}}}
+{"t":6326,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Carrier 6. "}}}
+{"t":6427,"frame":{"kind":"delta","body":{"form":"message_delta","event":"text_delta","contentIndex":1,"delta":"Carrier 7. "}}}
+{"t":6522,"command":"abort"}
+{"t":6525,"frame":{"kind":"sleep","dueInMs":3600000}}
+{"t":6525,"answered":"abort"}
+{"t":6527,"frame":{"kind":"entry","epoch":"42673fd74afc5f814a78fed703b2f5cc","seq":13,"entryId":"e0c7384d","body":{"form":"message","role":"assistant","content":[{"form":"thinking","thinking":"Short, by carrier."},{"form":"text","text":"Carrier 1. Carrier 2. Carrier 3. Carrier 4. Carrier 5. Carrier 6. Carrier 7. "}],"api":"google-generative-ai","provider":"google","model":"gemini-3.6-flash","usage":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"totalTokens":0,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stopReason":"aborted","timestamp":1791535039512,"errorMessage":"This operation was aborted","durationMs":907,"thinkingLevel":"low"}}}
+{"t":6528,"frame":{"kind":"turn","running":false}}

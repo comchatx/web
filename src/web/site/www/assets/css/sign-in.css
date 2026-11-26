@@ -1,0 +1,293 @@
+/*
+ * ComChatX's site, drawn the way Claude's public site is drawn (claude.com and claude.ai/login, read 2026-10-22), in the product's
+ * theme. claude.ai/login gives the layout, the structure, the spacing, the type scale and the motion; theme.css gives the faces, the
+ * colours by their jobs, the weights and the radii, and this file draws by its names, as base.css does.
+ * This file holds the login page, which the product serves as its door: the hero and its picture, and the page's FAQ; the card is
+ * Clerk's, drawn by the product's door.css. The module sign-in keeps it. The pages load theme.css, then base, chrome, sign-in and pricing (README.md, "Modules").
+ */
+
+/* claude.ai/login's motion, read from its stylesheet 2026-10-23: --cds-dur-fast, --cds-dur-slow and the ease its fields move with.
+   Its button spring overshoots, and the theme allows no bounce, so a button eases back on Claude's quart out instead. */
+.theme-app {
+  --dur-fast: 60ms; --dur-slow: .45s; --ease-field: cubic-bezier(.4, 0, .2, 1);
+}
+
+/* ── The sign-in hero (claude.com/ and claude.ai/login) ─────────────────── */
+.hero-login { padding: 20px 0 0; }
+.hero-login .container { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3rem; align-items: center; }
+.hero-copy { display: flex; flex-direction: column; align-items: center; gap: 32px; text-align: center; }
+.hero-title { font-size: var(--hero-title); font-weight: var(--weight-regular); line-height: 1.15; letter-spacing: -.01em; text-wrap: balance; }
+:lang(zh) .hero-title { letter-spacing: .02em; line-height: 1.25; word-break: keep-all; }
+/* cx stands beside its name as the product draws it, ready (cx.js), so the name reads as the assistant's and not the product's. */
+.hero-cx { white-space: nowrap; }
+.hero-cx-figure { display: inline-block; width: 1.77em; height: .92em; margin-left: .1em; vertical-align: -.1em; overflow: visible; }
+.hero-sub { margin-top: -16px; font-size: 1.125rem; line-height: 1.375; color: var(--ink); max-width: 28rem; text-wrap: pretty; }
+:lang(zh) .hero-sub { font-size: 1rem; line-height: 1.75; color: var(--quiet); max-width: 25rem; }
+.hero-media { position: relative; aspect-ratio: 557 / 680; border-radius: var(--radius-large); overflow: hidden; background: var(--wash); animation: login-hero-in .8s ease-out; }
+/* Claude's login picture, frame and all, rises 20px into place as the page opens; the heading, its line and the card
+   stand still. */
+@keyframes login-hero-in { from { opacity: 0; transform: translateY(20px); } }
+/* The picture is drawn only where its words are the theme's smallest size or larger: 12px when its frame is 557px wide. The frame
+   is half the container's width less half the gap, and the container's margin grows with the window (base.css), so the frame
+   reaches 557px in a hero 1281px wide, 1282px beside a scrollbar; below that the hero is one column, the card alone. */
+.hero-login { container: hero / inline-size; }
+@container hero (max-width: 1281.98px) {
+  .hero-login .container { grid-template-columns: minmax(0, 1fr); }
+  .hero-media { display: none; }
+}
+@media (max-width: 767px) {
+  .hero-sub { font-size: 1rem; line-height: 1.375; }
+}
+
+/* claude.ai/login sets its section titles smaller. */
+.theme-app .section-title { font-size: 1.875rem; font-weight: var(--weight-regular); }
+/* Nothing on claude.ai/login rises into view as it scrolls, the plans block included. */
+.js [data-page="login"] :is(.reveal, .reveal.is-in, [data-reveal] > *) { opacity: 1; transform: none; translate: none; transition: none; animation: none; }
+
+/* claude.ai/login's own list: smaller questions with a chevron, and an answer that opens in 200ms. */
+.faq-plain { --faq-time: .2s; --faq-ease: var(--ease-out-quart); }
+.faq-plain .faq-list { max-width: 704px; margin-top: 40px; }
+.faq-plain .faq-item { border-top: 0; border-bottom: 1px solid var(--line); }
+.faq-plain .faq-item:last-child { border-bottom: 0; }
+.faq-plain .faq-button { padding: 10px 12px; font-size: .875rem; font-weight: var(--weight-strong); }
+.faq-plain .faq-button .plus { display: none; }
+.faq-plain .faq-button .chev-r { flex: none; width: 16px; height: 16px; color: var(--quiet); transition: transform .15s var(--ease-field); }
+.faq-plain .faq-button[aria-expanded="true"] .chev-r { transform: rotate(90deg); }
+.faq-plain .faq-a-inner { padding: 0 44px 16px 12px; font-size: .875rem; }
+.faq-plain .chev-r { display: block; }
+
+/* ── The drawn hero picture: three examples, each played once straight through and once with a "why" ─────────── */
+/* The picture scales as one drawing: every size in it is in em of a face that is 12px when the frame is 557px wide, so
+   its lines break alike at every width, and the face stops at 8px on the narrowest frames. Its radii are the theme's at
+   that width: 1em is --radius-large, .5em --radius, .333em --radius-small. */
+.hero-media { container-type: inline-size; }
+.art { position: absolute; inset: 0; font-size: max(8px, 100cqw * 12 / 557); line-height: 1.55; --u: 9.6; --fade: 1; }
+/* The lines behind the window take a colour of the theme, as a mask over the frame's ground. */
+.art::before {
+  content: ""; position: absolute; inset: 0; background: var(--raised);
+  -webkit-mask: url("../art/lines.svg") center / cover no-repeat; mask: url("../art/lines.svg") center / cover no-repeat;
+}
+/* One clock runs the picture (sign-in.js): --u counts the seconds into the example on screen, a line comes at its --a and
+   goes at its --z, and the script moves the camera, the pointer, cx, the keys and the chat's scroll by the same seconds. With
+   no script the picture holds the first example, answered: the lines marked data-still, at 9.6 seconds. */
+html:not(.js) .art [data-still] { --a: 0; }
+.art-stage { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; transform-origin: 50% 50%; }
+.art-window { position: relative; display: flex; flex-direction: column; width: 33.5em; border-radius: 1em; background: var(--ground); box-shadow: 0 0 0 1px var(--float-edge); overflow: hidden; text-align: left; }
+.art-bar { display: flex; align-items: center; gap: .5em; height: 2.5em; padding: 0 1em; border-bottom: 1px solid var(--frame-line); background: var(--frame); }
+.art-bar i { width: .667em; height: .667em; border-radius: 50%; background: var(--line); }
+.art-bar > span:first-of-type { margin-left: .5em; color: var(--frame-quiet); font-size: .917em; }
+.art-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1em; padding: 1.1em 1.25em 0; }
+.art-heads { display: grid; font-weight: var(--weight-strong); }
+.art-heads > * { grid-area: 1 / 1; }
+/* A chat cx opens on its own takes its title as the seller opens what cx found. */
+.art-heads > .art-slot.is-on { opacity: calc(var(--fade) * clamp(0, (var(--u) - var(--a, -1)) * 2.5, 1)); }
+.art-sample { flex: none; color: var(--quiet); font-size: .833em; }
+/* The chat keeps its height; as lines come, the newest sits at its foot and the oldest scroll away. */
+.art-body { position: relative; height: 32em; overflow: hidden; }
+.art-scene { position: absolute; top: 0; left: 0; right: 0; display: flex; flex-direction: column; gap: .75em; padding: .9em 1.25em 1.25em; translate: 0 calc(var(--scroll, 0) * -1em); }
+/* An example fades in over .4s as it begins, and out over .4s as it ends. */
+.art-slot { opacity: 0; }
+.art-slot.is-on { opacity: var(--fade); }
+.art-scene:not(.is-why) .art-why, .art-scene.is-why .art-direct { display: none; }
+/* A line fades in over .4s at its moment, rising .5em and slowing as it lands, and fades out over .25s when it goes. */
+.art-part {
+  --p: clamp(0, (var(--u) - var(--a, 999)) * 2.5, 1); --q: clamp(0, (var(--u) - var(--z, 999)) * 4, 1);
+  opacity: calc(var(--p) * (1 - var(--q))); translate: 0 calc((1 - var(--p)) * (1 - var(--p)) * .5em);
+}
+.art-me { align-self: flex-end; max-width: 85%; padding: .6em .9em; border-radius: 1em 1em .333em 1em; background: var(--wash); }
+.art-step { display: flex; align-items: flex-start; gap: .55em; color: var(--quiet); font-size: .917em; }
+.art-step svg, .art-done svg, .art-card-head svg { flex: none; width: 1.15em; height: 1.15em; margin-top: .2em; }
+.art-src { display: block; margin-top: .15em; color: var(--quiet); font-size: .833em; }
+.art-plan, .art-evidence, .art-summary { display: flex; flex-direction: column; gap: .6em; padding: .95em; border-radius: 1em; background: var(--raised); box-shadow: inset 0 0 0 1px var(--line); }
+.art-items { display: flex; flex-direction: column; gap: .15em; padding: 0; list-style: none; }
+.art-items li { display: flex; gap: .55em; }
+.art-items li::before { content: ""; flex: none; width: .3em; height: .3em; margin-top: .65em; border-radius: 50%; background: var(--quiet); }
+.art-cmp { display: flex; flex-direction: column; gap: .55em; margin: 0; }
+.art-cmp > div { display: grid; grid-template-columns: 2.6em 1fr; column-gap: .5em; }
+.art-cmp dt { grid-row: span 2; color: var(--quiet); font-size: .833em; line-height: 1.86; }
+.art-cmp dd { grid-column: 2; margin: 0; }
+.art-count { color: var(--quiet); font-size: .833em; font-variant-numeric: tabular-nums; }
+.art-cmp del { color: var(--quiet); text-decoration-thickness: 1px; }
+.art-cmp ins { padding: 0 .15em; border-radius: .333em; background: var(--mark); text-decoration: none; }
+.art-options { display: flex; flex-direction: column; gap: .3em; padding: 0; list-style: none; }
+.art-options li { display: flex; align-items: flex-start; gap: .6em; padding: .4em .55em; border-radius: .5em; }
+.art-options i { flex: none; display: grid; place-items: center; width: 1.5em; height: 1.5em; margin-top: .05em; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--line); color: var(--quiet); font-size: .833em; font-style: normal; font-weight: var(--weight-strong); }
+/* The option cx recommends is outlined in ink, its letter too. */
+.art-options .art-pick { box-shadow: inset 0 0 0 1px var(--ink); }
+.art-options .art-pick i { box-shadow: inset 0 0 0 1px var(--ink); color: var(--ink); }
+.art-options em { display: inline-block; margin-left: .45em; padding: 0 .5em; border-radius: .333em; background: var(--wash); color: var(--ink); font-size: .75em; font-style: normal; font-weight: var(--weight-strong); line-height: 1.7; vertical-align: .1em; }
+/* The seller's answer, under the plan: the buttons come up, the pointer presses one, and what cx did takes their place.
+   Buttons the seller answered with a question fold away as the question is sent. */
+.art-turn { display: grid; }
+.art-turn > * { grid-area: 1 / 1; }
+.art-acts { display: flex; gap: .5em; }
+.art-acts.art-why { overflow: hidden; max-height: calc((1 - var(--q)) * 2.4em); margin-bottom: calc(var(--q) * -.75em); }
+.art-acts > * { display: inline-flex; align-items: center; height: 2.2em; padding: 0 1em; border-radius: .5em; font-size: .917em; font-weight: var(--weight-strong); }
+.art-acts span { box-shadow: inset 0 0 0 1px var(--edge); background: var(--raised); color: var(--ink); }
+/* A press takes the button's pressed colour and gives a little, never past its size. */
+.art-acts b, .art-send, .art-knock-foot b { --b: 0; background: color-mix(in srgb, var(--act-hover) calc(var(--b) * 100%), var(--act)); color: var(--act-ink); scale: calc(1 - .06 * var(--b)); }
+.art-done { display: flex; align-items: flex-start; gap: .55em; }
+.art-done svg { color: var(--quiet); }
+/* What cx found on a check the seller set, coming into the empty chat on its own: it ticks through what it checked, marks
+   what it found, says what it has ready, and goes up into the chat's head as the seller opens it. */
+.art-knock {
+  --kp: clamp(0, (var(--u) - var(--a, 999)) / .5, 1); --ke: calc(1 - (1 - var(--kp)) * (1 - var(--kp)) * (1 - var(--kp)) * (1 - var(--kp)));
+  --kq: clamp(0, (var(--u) - var(--z, 999)) / .45, 1);
+  position: absolute; top: 2em; left: 50%; display: flex; flex-direction: column; gap: .75em; width: 25em; padding: 1em 1.1em 1.1em;
+  border-radius: 1em; background: var(--raised); box-shadow: 0 0 0 1px var(--float-edge); transform-origin: 50% 0;
+  opacity: calc(min(1, var(--kp) * 3) * (1 - var(--kq))); translate: -50% calc((1 - var(--ke)) * -1.5em - var(--kq) * 2.5em); scale: calc(1 - var(--kq) * .2);
+}
+.art-knock-head { display: flex; align-items: center; gap: .55em; font-weight: var(--weight-strong); }
+.art-knock-mark { flex: none; width: 1.4em; height: 1.4em; background: url("../brand/mark.svg") center / contain no-repeat; }
+[data-theme="dark"] .art-knock-mark { background-image: url("../brand/mark-dark.svg"); }
+.art-knock-head time { margin-left: auto; color: var(--quiet); font-size: .833em; font-weight: var(--weight-regular); font-variant-numeric: tabular-nums; }
+.art-checks { display: flex; flex-direction: column; gap: .2em; margin: 0; padding: 0; list-style: none; }
+.art-checks li {
+  --r: clamp(0, (var(--u) - var(--a, 999) - .5 - var(--k) * .4) * 4, 1); --s: clamp(0, (var(--u) - var(--a, 999) - .75 - var(--k) * .4) * 5, 1);
+  display: flex; align-items: center; gap: .6em; min-height: 2.3em; padding: 0 .6em; border-radius: .5em; font-variant-numeric: tabular-nums;
+  opacity: var(--r); translate: 0 calc((1 - var(--r)) * (1 - var(--r)) * .4em);
+}
+.art-checks li > :not(:first-child) { opacity: var(--s); }
+.art-checks li > :nth-child(2) { margin-left: auto; }
+.art-checks svg { flex: none; width: 1.15em; height: 1.15em; color: var(--quiet); }
+.art-checks :is(b, em) { font-style: normal; font-weight: var(--weight-strong); }
+/* What cx found lifts onto the wash, and its mark sends out two rings that stay inside the row, clear of its words. */
+.art-checks .is-found { background: color-mix(in srgb, var(--wash) calc(var(--s) * 100%), transparent); }
+.art-flag { position: relative; flex: none; display: grid; place-items: center; width: 1.35em; height: 1.35em; border-radius: 50%; background: var(--ink); color: var(--raised); font-size: .833em; font-style: normal; font-weight: var(--weight-strong); }
+.art-flag::before, .art-flag::after {
+  --pr: clamp(0, (var(--u) - var(--a, 999) - 1 - var(--k) * .4 - var(--d, 0)) / .9, 1);
+  content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: 0 0 0 1.5px var(--ink);
+  opacity: calc((1 - var(--pr)) * .6 * min(1, var(--pr) * 30)); scale: calc(1 + var(--pr));
+}
+.art-flag::after { --d: .35; }
+.art-knock-foot { display: flex; align-items: center; justify-content: space-between; gap: 1em; opacity: clamp(0, (var(--u) - var(--a, 999) - 2) * 4, 1); }
+.art-knock-foot b { display: inline-flex; align-items: center; height: 2.2em; padding: 0 1.1em; border-radius: .5em; font-size: .917em; font-weight: var(--weight-strong); }
+/* The seller's message box, with the product's placeholder. The caret stands while the pointer has put the keys there. */
+.art-composer { display: flex; align-items: flex-end; gap: .65em; margin: 0 1em 1em; padding: .7em .7em .7em 1em; border-radius: 1em; background: var(--raised); box-shadow: inset 0 0 0 1px var(--line); }
+.art-composer.is-focused { box-shadow: inset 0 0 0 1px var(--edge); }
+.art-input { flex: 1; min-height: 3.1em; }
+.art-placeholder { color: var(--quiet); }
+.art-composer.has-text .art-placeholder { display: none; }
+.art-caret { display: none; width: 1px; height: 1.2em; margin: 0 1px; vertical-align: -.25em; background: var(--ink); }
+.art-composer.is-focused .art-caret { display: inline-block; }
+.art-send { flex: none; display: grid; place-items: center; width: 2.2em; height: 2.2em; border-radius: .5em; }
+.art-send svg { width: 1em; height: 1em; }
+/* What cx read or wrote, as a card that comes in from the right of the window, on quart out. */
+.art-card {
+  --ci: clamp(0, (var(--u) - var(--a, 999)) / .8, 1); --ce: calc(1 - (1 - var(--ci)) * (1 - var(--ci)) * (1 - var(--ci)) * (1 - var(--ci)));
+  --co: clamp(0, (var(--u) - var(--z, 999)) / .5, 1);
+  position: absolute; left: 0; top: 0; display: flex; flex-direction: column; gap: .75em; width: 19em; padding: 1em 1.1em 1.1em; border-radius: 1em;
+  background: var(--raised); box-shadow: 0 0 0 1px var(--float-edge); text-align: left;
+  opacity: calc(min(1, var(--ci) * 4) * (1 - var(--co))); translate: calc((1 - var(--ce)) * 16em + var(--co) * 3em) 0;
+}
+.art-card-head { display: flex; align-items: flex-start; gap: .5em; font-weight: var(--weight-strong); }
+.art-card-head em { margin-left: auto; padding: 0 .5em; border-radius: .333em; background: var(--wash); color: var(--quiet); font-size: .75em; font-style: normal; font-weight: var(--weight-regular); line-height: 1.8; white-space: nowrap; }
+.art-listing { display: grid; grid-template-columns: 5em 1fr; gap: .8em; }
+.art-photo { display: grid; place-items: center; aspect-ratio: 1; border-radius: .5em; background: var(--wash); color: var(--quiet); }
+.art-photo svg { width: 70%; height: 70%; }
+.art-listing-title { font-size: .917em; line-height: 1.45; }
+.art-price { margin-top: .2em; font-size: 1.167em; font-weight: var(--weight-strong); }
+.art-card-foot { padding-top: .6em; border-top: 1px solid var(--line); color: var(--quiet); font-size: .917em; }
+/* Amazon's own pages, in as few of Amazon's colours as make each read as Amazon's at a glance, and white in both schemes as
+   Amazon draws them; the drawn product takes the same colours. Their words are Amazon's, in English, as amazon.com and
+   Seller Central print them. */
+.art-amazon {
+  --amz-ink: #0F1111; --amz-quiet: #565959; --amz-link: #007185; --amz-line: #D5D9D9; --amz-field: #888C8C; --amz-glow: #C8F3FA;
+  --amz-nav: #131921; --amz-seller-nav: #232F3E; --amz-search: #FEBD69; --amz-star: #DE7921; --amz-green: #007600;
+  --amz-yellow: #FFD814; --amz-orange: #FFA41C; --amz-page: #FFFFFF; --amz-nav-ink: #FFFFFF;
+  gap: 0; width: 21em; padding: 0; overflow: hidden; background: var(--amz-page); color: var(--amz-ink);
+}
+.amz-nav { display: flex; align-items: center; gap: .6em; height: 2.6em; padding: 0 .75em; background: var(--amz-nav); color: var(--amz-nav-ink); font-weight: var(--weight-strong); white-space: nowrap; }
+.amz-nav.is-seller { background: var(--amz-seller-nav); }
+.amz-nav > svg { flex: none; width: 1.25em; height: 1.25em; }
+.amz-search { flex: 1; height: 1.6em; border-radius: .333em; background: var(--amz-page); }
+.amz-search:has(+ .amz-go) { border-radius: .333em 0 0 .333em; }
+.amz-go { flex: none; display: grid; place-items: center; width: 2.1em; height: 1.6em; margin-left: -.6em; border-radius: 0 .333em .333em 0; background: var(--amz-search); color: var(--amz-ink); }
+.amz-go svg { width: 1em; height: 1em; }
+.amz-page { display: flex; flex-direction: column; gap: .7em; padding: .9em 1em 1em; }
+.amz-item { display: grid; grid-template-columns: 4.6em 1fr; gap: .8em; align-items: start; }
+.amz-photo { display: block; aspect-ratio: 1; }
+.amz-photo svg { display: block; width: 100%; height: 100%; }
+.amz-title { font-size: .917em; line-height: 1.4; }
+.amz-stars { display: flex; align-items: center; gap: .5em; margin-top: .3em; color: var(--amz-star); font-size: .833em; }
+.amz-stars svg { flex: none; width: 5.4em; height: 1.08em; }
+.amz-stars span { color: var(--amz-link); }
+.amz-box { display: flex; flex-direction: column; gap: .5em; padding: .85em .9em .9em; border: 1px solid var(--amz-line); border-radius: .5em; }
+.amz-price { font-size: 1.833em; line-height: 1; }
+.amz-price sup { position: relative; top: .12em; font-size: .46em; vertical-align: top; }
+.amz-stock { color: var(--amz-green); font-size: .917em; }
+.amz-cart, .amz-buy { display: grid; place-items: center; height: 2.3em; border-radius: var(--radius-round); font-size: .833em; }
+.amz-cart { background: var(--amz-yellow); }
+.amz-buy { background: var(--amz-orange); }
+.amz-seller { display: grid; grid-template-columns: auto 1fr; gap: .15em 1em; margin: .15em 0 0; font-size: .75em; }
+.amz-seller dt { color: var(--amz-quiet); }
+.amz-seller dd { margin: 0; }
+.amz-seller dd:last-child { color: var(--amz-link); }
+.amz-product { display: grid; grid-template-columns: 3em 1fr; gap: .7em; align-items: center; padding-bottom: .75em; border-bottom: 1px solid var(--amz-line); }
+.amz-product p { display: flex; flex-direction: column; font-size: .833em; }
+.amz-product span + span { color: var(--amz-quiet); }
+.amz-label { font-size: .833em; font-weight: var(--weight-strong); }
+.amz-field { margin-top: -.35em; padding: .5em .65em; border: 1px solid var(--amz-field); border-radius: .25em; font-size: .833em; line-height: 1.45; }
+/* The title on Amazon as cx changes it: the term that leaves, and the one that comes in after the product's name at the same
+   length (n/75), lit while the change is new. */
+.art-strip {
+  --f: clamp(0, (var(--u) - var(--fa, 999)) / .9, 1);
+  --on: calc(clamp(0, (var(--f) - .5) * 4, 1) * (1 - clamp(0, (var(--u) - var(--fa, 999) - 2.4) * 1.5, 1)));
+}
+.art-strip [data-term] { display: inline-block; vertical-align: top; white-space: pre; }
+.art-strip del { overflow: hidden; max-width: calc((1 - var(--f)) * var(--w)); opacity: calc(1 - var(--f)); color: var(--amz-quiet); text-decoration: line-through 1px color-mix(in srgb, currentColor calc(min(1, var(--f) * 8) * 100%), transparent); }
+.art-strip ins { width: calc(min(1, var(--f) * 2) * var(--w)); text-decoration: none; }
+.art-strip ins > span { --d: clamp(0, var(--f) * 2 - .8, 1); display: inline-block; opacity: var(--d); translate: 0 calc((1 - var(--d)) * (1 - var(--d)) * -.9em); }
+.art-strip ins b { padding: 0 .15em; border-radius: .25em; background: color-mix(in srgb, var(--amz-glow) calc(var(--on) * 100%), transparent); font-weight: var(--weight-regular); }
+/* Figures grow from their foot, one after another, on quart out, from the moment their card or line comes. */
+.art-sales { display: flex; flex-direction: column; gap: .4em; }
+.art-chart-name { color: var(--quiet); font-size: .833em; }
+.art-bars { position: relative; display: flex; align-items: flex-end; height: 5.5em; padding-top: 1.3em; box-sizing: content-box; border-bottom: 1px solid var(--line); }
+.art-bars-few { gap: .7em; padding-right: 4.5em; }
+.art-bars-many { gap: .25em; }
+.art-bars i {
+  --g0: clamp(0, (var(--u) - var(--a, 999) - .3 - var(--k) * .06) * 1.6, 1); --g: calc(1 - (1 - var(--g0)) * (1 - var(--g0)) * (1 - var(--g0)) * (1 - var(--g0)));
+  position: relative; flex: 1; height: calc(var(--v) * var(--g) * 100%); border-radius: .25em .25em 0 0; background: var(--edge); font-style: normal;
+}
+.art-bars i.is-low { background: var(--ink); }
+.art-bars b { position: absolute; bottom: 100%; left: 50%; z-index: 1; translate: -50% 0; padding: 0 .3em; background: var(--raised); color: var(--quiet); font-size: .75em; font-weight: var(--weight-regular); line-height: 1.6; opacity: var(--g); }
+.art-avg { position: absolute; left: 0; right: 0; bottom: calc(var(--v) * 5.5em); border-top: 1px dashed var(--ink); opacity: clamp(0, (var(--u) - var(--a, 999) - 1.1) * 2.5, 1); }
+.art-avg span { position: absolute; right: 0; bottom: .1em; color: var(--ink); font-size: .75em; white-space: nowrap; }
+.art-cut { position: absolute; top: 0; left: calc(11.5 / 14 * 100%); translate: -50% 0; color: var(--ink); font-size: .75em; white-space: nowrap; opacity: clamp(0, (var(--u) - var(--a, 999) - 1.4) * 2.5, 1); }
+.art-lines { display: block; width: 100%; height: auto; overflow: visible; border-bottom: 1px solid var(--line); }
+.art-lines polyline {
+  --g0: clamp(0, (var(--u) - var(--a, 999) - .3) / 1.1, 1); --g: calc(1 - (1 - var(--g0)) * (1 - var(--g0)) * (1 - var(--g0)) * (1 - var(--g0)));
+  fill: none; stroke-width: .37; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--g));
+}
+.art-lines .is-up { stroke: var(--ink); }
+.art-lines .is-down { stroke: var(--edge); }
+.art-legend { display: flex; flex-wrap: wrap; gap: .2em 1.2em; font-size: .833em; }
+.art-legend span { display: inline-flex; align-items: center; gap: .45em; color: var(--quiet); }
+.art-legend span::before { content: ""; width: 1.2em; height: 2px; border-radius: 1px; background: var(--ink); }
+.art-legend .is-down::before { background: var(--edge); }
+.art-legend b { color: var(--ink); font-weight: var(--weight-strong); }
+.art-axis { display: flex; justify-content: space-between; color: var(--quiet); font-size: .75em; }
+/* The line that ties what cx said in the chat to its card. */
+.art-link { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; opacity: 0; pointer-events: none; }
+.art-link path { fill: none; stroke: var(--quiet); stroke-width: .12; stroke-linecap: round; stroke-dasharray: 1; }
+.art-link circle { fill: var(--quiet); }
+/* While the camera looks at a card, the rest of the picture sits under the theme's scrim, as a page does under a dialog. */
+.art-dim { position: absolute; inset: -60em; background: var(--scrim); opacity: var(--dim, 0); pointer-events: none; }
+/* cx itself, as the title draws it, goes along the line with the title it sends, stands on Amazon's field while the title
+   lands, and goes with the card. The point it is at is where its feet are. */
+.art-cx { position: absolute; left: 0; top: 0; width: 2.6em; height: 1.35em; margin: -1.35em 0 0 -1.3em; opacity: 0; pointer-events: none; transform-origin: 50% 100%; }
+.art-cx svg { display: block; width: 100%; height: 100%; overflow: visible; }
+/* The seller's pointer. Its tip is the corner it stands on; a press squeezes it a little. */
+.art-pointer { position: absolute; left: 0; top: 0; width: 1.25em; height: 1.9em; transform-origin: 0 0; opacity: 0; }
+.art-pointer svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.art-pointer path { fill: var(--ink); stroke: var(--ground); stroke-width: 1.3; stroke-linejoin: round; }
+
+/* Under ?still, for pictures, the picture holds as it does under reduced motion; under ?art-at it holds its moment. */
+.is-still, .is-held { animation: none; }
+.is-still :is(.art-pointer, .art-cx) { display: none; }
+
+/* Under reduced motion nothing moves: the picture holds the first example, answered. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-media { animation: none; }
+  .art-pointer, .art-cx { display: none; }
+}

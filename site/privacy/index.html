@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<script src="../assets/js/appearance.js"></script>
+<link rel="icon" href="../assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/brand/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../assets/brand/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/css/theme.css">
+<link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="../assets/css/chrome.css">
+<link rel="stylesheet" href="../assets/css/legal.css">
+<link rel="alternate" hreflang="zh-CN" href="../privacy/">
+<link rel="alternate" hreflang="en" href="../en/privacy/">
+<!-- Before the page draws: the script is on; ?still asks for a picture, with nothing moving; and the first page of a visit lets
+     the header come down into place (chrome.css). -->
+<script>(() => {
+  const root = document.documentElement;
+  root.classList.add("js");
+  if (new URLSearchParams(location.search).has("still")) root.classList.add("still");
+  try { if (!sessionStorage.getItem("cmx-site-entered")) { sessionStorage.setItem("cmx-site-entered", "1"); root.classList.add("enter"); } }
+  catch { root.classList.add("enter"); }
+})()</script>
+<script src="../assets/js/chrome.js" defer></script>
+<title>隐私政策 — ComChatX</title>
+<meta name="description" content="ComChatX 收集什么、怎么用、交给谁处理、保存多久，以及怎么删除账户。">
+</head>
+<body data-page="privacy">
+<a class="skip-link" href="#main">跳到正文</a>
+<header class="site-header">
+  <div class="container header-row">
+    <a class="brand" href="../"><span class="wordmark">ComChatX</span></a>
+    <nav class="nav" aria-label="主导航">
+      <ul class="nav-list" role="list">
+        <li><a class="nav-link" href="../pricing/">价格</a></li>
+      </ul>
+      <a class="btn btn-outline" href="../contact/">联系销售</a>
+      <a class="btn btn-primary way-in" href="https://comchatx.com/login">试用 ComChatX</a>
+    </nav>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="菜单"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 8h16M4 16h16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="菜单" hidden>
+    <div class="mobile-menu-head">
+      <a class="brand" href="../"><span class="wordmark">ComChatX</span></a>
+      <button class="menu-toggle menu-close" type="button" aria-label="关闭"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    </div>
+    <ul class="mobile-menu-list" role="list">
+      <li><a class="mm-link" href="../pricing/">价格</a></li>
+    </ul>
+    <div class="mobile-menu-actions">
+      <a class="btn btn-outline" href="../contact/">联系销售</a>
+      <a class="btn btn-primary way-in" href="https://comchatx.com/login">试用 ComChatX</a>
+    </div>
+  </div>
+</header>
+<main id="main" class="page-enter">
+<article class="legal" aria-labelledby="page-title">
+<div class="container">
+<div class="legal-column">
+<h1 id="page-title">隐私政策</h1>
+<p class="legal-date">2026 年 11 月 3 日起生效</p>
+<nav class="legal-toc" aria-label="目录">
+<ol role="list">
+<li><a href="#collect">我们收集什么</a></li>
+<li><a href="#use">我们怎么用</a></li>
+<li><a href="#processors">谁会处理你的数据</a></li>
+<li><a href="#retention">保存多久</a></li>
+<li><a href="#deletion">删除账户</a></li>
+<li><a href="#cookies">Cookie</a></li>
+<li><a href="#rights">你的权利</a></li>
+<li><a href="#policy-changes">政策的修改</a></li>
+</ol>
+</nav>
+<section class="legal-section" aria-labelledby="collect">
+  <h2 id="collect">我们收集什么</h2>
+  <p><strong>账户信息</strong>：你登录用的邮箱或 Google 账号，由 Clerk 保存，我们按需读取。我们自己保存账户编号、我们给账户和 cx 的电脑分配的内部编号、Clerk 给你的登录账户编号、你的邀请码，以及注册的时间。</p>
+  <p><strong>你的内容</strong>：对话记录、你上传的文件，以及 cx 为你生成的文件。</p>
+  <p><strong>你接入的账户和密钥</strong>：你自己的模型 API 密钥和数据源凭据，加密保存，只在调用时使用，界面上不再显示。</p>
+  <p><strong>用量和付款</strong>：每一笔扣费和充值的金额、时间和用途；每次调用数据源的记录，包括查询的内容和参数、每一项的结果、数据源返回的说明，以及用量和费用。银行卡和支付宝信息由 Stripe 处理，我们不保存卡号；为防止重复领取邀请奖励，我们保存付款方式的一个不可还原的摘要。</p>
+</section>
+<section class="legal-section" aria-labelledby="use">
+  <h2 id="use">我们怎么用</h2>
+  <p><strong>只用来提供和改进 ComChatX</strong>：运行 cx 和 cx 的电脑、调用你选的模型和数据源、计费、防止滥用，以及回复你的来信。</p>
+  <p><strong>我们不做的事</strong>：我们不出售你的个人信息，不用你的内容投放广告。ComChatX 不用你的数据训练模型；模型供应方按它们各自的条款处理。</p>
+</section>
+<section class="legal-section" aria-labelledby="processors">
+  <h2 id="processors">谁会处理你的数据</h2>
+  <p><strong>为提供服务，下面这些服务商会处理部分数据</strong>：Clerk（登录）、Stripe（付款）、Fly.io（运行 cx 的电脑和平台，位于新加坡）、Cloudflare（存储你的文件和对话记录，位于亚太地区）、Supabase（数据库，位于新加坡）。</p>
+  <p><strong>模型和数据源</strong>：你在对话中让 cx 调用模型时，相关内容会发送给该模型的供应方（经 OpenRouter 或你自己的密钥）；调用数据源时，查询会发送给该数据源，例如 Keepa。</p>
+</section>
+<section class="legal-section" aria-labelledby="retention">
+  <h2 id="retention">保存多久</h2>
+  <p><strong>保存期限</strong>：账户存在期间，你的内容一直保存。</p>
+  <p><strong>删除文件</strong>：你可以在对话里让 cx 删除文件；删除的文件不能恢复。</p>
+</section>
+<section class="legal-section" aria-labelledby="deletion">
+  <h2 id="deletion">删除账户</h2>
+  <p><strong>怎么删除</strong>：在应用的设置里点“删除账户”并确认即可。</p>
+  <p><strong>删除什么</strong>：删除后账户立即停用，我们会取消订阅，销毁 cx 的电脑和它的磁盘，删除你的文件、对话记录、接入的密钥和数据源数据，最后删除你的登录账户。你购买过的数据副本平台保留一份。存储里的删除是立即且不可恢复的。</p>
+  <p><strong>为了记账和防止滥用，下面这些会保留</strong>：每一笔扣费和充值的记录；每次调用数据源的记录（见上文“用量和付款”）；账户编号、内部编号、登录账户编号、邀请码，以及注册和删除的时间；付款方式的摘要。数据库备份保留 7&nbsp;天，到期后自动删除。</p>
+</section>
+<section class="legal-section" aria-labelledby="cookies">
+  <h2 id="cookies">Cookie</h2>
+  <p><strong>必需的 cookie</strong>：应用 comchatx.com 只用登录和邀请所必需的 cookie。本网站不使用 cookie，不做跟踪。</p>
+</section>
+<section class="legal-section" aria-labelledby="rights">
+  <h2 id="rights">你的权利</h2>
+  <p><strong>怎么提出</strong>：你可以写信到 <a href="mailto:support@comchatx.com">support@comchatx.com</a>，要求查看、更正或删除你的个人信息，我们会在核实身份后处理。</p>
+</section>
+<section class="legal-section" aria-labelledby="policy-changes">
+  <h2 id="policy-changes">政策的修改</h2>
+  <p><strong>更新和通知</strong>：我们修改本政策时，会更新本页和生效日期；重要变化会提前在应用里或通过邮件告诉你。</p>
+</section>
+</div>
+</div>
+</article>
+</main>
+<footer class="site-footer" data-theme="dark">
+<div class="container">
+  <div class="footer-grid">
+    <a class="footer-logo" href="../"><span class="wordmark">ComChatX</span></a>
+    <nav class="footer-cols" aria-label="页脚">
+  <div class="footer-col">
+    <ul role="list">
+      <li><a href="../pricing/">价格</a></li>
+      <li><a class="way-in" href="https://comchatx.com/login">登录</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <ul role="list">
+      <li><a href="../pricing/#faq">常见问题</a></li>
+      <li><a href="../contact/">联系销售</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <ul role="list">
+      <li><a href="/terms/">服务条款</a></li>
+      <li><a href="/privacy/" aria-current="page">隐私政策</a></li>
+    </ul>
+  </div>
+</nav>
+    <p class="footer-copy">© 2026 ComChatX</p>
+  </div>
+  <div class="footer-bar">
+    <!-- ComChatX has no X or LinkedIn account yet: the two icons stand where the links will go, and link nowhere until then. -->
+<ul class="footer-social" role="list" aria-label="社交媒体">
+  <li><a class="footer-social-link" role="link" aria-disabled="true" aria-label="X"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 1.5h4l9 13h-4Z" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/><path d="M14.5 1.5 9.18 6.82M6.82 9.18 1.5 14.5" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/></svg></a></li>
+  <li><a class="footer-social-link" role="link" aria-disabled="true" aria-label="LinkedIn"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M2.25.75h11.5a1.5 1.5 0 0 1 1.5 1.5v11.5a1.5 1.5 0 0 1-1.5 1.5H2.25a1.5 1.5 0 0 1-1.5-1.5V2.25a1.5 1.5 0 0 1 1.5-1.5Zm1.6 4.8a1.34 1.34 0 1 0 0-2.68 1.34 1.34 0 0 0 0 2.68ZM2.68 6.56h2.34v6.57H2.68Zm3.73 0h2.23v.95c.36-.61 1.14-1.12 2.17-1.12 1.81 0 2.51 1.17 2.51 2.96v3.78h-2.34v-3.29c0-.87-.27-1.45-1.09-1.45-.89 0-1.25.62-1.25 1.45v3.29H6.41Z"/></svg></a></li>
+</ul>
+    <div class="lang-switch">
+  <button type="button" aria-expanded="false" aria-controls="lang-menu" aria-label="语言：中文"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M2.6 10h14.8M10 2.5c2 2.1 3 4.6 3 7.5s-1 5.4-3 7.5c-2-2.1-3-4.6-3-7.5s1-5.4 3-7.5Z" fill="none" stroke="currentColor" stroke-width="1.2"/></svg><span>中文</span><svg class="caret" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3.5 7 10 13.5 16.5 7" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <ul class="lang-menu" id="lang-menu" role="list">
+    <li><a href="../privacy/" hreflang="zh-CN" lang="zh-CN" aria-current="true">中文</a></li>
+    <li><a href="../en/privacy/" hreflang="en" lang="en">English</a></li>
+  </ul>
+</div>
+  </div>
+</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,121 @@
+{
+  "packages": [
+    {
+      "name": "@comchatx/cx-s3-storage",
+      "description": "Stores your images in your own bucket, with links for listings.",
+      "kinds": [
+        "skill"
+      ],
+      "author": "ComChatX",
+      "updated": "2026-09-25T08:00:00.000Z",
+      "version": "0.1.4",
+      "repository": "https://github.com/comchatx/cx-s3-storage",
+      "readme": "To change a listing's main image, Amazon needs a link to the picture that anyone can open. Connect your own cloud storage to cx, and cx stores images and other files there, each with a public link a listing can use as its main image; it can also list, read, copy and delete them. Useful for keeping and sorting product images. Amazon S3, Cloudflare R2 and other S3-compatible storage all work; providers call the place a bucket.\n\nSome things you can ask:\n\n- Store these images in my bucket's listings folder, and give me each one's link.\n- Which images are in my bucket's listings folder?\n- Copy last year's images in listings to an archive folder, then delete the originals.\n\n## Connecting your bucket\n\nOn the plugin's Settings, enter the endpoint, bucket, region, Access key ID, Secret access key and public address. Your provider's guide shows where to find each one. A key limited to one bucket keeps cx to that bucket. Your keys stay with ComChatX and are never given to cx.\n\n## What it costs\n\nNothing on ComChatX. Your provider bills your own account as usual.\n",
+      "readme_cut": false,
+      "ours": true,
+      "comchatx": {
+        "name": "S3 File Storage",
+        "nameZh": "S3 文件存储",
+        "about": "把商品图片存进你自己的存储桶，生成 listing 用的链接。",
+        "mark": {
+          "draw": [
+            {
+              "d": "M3.7 8.5c0-1.45 3.7-2.6 8.3-2.6s8.3 1.15 8.3 2.6-3.7 2.6-8.3 2.6-8.3-1.15-8.3-2.6zM5.7 8.5c0 .8 2.8 1.5 6.3 1.5s6.3-.7 6.3-1.5-2.8-1.5-6.3-1.5-6.3.7-6.3 1.5z",
+              "rule": "evenodd"
+            },
+            {
+              "d": "M3.9 11c1.9 1 4.8 1.6 8.1 1.6s6.2-.6 8.1-1.6l-1.6 8.6c-.3 1.5-3 2.6-6.5 2.6s-6.2-1.1-6.5-2.6z",
+              "rule": "evenodd"
+            },
+            {
+              "d": "M4.4 8.2C5 4.6 8.2 2.6 12 2.6s7 2 7.6 5.6",
+              "width": 1.6
+            }
+          ]
+        },
+        "section": "data",
+        "order": 22,
+        "skills": {
+          "s3": {
+            "zh": "读写存储桶里的文件，给出图片等文件的公开地址。",
+            "en": "Reads and writes files in your bucket, and gives a file's public address."
+          }
+        },
+        "source": {
+          "name": "s3-storage",
+          "help": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html",
+          "aspects": {},
+          "fields": {
+            "endpoint": {
+              "label": {
+                "en": "Endpoint",
+                "zh": "端点"
+              },
+              "help": {
+                "en": "For example https://s3.us-east-1.amazonaws.com.",
+                "zh": "例如 https://s3.us-east-1.amazonaws.com。"
+              }
+            },
+            "bucket": {
+              "label": {
+                "en": "Bucket",
+                "zh": "存储桶"
+              }
+            },
+            "region": {
+              "label": {
+                "en": "Region",
+                "zh": "区域"
+              },
+              "help": {
+                "en": "For example us-east-1, or auto for Cloudflare R2.",
+                "zh": "例如 us-east-1，Cloudflare R2 填 auto。"
+              }
+            },
+            "key_id": {
+              "label": {
+                "en": "Access key ID",
+                "zh": "Access key ID"
+              },
+              "help": {
+                "en": "cx can use only the buckets this key reaches.",
+                "zh": "cx 只能使用这个密钥能访问的存储桶。"
+              }
+            },
+            "secret_key": {
+              "label": {
+                "en": "Secret access key",
+                "zh": "Secret access key"
+              }
+            },
+            "public_base": {
+              "label": {
+                "en": "Public address",
+                "zh": "公开地址"
+              },
+              "help": {
+                "en": "Where anyone can open your bucket's files, for example https://images.example.com.",
+                "zh": "存储桶文件对外公开的网址，例如 https://images.example.com。"
+              }
+            }
+          }
+        }
+      },
+      "shipped": {
+        "readme": "To change a listing's main image, Amazon needs a link to the picture that anyone can open. Connect your own cloud storage to cx, and cx stores images and other files there, each with a public link a listing can use as its main image; it can also list, read, copy and delete them. Useful for keeping and sorting product images. Amazon S3, Cloudflare R2 and other S3-compatible storage all work; providers call the place a bucket.\n\nSome things you can ask:\n\n- Store these images in my bucket's listings folder, and give me each one's link.\n- Which images are in my bucket's listings folder?\n- Copy last year's images in listings to an archive folder, then delete the originals.\n\n## Connecting your bucket\n\nOn the plugin's Settings, enter the endpoint, bucket, region, Access key ID, Secret access key and public address. Your provider's guide shows where to find each one. A key limited to one bucket keeps cx to that bucket. Your keys stay with ComChatX and are never given to cx.\n\n## What it costs\n\nNothing on ComChatX. Your provider bills your own account as usual.\n",
+        "readme_zh": "改 listing 的主图时，亚马逊要的是一个谁都能打开的图片链接。这个插件把 cx 连到你自己的云存储，cx 把图片和其他文件存进去，每个文件都有公开链接，可以直接填作 listing 的主图；也能列出、读取、复制和删除里面的文件。适合存放和整理商品图片。Amazon S3、Cloudflare R2 等兼容 S3 的云存储都能用，服务商把存文件的地方叫「存储桶」。\n\n你可以这样问：\n\n- 把这几张图存进存储桶的 listings 文件夹，再告诉我每张的链接。\n- 存储桶的 listings 文件夹里有哪些图片？\n- 把 listings 里去年的旧图复制到 archive 文件夹，再删掉原图。\n\n## 连接存储桶\n\n在插件的「设置」里填写端点、存储桶、区域、Access key ID、Secret access key 和公开地址，各项的获取方法见服务商的指南。密钥只能访问一个存储桶时，cx 也只能用这一个。你的密钥保存在 ComChatX，不会交给 cx。\n\n## 费用\n\nComChatX 不收费，服务商照常向你自己的账号收费。\n",
+        "skills": [
+          {
+            "name": "s3",
+            "description": "The seller's own S3-compatible object storage (Amazon S3, Cloudflare R2, Backblaze B2, Wasabi or any provider that serves the S3 API) through the S3 REST API, signed with the seller's key — list, read, write, copy and delete objects, multipart uploads, and the public address of a stored object, such as an image's URL for a listing. Use before the first call that reads or changes the seller's own bucket. Needs cx-sources; if no cx-sources skill is listed, it is not installed, and the seller installs it in Plugins."
+          }
+        ],
+        "prompts": [],
+        "unread": []
+      },
+      "uses": [
+        "cx-sources"
+      ]
+    }
+  ]
+}

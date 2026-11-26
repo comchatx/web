@@ -1,0 +1,26 @@
+{
+  "name": "comchatx-web",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "description": "ComChatX's web page code and site, cut from the private repository after each release train",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "theme": "node src/web/theme.mjs --check",
+    "check": "tsc --noEmit && node src/web/theme.mjs --check && vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "26.2.0",
+    "esbuild": "0.27.2",
+    "happy-dom": "20.14.5",
+    "markdown-it": "15.0.2",
+    "typescript": "7.0.2",
+    "validate-npm-package-name": "8.0.0",
+    "vitest": "4.1.11"
+  }
+}

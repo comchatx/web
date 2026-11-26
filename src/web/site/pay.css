@@ -1,0 +1,31 @@
+/*
+ * 订阅's form as the two pages that hold it draw it: the settings window's 账单 pages, and the road's 订阅 card (src/web/road.ts). Its
+ * rows, its choices and the payment provider's box, by the theme's names; each page loads this before its own stylesheet, which places
+ * the form and draws the rest of its page.
+ */
+
+/* One row grammar: a name and one quiet line at the left, the control at the right, a hairline between rows. */
+.sw-group + .sw-group, .sw-foot + .sw-group { margin-top: var(--space-8); }
+.sw-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-6); min-height: var(--space-8); margin-bottom: var(--space-2); }
+.sw-head :is(h3, h4) { margin: 0; font-size: var(--size-body); line-height: var(--leading-tight); }
+.sw-rows { margin: 0; padding: 0; list-style: none; }
+.sw-row { display: flex; align-items: center; gap: var(--space-4) var(--space-7); min-height: calc(var(--space-8) + 2 * var(--space-5)); padding: var(--space-5) 0; }
+.sw-rows > * + *, .sw-head + .sw-rows > :first-child, .sw-rule + .sw-rows > :first-child, .sw-lots > .sw-rows > :first-child { border-top: 1px solid var(--line); }
+.sw-text { flex: 1; min-width: 0; }
+.sw-text > p { margin: 0; overflow-wrap: anywhere; }
+.sw-label { line-height: var(--leading-small); }
+.sw-help { text-wrap: pretty; }
+.sw-ctl { flex: none; display: flex; align-items: center; justify-content: flex-end; gap: var(--space-5); max-width: 62%; }
+
+.sw-value { overflow-wrap: anywhere; text-align: right; }
+.sw-row.stacked { flex-wrap: wrap; }
+.sw-row.stacked > .sw-wide { flex: none; width: 100%; }
+.sw-row.roomy { flex-wrap: wrap; }
+.sw-row.roomy > .sw-text { flex: 1 1 12rem; }
+.sw-row.roomy > .sw-ctl { margin-left: auto; max-width: 100%; }
+
+/* The card form: the provider's fields in their box, and what is said under them. */
+.sw-card-which { display: flex; flex-direction: column; gap: var(--space-2); }
+.sw-card-which + .sw-card-box { margin-top: var(--space-4); }
+.sw-card-box { padding: var(--space-6); border: 1px solid var(--edge); border-radius: var(--radius); background: var(--raised); }
+.sw-card-bad { margin: var(--space-5) 0 0; color: var(--bad); font-size: var(--size-small); line-height: var(--leading-small); }

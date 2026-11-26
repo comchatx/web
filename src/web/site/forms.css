@@ -1,0 +1,205 @@
+/*
+ * One field, wherever a person types: the chat page, the sign-in card and the road read this file after their own, so a field is drawn
+ * once. A field is one box; with the caret in it the keyboard's mark is drawn over the box's own edge and inward, so it runs over nothing
+ * beside it; filled changes nothing; refused is the edge in the failure colour, beside the line that says why; switched off is a button
+ * that is off. Where a field shares its frame with a mark or a row of controls (the plugin search, an amount, the message box), the frame
+ * is the box. Every value is the theme's.
+ */
+input.tab-rename, .dialog input:not([type="radio"], [type="checkbox"]), .dialog textarea,
+.cl-formFieldInput, .cl-otpCodeFieldInput, .road-name input, .composer, .pl-searchbox, .sw-amount,
+.pl-key, .pl-store-field, .pl-fieldrow > input, .pl-field input[type="text"], .sw-name-field {
+  border: 1px solid var(--edge); border-radius: var(--radius); background: var(--raised); outline: none; box-shadow: none;
+}
+/* The message box holds a row of controls under its words: it keeps a surface's corners. */
+.composer { border-radius: var(--radius-large); }
+
+input.tab-rename:focus-visible,
+.dialog input:not([type="radio"], [type="checkbox"]):focus-visible, .dialog textarea:focus-visible,
+.cl-formFieldInput:focus-visible, .cl-otpCodeFieldInput[data-focus-within="true"], .road-name input:focus-visible,
+.composer:focus-within, .pl-searchbox:focus-within, .sw-amount:has(:focus-visible),
+.pl-key:focus-visible, .pl-store-field:focus-visible, .pl-fieldrow > input:focus-visible, .pl-field input[type="text"]:focus-visible, .sw-name-field:focus-visible {
+  border-color: var(--act); outline: 2px solid var(--act); outline-offset: -2px;
+}
+
+input.tab-rename[aria-invalid="true"],
+.dialog input[aria-invalid="true"], .dialog textarea[aria-invalid="true"],
+.cl-formFieldInput[aria-invalid="true"], .cl-otpCodeFieldInput[data-feedback="error"], .road-name input[aria-invalid="true"],
+.composer:has([aria-invalid="true"]), .pl-searchbox:has([aria-invalid="true"]), .sw-amount:has([aria-invalid="true"]),
+.pl-key[aria-invalid="true"], .pl-store-field[aria-invalid="true"], .pl-fieldrow > input[aria-invalid="true"], .pl-field input[aria-invalid="true"], .sw-name-field[aria-invalid="true"] {
+  border-color: var(--bad); outline-color: var(--bad);
+}
+
+input.tab-rename:disabled,
+.dialog input:not([type="radio"], [type="checkbox"]):disabled, .dialog textarea:disabled,
+.cl-formFieldInput:disabled, .road-name input:disabled,
+.composer:has(textarea:disabled), .pl-searchbox:has(:disabled), .sw-amount:has(:disabled),
+.pl-key:disabled, .pl-store-field:disabled, .pl-fieldrow > input:disabled, .pl-field input[type="text"]:disabled {
+  border-color: var(--line); background: var(--wash); color: var(--quiet); cursor: default;
+}
+
+/*
+ * One form for each control a page repeats, under the `f-` names, which no older rule of a page reaches. Each is drawn as the signed set
+ * of controls draws it (ruled 2026-11-19), and src/web/forms.ts gives each its behaviour; .claude/skills/ui-forms/SKILL.md says which to
+ * use where. Every value is the theme's.
+ */
+
+/* Link: the action colour, no underline; under a pointer a shade two pixels past the words. */
+a.f-link { color: var(--act); text-decoration: none; }
+a.f-link:hover { border-radius: var(--radius-small); background: var(--shade, var(--float-hover)); box-shadow: 0 0 0 var(--space-1) var(--shade, var(--float-hover)); color: var(--act-hover); }
+
+/* Button with a word. Plain: a hairline on the ground one step in, one step further on a card. Primary: the action colour. */
+.f-btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-3); padding: var(--space-2) var(--space-5); border: 1px solid var(--line); border-radius: var(--radius); background: var(--hover); color: var(--ink); font-size: var(--size-small); line-height: var(--leading-small); white-space: nowrap; cursor: pointer; }
+.f-card .f-btn { background: var(--float-hover); }
+.f-btn:hover:not(:disabled, [aria-disabled="true"], .busy) { border-color: var(--edge); background: var(--shade, var(--float-hover)); }
+.f-btn.primary { border-color: var(--act); background: var(--act); color: var(--act-ink); }
+.f-btn.primary:hover:not(:disabled, [aria-disabled="true"], .busy) { border-color: var(--act-hover); background: var(--act-hover); }
+.f-btn:is(:disabled, [aria-disabled="true"]) { border-color: var(--line); background: var(--wash); color: var(--quiet); cursor: default; }
+/* Busy: the word keeps its room, unseen under the ring. */
+.f-btn.busy { position: relative; border-color: var(--live-edge); background: var(--live-wash); color: var(--ink); cursor: default; }
+.f-btn.busy > .f-word { visibility: hidden; }
+.f-btn.busy > .f-spin { position: absolute; inset: 0; margin: auto; }
+/* Words alone that a person presses: a link's colour and a link's shade. */
+.f-quiet { padding: 0; border: none; background: none; color: var(--act); font-size: var(--size-small); line-height: var(--leading-small); cursor: pointer; }
+.f-quiet:hover:not(:disabled) { border-radius: var(--radius-small); background: var(--shade, var(--float-hover)); box-shadow: 0 0 0 var(--space-1) var(--shade, var(--float-hover)); color: var(--act-hover); }
+
+/* Icon button: the mark alone, quiet, no edge; 32 px standing alone, 24 px in a row of marks, 32 px for a coarse pointer. */
+.f-icon { position: relative; display: inline-grid; place-items: center; width: var(--space-8); height: var(--space-8); padding: 0; border: none; border-radius: var(--radius); background: none; color: var(--quiet); cursor: pointer; }
+.f-marks { display: inline-flex; gap: var(--space-1); }
+.f-marks .f-icon { width: var(--space-7); height: var(--space-7); }
+@media (pointer: coarse) { .f-marks .f-icon { width: var(--space-8); height: var(--space-8); } }
+.f-icon:hover:not(:disabled), .f-icon[aria-expanded="true"] { background: var(--shade, var(--float-hover)); color: var(--ink); }
+.f-icon:disabled { cursor: default; }
+.f-icon:disabled > svg { opacity: 0.45; }
+
+/* Tooltip. A label names a control; a card holds a few lines and the pointer may rest on it. */
+.f-tip { position: fixed; z-index: 30; left: 0; top: 0; width: max-content; max-width: min(20rem, 70vw); margin: 0; padding: var(--space-1) var(--space-4); border: 1px solid var(--float-edge); border-radius: var(--radius); background: var(--raised); box-shadow: var(--float-shadow); color: var(--ink); font-size: var(--size-small); line-height: var(--leading-small); text-align: left; white-space: normal; overflow-wrap: anywhere; pointer-events: none; }
+.f-tip.f-tip-card { display: flex; flex-direction: column; gap: var(--space-1); min-width: 10rem; max-width: 18rem; padding: var(--space-4) var(--space-5); pointer-events: auto; }
+/* The card's reach over the gap, so a pointer crossing to it does not leave. */
+.f-tip.f-tip-card::before { content: ""; position: absolute; inset: calc(-1 * var(--space-3)); z-index: -1; }
+/* Hidden is the one way a tip goes: it comes after every kind, so none outweighs it. */
+.f-tip[hidden] { display: none; }
+
+/* Menu, and the list a select opens. */
+.f-menu { position: fixed; z-index: 20; display: flex; flex-direction: column; min-width: 10rem; max-width: calc(100vw - 2 * var(--space-4)); margin: 0; padding: var(--space-2); list-style: none; border: 1px solid var(--float-edge); border-radius: var(--radius-large); background: var(--raised); box-shadow: var(--float-shadow); color: var(--ink); font-size: var(--size-small); line-height: var(--leading-small); }
+.f-menu[hidden] { display: none; }
+.f-menu-row { display: flex; align-items: center; gap: var(--space-4); min-width: 0; height: var(--row); margin: 0; padding: 0 var(--space-4); border: none; border-radius: var(--radius); background: none; color: inherit; font: inherit; text-align: left; white-space: nowrap; cursor: pointer; }
+.f-menu-row:hover, .f-menu-row:focus-visible { background: var(--float-hover); }
+.f-menu-row:focus-visible { outline: 2px solid var(--act); outline-offset: -2px; }
+.f-menu-row > .f-words { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.f-tick { flex: none; width: 1rem; color: var(--ink); }
+.f-menu-row:not([aria-selected="true"], [aria-checked="true"]) > .f-tick { visibility: hidden; }
+.f-menu-rule { height: 1px; margin: var(--space-2) 0; background: var(--line); }
+/* The accounts a sign-in holds, in a menu (`account-switch.ts`): past eight and a half rows they scroll inside it, as the set's long list does, so the menu keeps to the window. */
+.f-accounts { display: flex; flex-direction: column; max-height: calc(8.5 * var(--row)); overflow-y: auto; overscroll-behavior: contain; }
+.f-accounts > .f-menu-row { flex: none; }
+/* An account's mark: an organisation's square, the person's own round, as the corner's avatar is. */
+.f-account-mark { flex: none; display: grid; place-items: center; width: 1.4rem; height: 1.4rem; border-radius: var(--radius-small); background: var(--ink); color: var(--raised); font-size: var(--size-caption); font-weight: var(--weight-strong); line-height: var(--leading-tight); }
+.f-account-mark.person { border-radius: var(--radius-round); }
+.f-menu.f-list { max-height: calc(8.5 * var(--row) + var(--space-2)); overflow-y: auto; overscroll-behavior: contain; }
+.f-menu.f-list > .f-menu-row { flex: none; }
+
+/* Select: the value as plain words and a chevron; a shade under the pointer; its list is the menu, the held line ticked at its end. */
+.f-select { display: inline-flex; align-items: center; gap: var(--space-3); min-height: var(--space-8); padding: 0 var(--space-4); border: none; border-radius: var(--radius); background: none; color: var(--ink); font-size: var(--size-small); line-height: var(--leading-small); cursor: pointer; }
+.f-select:hover:not(:disabled), .f-select[aria-expanded="true"] { background: var(--shade, var(--float-hover)); }
+.f-select:focus-visible { outline: 2px solid var(--act); outline-offset: -2px; }
+.f-select:disabled { color: var(--quiet); cursor: default; }
+.f-select > svg { flex: none; color: var(--quiet); }
+
+/* Search: the field on the ground one step in, no outline, its mark at the start; the clear button is the browser's own. */
+.f-search { display: flex; align-items: center; gap: var(--space-3); min-width: 0; height: var(--space-8); padding: 0 var(--space-4); border: none; border-radius: var(--radius); background: var(--wash); color: var(--quiet); cursor: text; }
+.f-search > input { flex: 1; min-width: 0; padding: 0; border: none; background: none; outline: none; color: var(--ink); font-size: var(--size-small); line-height: var(--leading-small); }
+.f-search > input::placeholder { color: var(--quiet); opacity: 1; }
+.f-search:focus-within { outline: 2px solid var(--act); outline-offset: -2px; }
+
+/* Dialog: the browser's own modal, over the scrim. */
+.f-dialog { width: max-content; max-width: min(30rem, calc(100vw - 2 * var(--space-6))); padding: var(--space-6) var(--space-7); border: 1px solid var(--float-edge); border-radius: var(--radius-large); background: var(--raised); color: var(--ink); box-shadow: var(--float-shadow); }
+.f-dialog::backdrop { background: var(--scrim); }
+.f-dialog h2 { margin: 0 0 var(--space-4); font-size: var(--size-lead); line-height: var(--leading-tight); font-weight: var(--weight-strong); }
+.f-dialog p { margin: 0; font-size: var(--size-small); line-height: var(--leading-small); }
+.f-acts { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-4); margin-top: var(--space-6); }
+
+/* Toast: one line at the window's foot, on the ink ground. */
+.f-toast { position: fixed; z-index: 40; left: var(--space-6); right: var(--space-6); bottom: var(--space-7); width: fit-content; max-width: min(34rem, calc(100vw - 2 * var(--space-6))); margin: 0 auto; padding: var(--space-3) var(--space-5); border-radius: var(--radius); background: var(--ink); color: var(--ground); font-size: var(--size-small); line-height: var(--leading-small); text-wrap: balance; }
+.f-toast[hidden] { display: none; }
+
+/* Notices: a failure in a block, a fact in a block, a line of status, a line of failure. */
+.f-failed { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-4); margin: 0; padding: var(--space-4) var(--space-5); border: 1px solid var(--bad-line); border-radius: var(--radius); color: var(--bad); font-size: var(--size-small); line-height: var(--leading-small); }
+.f-failed .f-btn { color: var(--ink); }
+.f-fact { margin: 0; padding: var(--space-4) var(--space-5); border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink); font-size: var(--size-small); line-height: var(--leading-small); }
+.f-line { margin: 0; color: var(--quiet); font-size: var(--size-small); line-height: var(--leading-small); }
+.f-line.bad { color: var(--bad); }
+
+/* Switch: the action colour when on; faded whole when it cannot be turned; no word beside it says its state. */
+.f-switch { display: inline-flex; align-items: center; min-height: var(--space-7); padding: 0; border: none; background: none; cursor: pointer; }
+.f-switch > i { position: relative; display: block; width: 2rem; height: 1.15rem; border: 1px solid var(--edge); border-radius: var(--radius-round); background: var(--wash); }
+.f-switch > i::after { content: ""; position: absolute; top: 1px; left: 1px; width: calc(1.15rem - 4px); height: calc(1.15rem - 4px); border-radius: var(--radius-round); background: var(--quiet); }
+.f-switch[aria-checked="true"] > i { border-color: var(--act); background: var(--act); }
+.f-switch[aria-checked="true"] > i::after { left: calc(100% - 1.15rem + 3px); background: var(--act-ink); }
+.f-switch:is(:disabled, [aria-disabled="true"]) { cursor: default; }
+.f-switch:is(:disabled, [aria-disabled="true"]:not([aria-busy="true"])) > i { opacity: 0.45; }
+.f-switch[aria-busy="true"] > i { border-color: var(--live-edge); background: var(--live-wash); }
+@keyframes f-refused { 20% { transform: translateX(-3px); } 40% { transform: translateX(3px); } 60% { transform: translateX(-2px); } 80% { transform: translateX(2px); } }
+.f-switch.f-refused > i { animation: f-refused 0.3s; }
+@media (prefers-reduced-motion: reduce) { .f-switch.f-refused > i { animation: none; } }
+
+/* Choice: a few values, all in sight, on a track with no outline; the held value is one pill on --held that slides to the next. */
+.f-seg { position: relative; display: inline-flex; max-width: 100%; height: var(--space-8); padding: var(--space-1); border: none; border-radius: var(--radius); background: var(--wash); }
+.f-seg > button { position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; padding: 0 var(--space-5); border: none; border-radius: var(--radius-small); background: none; color: var(--quiet); font-size: var(--size-small); line-height: var(--leading-small); white-space: nowrap; cursor: pointer; }
+.f-seg.icons > button { width: calc(var(--space-8) + var(--space-2)); padding: 0; }
+.f-seg > button:hover, .f-seg > button:is([aria-checked="true"], [aria-selected="true"]) { background: none; color: var(--ink); }
+.f-seg > button:focus-visible { outline: 2px solid var(--act); outline-offset: -2px; }
+.f-pill { position: absolute; top: var(--space-1); bottom: var(--space-1); left: 0; width: var(--f-w, 0); transform: translateX(var(--f-x, 0)); border-radius: var(--radius-small); background: var(--held); box-shadow: 0 0 0 1px var(--line); transition: transform var(--motion-quick) var(--ease), width var(--motion-quick) var(--ease); }
+.f-seg.still > .f-pill { transition: none; }
+/* The last value's field stands in its cell before its words, and after its cell for the keyboard. */
+.f-seg > .f-after { order: 1; }
+.f-seg > .f-field { position: relative; z-index: 1; align-self: stretch; }
+@media (prefers-reduced-motion: reduce) { .f-pill { transition: none; } }
+/* Under a 360 px window each value keeps 6 px each side, so four values fit. */
+@media not (min-width: 22.5rem) { .f-seg > button { padding: 0 var(--space-3); } }
+
+/* Tag: a hairline, quiet, 12 px; the failure colour for a failure. */
+.f-tag { flex: none; padding: 0 var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-small); color: var(--quiet); font-size: var(--size-caption); font-weight: var(--weight-regular); line-height: var(--leading-small); white-space: nowrap; }
+.f-tag.failed { border-color: var(--bad-line); color: var(--bad); }
+
+/* Tick and radio: ink when chosen; a radio is round. */
+.f-pick { display: inline-flex; align-items: center; gap: var(--space-4); min-height: var(--space-7); font-size: var(--size-small); line-height: var(--leading-small); cursor: pointer; }
+.f-pick > input { appearance: none; position: relative; flex: none; width: var(--space-6); height: var(--space-6); margin: 0; padding: 0; border: 1px solid var(--edge); border-radius: var(--radius-small); background: none; cursor: pointer; }
+.f-pick > input[type="radio"] { border-radius: var(--radius-round); }
+.f-pick > input:checked { border-color: var(--ink); background: var(--ink); }
+.f-pick > input[type="radio"]:checked { box-shadow: inset 0 0 0 calc(var(--space-2) - 1px) var(--ink), inset 0 0 0 var(--space-6) var(--raised); }
+.f-pick > input[type="checkbox"]:checked::after { content: ""; position: absolute; left: 30%; top: 8%; width: 30%; height: 58%; border: solid var(--raised); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.f-pick > input:disabled { border-color: var(--line); cursor: default; }
+
+/* Block: an option the whole of which is pressed, its words alone inside and its tick box kept unseen within it. Under the pointer the
+   floating shade; chosen, the action's edge at twice the width, the second line drawn inside so the block keeps its size, on the ground
+   of a pressed control: the edge's width and lightness tell a chosen block, not hue. */
+.f-block { position: relative; display: inline-flex; align-items: center; max-width: 100%; min-width: 0; padding: var(--space-4) var(--space-5); border: 1px solid var(--line); border-radius: var(--radius); font-size: var(--size-body); line-height: var(--leading-small); overflow-wrap: anywhere; cursor: pointer; }
+.f-block:hover { background: var(--float-hover); }
+.f-block:has(input:checked) { border-color: var(--act); background: var(--wash); box-shadow: inset 0 0 0 1px var(--act); }
+.f-block:has(input:focus-visible) { outline: 2px solid var(--act); outline-offset: 2px; }
+.f-block input:focus-visible { outline: none; }
+
+/* Empty: one quiet line. */
+.f-empty { margin: 0; color: var(--quiet); font-size: var(--size-small); line-height: var(--leading-small); }
+
+/* Not seen yet: a 6 px ink dot; an ink count. */
+.f-dot { display: inline-block; flex: none; width: var(--space-3); height: var(--space-3); border-radius: var(--radius-round); background: var(--ink); }
+.f-count { color: var(--ink); font-weight: var(--weight-strong); font-variant-numeric: tabular-nums; }
+
+/* Card on the app's own pages: a hairline, 12 px corners, the ground one step in. A board page keeps its own entry. */
+.f-card { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; padding: var(--space-5); border: 1px solid var(--line); border-radius: var(--radius-large); background: var(--hover); }
+
+/* Loading: the shape of what is read, breathing; a ring on a pressed button or beside what waits; both still under reduced motion. */
+.f-sk { display: flex; flex-direction: column; gap: var(--space-3); font-size: var(--size-small); line-height: var(--leading-small); }
+.f-sk > i { display: block; height: 1em; border-radius: var(--radius-small); background: var(--line); animation: f-breathe 1.6s linear infinite; }
+@keyframes f-breathe { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+.f-spin { display: inline-block; flex: none; width: 0.9rem; height: 0.9rem; border: 2px solid var(--live-edge); border-top-color: var(--ink); border-radius: var(--radius-round); animation: f-spin 0.8s linear infinite; }
+@keyframes f-spin { to { transform: rotate(1turn); } }
+@media (prefers-reduced-motion: reduce) { .f-sk > i, .f-spin { animation: none; } }
+/* Words of work under way: a light crosses them once each 2 s, from the line's quiet colour up to the ink and back, so nowhere are they
+   fainter than at rest; still and plain under reduced motion, the system's text under forced colours. */
+.f-working { color: var(--live); background: linear-gradient(90deg, var(--live) 0 35%, var(--ink) 50%, var(--live) 65% 100%) 100% 0 / 300% 100%;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: f-working 2s linear infinite; }
+@keyframes f-working { to { background-position: 0 0; } }
+@media (prefers-reduced-motion: reduce) { .f-working { background: none; -webkit-text-fill-color: currentColor; animation: none; } }
+@media (forced-colors: active) { .f-working { background: none; -webkit-text-fill-color: currentColor; animation: none; } }

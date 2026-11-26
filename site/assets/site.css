@@ -1,0 +1,621 @@
+/*
+ * ComChatX's site, in the brand's four colours: paper #FAF7F0, ink #1B2420, forest #1E4A38, sand #BE9257.
+ * The values below are those four and what the product's theme derives from them, named by their job as the theme names them:
+ * forest is only what a person acts on, and sand is only money and the mark. One light scheme.
+ * The layout follows Twoo's site (PR #1039), as ruled on 2026-10-20: one centred column and a large first heading. A scene
+ * has no fill under it, as ruled the same day: its title and cx at its desk stand beside the conversation, whose own edge is
+ * the only box, and space alone parts one scene from the next.
+ */
+:root {
+  color-scheme: light;
+  --ground: #FAF7F0;          /* paper */
+  --raised: #FDFCF9;          /* paper lifted 60% toward white: the conversation */
+  --hover: #EFECE5;           /* ink 4.5% into paper: what is under the pointer */
+  --wash: #EBE9E2;            /* ink 6% into paper: the seller's message, a step */
+  --line: #D9D8D2;            /* ink 13% into paper */
+  --float-edge: #BEBFB9;      /* ink 24% into paper: the outline of what lies over the page, in a shadow's place */
+  --edge: #818680;            /* the least ink that outlines a control at 3:1 */
+  --mark: #DCDBD4;            /* ink 12% into paper: a word a change adds */
+  --ink: #1B2420;             /* ink */
+  --quiet: #5E635E;           /* the least ink that reads 4.6:1 on every ground here */
+  --act: #1E4A38;             /* forest */
+  --act-ink: #FAF7F0;         /* paper */
+  --act-hover: #1E3E31;       /* ink 30% into forest */
+  --act-wash: #DEE1D8;        /* forest 12% into paper: selected text */
+  --money: #865C1F;           /* sand darkened until it reads 4.8:1 */
+  --chart-lead: #1B2420;      /* ink: the marks a chart's answer is about */
+  --chart-rest: #818680;      /* the least ink a mark reads at 3:1 on paper: the rest of a chart */
+  --logo-forest: #1E4A38;
+  --logo-sand: #BE9257;
+
+  /* cx, as the product's theme draws it in light */
+  --cx-line: #1B2420;
+  --cx-forest: #1E4A38;
+  --cx-forest-shade: #1E3E31;
+  --cx-sand: #BE9257;
+  --cx-sand-shade: #866D46;
+  --cx-sand-light: #EBD9A9;
+  --cx-chalk: #F3EFE4;
+  --cx-bezel: #E1DFD9;
+  --cx-bezel-top: #EDEBE4;
+  --cx-bezel-side: #CDCDC6;
+  --cx-tube-top: #E6E4DD;
+  --cx-tube-side: #C3C4BD;
+  --cx-paper: #F1E7D7;
+  --cx-coin: #865C1F;
+  --cx-hourglass: #5E635E;
+  --cx-screen-off: #1B2420;
+  --cx-screen-on: #FDFCF9;
+  --cx-good: #1E4A38;
+  --cx-warn: #688373;
+  --cx-quiet: #5E635E;
+  --cx-accent: #1B2420;
+  --cx-bad: #A43C33;
+
+  /* Faces: the reader's own system face for Chinese and for text; Instrument Serif, served from /fonts, for the wordmark and English headings. */
+  --font-ui: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", sans-serif;
+  --font-serif: "Instrument Serif", "Times New Roman", Times, serif;
+
+  /* The product's six sizes, and the site's three headings: the page's one heading, a section's, and a scene's. */
+  --size-caption: 0.75rem;    /* 12px */
+  --size-small: 0.8125rem;    /* 13px */
+  --size-body: 0.9375rem;     /* 15px */
+  --size-lead: 1.0625rem;     /* 17px */
+  --size-title: 1.25rem;      /* 20px */
+  --size-display: 1.625rem;   /* 26px */
+  --size-hero: clamp(2rem, 0.75rem + 6vw, 6.5rem);
+  --size-section: clamp(1.75rem, 0.9rem + 3.6vw, 3.75rem);
+  --size-scene: 1.875rem;
+  /* A chart's headline figure, the one a reason turns on. */
+  --size-figure: 1.875rem;
+  /* The case's two marks, one size in both languages. */
+  --size-marks: clamp(1.75rem, 0.9rem + 3.6vw, 3.75rem);
+  --leading-body: 1.65;
+  --leading-small: 1.5;
+  --leading-tight: 1.3;
+  --leading-heading: 1.15;
+
+  --space-2: 0.25rem;
+  --space-3: 0.375rem;
+  --space-4: 0.5rem;
+  --space-5: 0.75rem;
+  --space-6: 1rem;
+  --space-7: 1.5rem;
+  --space-8: 2rem;
+  --space-9: 3rem;
+  --space-10: 4rem;
+
+  --radius-small: 4px;
+  --radius: 6px;
+  --radius-large: 12px;
+  --radius-round: 999px;
+
+  --motion-quick: 120ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  --bar: 4.25rem;             /* the header's height */
+  --gutter: 2rem;
+  --column: 59rem;            /* the page's one column: a scene's two columns and the space between them */
+  --side: 16rem;              /* a scene's first column: its title, and cx at its desk */
+  --chat-gap: var(--space-5); /* between the parts of a conversation; two steps in a row sit closer */
+}
+/* English headings in the serif, at the sizes a serif needs to read as large as the Chinese. */
+:root:lang(en) {
+  --size-hero: clamp(2.75rem, 1rem + 7vw, 7rem);
+  --size-section: clamp(2.25rem, 1rem + 4vw, 4.25rem);
+  --size-scene: 2.375rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--size-lead);
+  line-height: var(--leading-body);
+  text-wrap: pretty;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, p, ol, ul, figure, dl, dd { margin: 0; }
+ol, ul { padding: 0; list-style: none; }
+img, video, svg { display: block; max-width: 100%; }
+a { color: var(--act); text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+a:hover { color: var(--act-hover); }
+:focus-visible { outline: 2px solid var(--act); outline-offset: 2px; }
+::selection { background: var(--act-wash); color: var(--ink); }
+button { font: inherit; color: inherit; }
+.vh { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+/* A phrase kept whole moves to the next line as one; one longer than the line still wraps. */
+.keep { display: inline-block; }
+/* Balancing would pull a word apart to sit beside a kept phrase, so a block that holds one wraps plainly. */
+:has(> .keep) { text-wrap: wrap; }
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+/* The first Tab stop: to the page's text, past the header. */
+.skip {
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-4);
+  z-index: 20;
+  padding: var(--space-3) var(--space-5);
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-size: var(--size-body);
+  transform: translateY(-200%);
+}
+.skip:focus { transform: none; }
+
+h1, h2 { font-weight: 600; text-wrap: balance; }
+/* Chinese headings set close, as large Chinese type is; a heading, lede or the case's one line breaks at its punctuation and spaces. */
+:lang(zh) h1, :lang(zh) h2 { letter-spacing: -0.02em; }
+:lang(zh) h1, :lang(zh) h2, :lang(zh) .lede, :lang(zh) .case p { word-break: keep-all; overflow-wrap: anywhere; }
+/* Whatever the page scrolls to, a link's target or a line that takes focus, lands below the header. */
+html { scroll-padding-top: var(--bar); }
+:lang(en) h1, :lang(en) h2 { font-family: var(--font-serif); font-weight: 400; letter-spacing: -0.01em; }
+h1 { font-size: var(--size-hero); line-height: var(--leading-heading); }
+:lang(en) h1 { line-height: 1; }
+/* A section's heading. */
+.wallet h2, .case h2, .close h2 { font-size: var(--size-section); line-height: var(--leading-heading); }
+:lang(en) .wallet h2, :lang(en) .close h2 { line-height: 1.05; }
+
+.wrap { width: 100%; max-width: calc(var(--column) + 2 * var(--gutter)); margin: 0 auto; padding: 0 var(--gutter); }
+
+/* ---- The button: one shape, forest ---- */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.25rem;
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid var(--act);
+  border-radius: var(--radius);
+  background: var(--act);
+  color: var(--act-ink);
+  font-size: var(--size-body);
+  font-weight: 600;
+  line-height: var(--leading-small);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--motion-quick) var(--ease), border-color var(--motion-quick) var(--ease);
+}
+.button:hover { background: var(--act-hover); border-color: var(--act-hover); color: var(--act-ink); }
+.button.big { min-height: 3rem; padding: var(--space-4) var(--space-8); font-size: var(--size-lead); }
+/* The other choice beside it: the same shape, outlined. */
+.button.quiet, .button.quiet:hover { border-color: var(--edge); color: var(--ink); }
+.button.quiet { background: transparent; }
+.button.quiet:hover { background: var(--hover); }
+
+/* ---- The header: the brand on the left, the pages in the middle, language and the account on the right ---- */
+.top { position: sticky; top: 0; z-index: 10; background: var(--ground); }
+.bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--space-8);
+  min-height: var(--bar);
+  padding: 0 var(--gutter);
+}
+.brand { justify-self: start; display: inline-flex; align-items: center; gap: var(--space-4); color: var(--ink); text-decoration: none; }
+.brand:hover { color: var(--ink); }
+.brand svg { width: 2.25rem; height: auto; }
+.wordmark { font-family: var(--font-serif); font-size: 1.5rem; line-height: 1; letter-spacing: 0; }
+.wordmark i { color: var(--logo-sand); }
+.links { display: flex; gap: var(--space-8); }
+.links a, .signin, .lang a { color: var(--ink); font-size: var(--size-body); text-decoration: none; white-space: nowrap; }
+.links a:hover, .signin:hover, .lang a:hover { color: var(--act); text-decoration: underline; }
+.links a[aria-current="page"] { color: var(--act); font-weight: 600; }
+.end { justify-self: end; display: flex; align-items: center; gap: var(--space-7); }
+.lang { display: flex; align-items: baseline; gap: var(--space-3); font-size: var(--size-body); color: var(--quiet); }
+.lang [aria-current] { color: var(--ink); font-weight: 600; }
+.auth { display: flex; align-items: center; gap: var(--space-7); }
+
+/* ---- The first screen: the heading, one line under it, and the first scene showing below ---- */
+.hero .wrap { padding-top: var(--space-10); padding-bottom: var(--space-10); }
+.lede { max-width: 34em; margin-top: var(--space-7); font-size: var(--size-title); line-height: 1.6; color: var(--quiet); }
+.hero .button { margin-top: var(--space-8); }
+
+/* cx at its desk: the scene is 350 by 140 units, drawn by assets/cx.js. */
+.desk { width: 100%; aspect-ratio: 350 / 140; }
+.desk svg { overflow: visible; }
+
+/* ---- A scene: its title and cx at its desk on the left, the conversation on the right, and no fill under either ---- */
+.scene + .scene { margin-top: var(--space-10); }
+.stage { display: grid; grid-template-columns: minmax(12rem, var(--side)) minmax(0, 1fr); align-items: start; column-gap: var(--space-9); }
+/* The title and cx stay in view while a long answer scrolls past them. */
+.side { position: sticky; top: calc(var(--bar) + var(--space-8)); }
+.side h2 { padding-top: var(--space-6); font-size: var(--size-scene); line-height: var(--leading-heading); }
+.side .desk { margin-top: var(--space-8); }
+.more { grid-column: 2; margin-top: var(--space-5); font-size: var(--size-body); line-height: var(--leading-body); color: var(--quiet); }
+
+/* The conversation drawn as the product draws it: the seller's message in a bubble, cx's answer on the page. */
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--chat-gap);
+  padding: var(--space-6) var(--space-7);
+  background: var(--raised);
+  border: 1px solid var(--float-edge);
+  border-radius: var(--radius-large);
+  font-size: var(--size-body);
+  line-height: var(--leading-body);
+}
+.sample { font-size: var(--size-caption); line-height: var(--leading-small); color: var(--quiet); }
+.who { display: block; margin-bottom: var(--space-2); font-size: var(--size-caption); line-height: var(--leading-small); color: var(--quiet); }
+.msg { align-self: flex-end; max-width: 85%; text-align: right; }
+.msg p { display: inline-block; padding: var(--space-4) var(--space-5); background: var(--wash); border-radius: var(--radius-large); text-align: left; line-height: var(--leading-small); }
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  background: var(--wash);
+  border-radius: var(--radius);
+  font-size: var(--size-small);
+  line-height: var(--leading-small);
+}
+.step + .step { margin-top: calc(var(--space-4) - var(--chat-gap)); }
+.step svg { flex: none; width: 1rem; height: 1rem; margin-top: 0.125rem; color: var(--quiet); }
+.step.bought svg { color: var(--money); }
+/* Where a number came from and when: on its own line under what it backs. */
+.src {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: var(--space-2);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  font-size: var(--size-caption);
+  line-height: 1.5;
+  color: var(--quiet);
+}
+/* In a narrow window the date drops under the source; neither is ever cut. */
+.src > span { white-space: nowrap; }
+/* A step cx takes before it answers a question sits over the answer, as a step does over any answer. */
+.answer > .step { margin-bottom: var(--chat-gap); }
+.msg:focus, .answer:focus { outline: none; }
+.msg:focus-visible, .answer:focus-visible { outline: 2px solid var(--act); outline-offset: 4px; border-radius: var(--radius-small); }
+
+.plan {
+  padding: var(--space-6) var(--space-6) var(--space-5);
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.plan h3 { margin-bottom: var(--space-3); font-size: var(--size-small); font-weight: 600; line-height: var(--leading-small); color: var(--quiet); }
+.plan .what { font-weight: 600; }
+/* A title cx would change: as it is and as it would be, each with its length against Amazon's 75 characters. */
+.titles { display: grid; row-gap: var(--space-4); margin-top: var(--space-4); }
+.titles > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-5); row-gap: var(--space-2); }
+.titles dt, .titles .count { grid-row: 1; font-size: var(--size-caption); line-height: var(--leading-small); color: var(--quiet); }
+.titles .count { grid-column: 2; font-variant-numeric: tabular-nums; }
+.titles .title { grid-row: 2; grid-column: 1 / -1; font-size: var(--size-small); line-height: var(--leading-small); }
+/* The words a change adds and the words it takes out, drawn the same in the plan and in the reason; each stays on one line where it fits. */
+.titles ins, .lines ins { display: inline-block; background: var(--mark); color: var(--ink); text-decoration: none; }
+.titles del, .lines del { display: inline-block; color: var(--quiet); text-decoration-thickness: 1px; }
+/* The options a plan offers, each under its letter; the one cx recommends in ink, with the tag the product puts on what it recommends. */
+.options { display: grid; row-gap: var(--space-3); margin-top: var(--space-4); }
+.options li { display: grid; grid-template-columns: 1em minmax(0, 1fr); align-items: baseline; column-gap: var(--space-4); color: var(--quiet); }
+.options .letter { font-weight: 600; }
+.options .pick { color: var(--ink); font-weight: 600; }
+.tag { padding: 0 var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-small); color: var(--quiet); font-size: var(--size-caption); font-weight: 400; line-height: var(--leading-small); white-space: nowrap; }
+.file { display: flex; gap: var(--space-4); align-items: flex-start; margin-top: var(--space-4); }
+.file svg { flex: none; width: 1rem; height: 1rem; margin-top: 0.2rem; color: var(--quiet); }
+.file .draft { display: block; margin-top: var(--space-2); font-size: var(--size-small); font-weight: 400; line-height: var(--leading-small); color: var(--quiet); text-wrap: pretty; }
+.acts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); margin-top: var(--space-5); }
+/* Without the script there is nothing to press. */
+.acts:not(:has(> :not([hidden]))) { display: none; }
+.acts .button { min-height: 2rem; padding: var(--space-2) var(--space-6); font-size: var(--size-small); }
+/* What came of the plan: done, or left as it was. */
+.done, .kept { display: flex; align-items: flex-start; gap: var(--space-4); margin-top: var(--space-5); font-weight: 600; }
+.done svg, .kept svg { flex: none; width: 1rem; height: 1rem; margin-top: 0.3rem; }
+.kept svg { color: var(--quiet); }
+.done:focus, .kept:focus { outline: none; }
+.done:focus-visible, .kept:focus-visible { outline: 2px solid var(--act); outline-offset: 2px; }
+
+/* ---- A chart in an answer: what it counts, the figures it turns on, its marks, and where the numbers came from ---- */
+/* A chart lays itself out by its own width, wherever the conversation is drawn. */
+.chart { margin-top: var(--space-6); container-type: inline-size; }
+.chart figcaption { font-size: var(--size-small); font-weight: 600; line-height: var(--leading-small); }
+.chart .src { margin-top: var(--space-4); }
+/* What cx says next stands clear of the chart above it. */
+.chart + p { margin-top: var(--space-7); }
+/* A chart drawn from two sources names both. */
+.srcs { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); margin-top: var(--space-4); }
+.chart .srcs .src { margin-top: 0; }
+/* The headline figures, each large over what it counts; a sum's figures are drawn the same. */
+.stats { display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-9); margin-top: var(--space-4); }
+.stats > div, .sum .term { display: flex; flex-direction: column-reverse; }
+.stats dt, .sum .key { font-size: var(--size-caption); line-height: var(--leading-small); color: var(--quiet); }
+.stats dd, .sum .fig { font-size: var(--size-figure); font-weight: 600; line-height: var(--leading-heading); font-variant-numeric: tabular-nums; }
+.stats .unit, .sum .unit { font-size: var(--size-body); }
+/* A sum worked out in the open, its signs quiet between its figures. */
+.sum { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4) var(--space-5); margin-top: var(--space-4); }
+.sum .with { display: flex; align-items: flex-start; gap: var(--space-5); }
+.sum .op { font-size: var(--size-figure); line-height: var(--leading-heading); color: var(--quiet); }
+/* What a chart's figures assume, under its marks. */
+.chart .note { margin-top: var(--space-5); font-size: var(--size-caption); line-height: var(--leading-small); color: var(--quiet); }
+/* Columns on one scale, one to a competitor: what its price would earn a month, and under it the price, the monthly sales and what each one earns, each row named once on the left. */
+.cols { display: grid; grid-template-columns: max-content minmax(0, 1fr); grid-template-rows: 8rem repeat(3, auto); column-gap: var(--space-5); row-gap: var(--space-2); margin-top: var(--space-6); font-size: var(--size-small); line-height: var(--leading-small); font-variant-numeric: tabular-nums; }
+.cols .keys { grid-column: 1; grid-row: 2 / -1; display: grid; grid-template-rows: subgrid; color: var(--quiet); word-break: keep-all; }
+.cols ol { grid-column: 2; grid-row: 1 / -1; display: grid; grid-template-rows: subgrid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); column-gap: var(--space-3); }
+.cols li { grid-row: 1 / -1; display: grid; grid-template-rows: subgrid; color: var(--quiet); text-align: center; white-space: nowrap; }
+/* A column stands on the plot's foot with its figure over it; the plot keeps a line free above the tallest for its figure. */
+.cols .plot { grid-row: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding-top: calc(1.5em + var(--space-2)); }
+.cols .value { margin-bottom: var(--space-2); }
+.cols svg { flex: none; width: min(70%, 2.75rem); }
+.cols rect { fill: var(--chart-rest); }
+.cols .lead { color: var(--ink); font-weight: 600; }
+.cols .lead rect { fill: var(--chart-lead); }
+/* In a narrow chart the figures take the caption size, and a row's name may take two lines. */
+@container (max-width: 26rem) {
+  .cols { grid-template-columns: min-content minmax(0, 1fr); font-size: var(--size-caption); }
+}
+/* Lines over eight weeks, one row each on one scale: the search term, its line, how far it moved, and how well it sells in the seller's ads. */
+/* The heads and the rows are set in different sizes, so their columns are counted in rem to line up. */
+.heads, .lines li { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr) 3.5rem 5.5rem; align-items: center; column-gap: var(--space-5); }
+.heads { margin-top: var(--space-4); font-size: var(--size-caption); line-height: var(--leading-small); color: var(--quiet); }
+.heads span { grid-column: 2 / span 2; text-align: right; }
+.heads span + span { grid-column: 4; }
+.lines { display: grid; row-gap: var(--space-4); margin-top: var(--space-3); font-size: var(--size-small); line-height: var(--leading-small); }
+.lines .key { color: var(--quiet); }
+.lines svg { width: 100%; height: 2.25rem; overflow: visible; }
+.lines path { fill: none; stroke: var(--chart-lead); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.lines .rest path { stroke: var(--chart-rest); stroke-width: 2; }
+.lines .dot, .lines .rest .dot { stroke-width: 7; }
+.lines .value { font-variant-numeric: tabular-nums; text-align: right; }
+.lines li:first-child .value { font-weight: 600; }
+/* In a narrow chart a search term takes its own line over its line and its figures. */
+@container (max-width: 28rem) {
+  .heads, .lines li { grid-template-columns: minmax(0, 1fr) 3.5rem 5.5rem; }
+  .heads span { grid-column: 1 / span 2; }
+  .heads span + span { grid-column: 3; }
+  .lines .key { grid-column: 1 / -1; }
+}
+/* Bars by day: the week before in the rest's grey, the week the answer is about in ink, each named under its half. */
+.days { display: grid; grid-template-columns: 1fr 1fr; row-gap: var(--space-3); margin-top: var(--space-5); font-size: var(--size-caption); line-height: var(--leading-small); color: var(--quiet); }
+.days svg { grid-column: 1 / -1; width: 100%; height: 6rem; }
+.days rect { fill: var(--chart-lead); }
+.days .rest { fill: var(--chart-rest); }
+.days .since { color: var(--ink); }
+/* Two options over the same hours on one scale: the recommended one in ink and the other in the rest's grey, each named with its figure where it ends, and under them the hours where a line turns. */
+.climb { display: grid; grid-template-columns: minmax(0, 1fr) max-content; grid-template-rows: 8rem auto; column-gap: var(--space-5); margin-top: var(--space-7); font-size: var(--size-caption); line-height: 1rem; }
+.climb .plot { grid-row: 1; grid-column: 1; }
+.climb svg { width: 100%; height: 100%; overflow: visible; }
+.climb path { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.climb .lead { stroke: var(--chart-lead); }
+.climb .rest { stroke: var(--chart-rest); stroke-width: 2; }
+.climb .dot { stroke-width: 7; }
+/* Both names share the plot's row, each moved down to where its line ends. */
+.climb > .b, .climb > .a { grid-row: 1; grid-column: 2; align-self: start; position: relative; transform: translateY(-50%); white-space: nowrap; }
+.climb > .b { font-weight: 600; }
+.climb > .a { top: 17.4%; color: var(--quiet); }
+.climb .ticks { grid-row: 2; grid-column: 1; position: relative; height: 1rem; margin-top: var(--space-3); color: var(--quiet); }
+.climb .ticks span { position: absolute; top: 0; left: 0; white-space: nowrap; }
+.climb .ticks .b { left: 37.81%; transform: translateX(-50%); }
+.climb .ticks .a { left: 75.61%; transform: translateX(-50%); }
+/* As cx's answer arrives, its marks draw in from the left, and columns rise from their foot one after another. */
+.asking .answer[data-asked] .chart svg { animation: draw 900ms var(--ease) 120ms both; }
+.asking .answer[data-asked] .cols svg { animation-name: rise; animation-duration: 600ms; }
+.asking .answer[data-asked] .cols li:nth-child(2) svg { animation-delay: 240ms; }
+.asking .answer[data-asked] .cols li:nth-child(3) svg { animation-delay: 360ms; }
+.asking .answer[data-asked] .cols li:nth-child(4) svg { animation-delay: 480ms; }
+.asking .answer[data-asked] .cols li:nth-child(5) svg { animation-delay: 600ms; }
+@keyframes draw { from { clip-path: inset(-50% 100% -50% -50%); } to { clip-path: inset(-50%); } }
+@keyframes rise { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0); } }
+
+/* A question the seller can put to cx, on the seller's side of the conversation until it is sent. */
+.chip {
+  align-self: flex-end;
+  max-width: 85%;
+  min-height: 2rem;
+  padding: var(--space-2) var(--space-6);
+  border: 1px solid var(--edge);
+  border-radius: var(--radius-round);
+  background: var(--raised);
+  color: var(--act);
+  font-size: var(--size-small);
+  line-height: var(--leading-small);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--motion-quick) var(--ease), background-color var(--motion-quick) var(--ease);
+}
+.chip:hover { border-color: var(--act); background: var(--hover); color: var(--act-hover); }
+/* cx at work on the answer. */
+.typing { display: flex; gap: var(--space-2); padding: var(--space-3) 0; }
+.typing span { width: 0.375rem; height: 0.375rem; border-radius: var(--radius-round); background: var(--quiet); animation: typing 1s var(--ease) infinite; }
+.typing span:nth-child(2) { animation-delay: 160ms; }
+.typing span:nth-child(3) { animation-delay: 320ms; }
+@keyframes typing { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+/* The parts of a scene arrive one by one while cx works, when motion is welcome; without the script they are all there. */
+.playing [data-part] { opacity: 0; transform: translateY(0.375rem); }
+.playing [data-part].on { opacity: 1; transform: none; transition: opacity 240ms var(--ease), transform 240ms var(--ease); }
+.asking [data-asked] { animation: arrive 240ms var(--ease); }
+@keyframes arrive { from { opacity: 0; transform: translateY(0.375rem); } }
+
+/* ---- One wallet ---- */
+.wallet .wrap, .case .wrap, .close .wrap { padding-top: var(--space-10); padding-bottom: var(--space-10); }
+.wallet { margin-top: var(--space-10); }
+.body { max-width: 36em; margin-top: var(--space-6); color: var(--quiet); }
+/* The data sources cx buys from, each named as its maker writes it. */
+.sources { display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-8); margin-top: var(--space-8); font-size: var(--size-title); font-weight: 600; line-height: var(--leading-tight); }
+/* The list is a few of many: said at once under it. */
+.also { max-width: 36em; margin-top: var(--space-6); color: var(--quiet); }
+.also strong { font-weight: 600; color: var(--ink); }
+.pulls { margin-top: var(--space-9); padding: var(--space-7); background: var(--raised); border: 1px solid var(--line); border-radius: var(--radius-large); }
+.pulls h3 { font-size: var(--size-body); font-weight: 600; }
+.pulls .sample { margin-top: var(--space-2); }
+.pulls ol { margin-top: var(--space-5); }
+.pulls li {
+  display: grid;
+  grid-template-columns: 3.25rem 7.5rem minmax(0, 1fr);
+  gap: var(--space-5);
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--line);
+  font-size: var(--size-small);
+  line-height: var(--leading-small);
+}
+.pulls li:lang(en) { grid-template-columns: 3.25rem 10.5rem minmax(0, 1fr); }
+.pulls time { color: var(--quiet); font-variant-numeric: tabular-nums; }
+.pulls .from { font-weight: 600; }
+.pulls .what { display: flex; align-items: flex-start; gap: var(--space-3); }
+.pulls .what svg { flex: none; width: 1rem; height: 1rem; margin-top: 0.125rem; color: var(--quiet); }
+.pulls .what.bought svg { color: var(--money); }
+
+/* ---- The case: the two marks side by side ---- */
+.case .duo { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) 0.3em; font-family: var(--font-serif); font-size: var(--size-marks); font-weight: 400; letter-spacing: 0; }
+.duo .us { display: inline-flex; align-items: center; gap: 0.18em; }
+/* On a narrow screen the × goes to the next line with GL.iNet's mark. */
+.duo .them { display: inline-flex; align-items: center; gap: 0.3em; }
+.duo .us svg { width: 1.5em; height: auto; }
+.duo .wordmark { font-size: 1em; }
+.duo .with { color: var(--quiet); }
+/* GL.iNet's own mark, as GL.iNet draws it, as wide as the wordmark, its letters on the wordmark's baseline. */
+.duo img { width: auto; height: 1.08em; transform: translateY(-0.18em); }
+.case p { max-width: 36em; margin-top: var(--space-6); color: var(--quiet); }
+/* Wrapped plainly, the Chinese line breaks at its comma; pretty would end a phone's first line on cx. */
+:lang(zh) .case p { text-wrap: wrap; }
+
+/* ---- The last word, and where else to go ---- */
+.close .button { margin-top: var(--space-8); }
+.routes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6); margin-top: var(--space-10); }
+.routes a {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  height: 100%;
+  padding: var(--space-7);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-large);
+  color: var(--ink);
+  text-decoration: none;
+  transition: background-color var(--motion-quick) var(--ease), border-color var(--motion-quick) var(--ease);
+}
+.routes a:hover { background: var(--hover); border-color: var(--float-edge); }
+.routes .name { font-size: var(--size-lead); font-weight: 600; color: var(--act); }
+.routes .line { font-size: var(--size-body); line-height: var(--leading-body); color: var(--quiet); }
+
+/* ---- Help: the page's heading and one paragraph ---- */
+.page .wrap { min-height: calc(100svh - var(--bar) - 5.5rem); padding-top: var(--space-10); padding-bottom: var(--space-10); }
+.page .wrap > * { max-width: 40rem; }
+.page h1 { font-size: var(--size-section); }
+.page p { margin-top: var(--space-7); font-size: var(--size-lead); line-height: 1.8; }
+
+/* ---- Pricing and Business: the page's heading over its parts, each part a section's title and what it holds ---- */
+.doc { min-height: calc(100svh - var(--bar) - 5.5rem); padding-bottom: var(--space-10); }
+.doc .intro .wrap { padding-top: var(--space-10); }
+.doc h1 { max-width: 15em; font-size: var(--size-section); }
+.doc section + section { margin-top: var(--space-10); }
+.doc h2 { font-size: var(--size-title); font-weight: 600; line-height: var(--leading-tight); }
+:lang(en) .doc h2 { font-family: var(--font-ui); font-weight: 600; letter-spacing: 0; }
+.doc h3 { font-size: var(--size-lead); font-weight: 600; line-height: var(--leading-tight); }
+
+/* Trial and membership side by side, row for row: a row is as tall in one card as in the other. */
+.tiers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-6); }
+.tier, .tier dl { display: grid; grid-template-rows: subgrid; }
+.tier { grid-row: span 10; padding: var(--space-7); background: var(--raised); border: 1px solid var(--line); border-radius: var(--radius-large); }
+.tier dl { grid-row: span 7; }
+.tier .rate { display: flex; align-items: baseline; gap: var(--space-3); margin-top: var(--space-5); }
+.tier .rate strong { font-size: var(--size-figure); font-weight: 600; line-height: var(--leading-heading); font-variant-numeric: tabular-nums; }
+.tier .per { color: var(--quiet); }
+.tier .for { margin: var(--space-4) 0 var(--space-6); color: var(--quiet); }
+.tier dl > div { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-6); padding: var(--space-4) 0; border-top: 1px solid var(--line); line-height: var(--leading-small); }
+.tier dt { flex: none; color: var(--quiet); }
+.tier dd { text-align: right; }
+.tier dd svg { width: 1rem; height: 1rem; vertical-align: -0.15em; }
+.tier dd.no { color: var(--quiet); }
+/* A page's main button with one quiet line beside it: what comes after signing up, or the address the button writes to. */
+.go { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-5) var(--space-7); margin-top: var(--space-8); }
+.go p { color: var(--quiet); }
+
+/* Business, under the plans: what it is beside what it covers. */
+.band { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-7) var(--space-9); padding: var(--space-8); border: 1px solid var(--line); border-radius: var(--radius-large); }
+.band .copy p { margin-top: var(--space-4); color: var(--quiet); }
+.band .button { margin-top: var(--space-7); }
+.band ul { align-self: center; }
+.band li { padding: var(--space-4) 0; border-top: 1px solid var(--line); }
+
+/* What Business covers: cards of one height, two to a row. */
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: var(--space-6); }
+.cards li { padding: var(--space-7); background: var(--raised); border: 1px solid var(--line); border-radius: var(--radius-large); }
+.cards p { margin-top: var(--space-4); color: var(--quiet); }
+
+/* ---- Terms, privacy, usage policy and about: the page's heading and date over sections of prose, at a reading measure ---- */
+.legal .updated { margin-top: var(--space-5); color: var(--quiet); }
+.legal section + section { margin-top: var(--space-8); }
+.legal section .wrap > * { max-width: 40rem; }
+.legal p { margin-top: var(--space-5); line-height: 1.8; }
+.legal h2 + p { margin-top: var(--space-4); }
+
+/* ---- The foot ---- */
+.foot { font-size: var(--size-small); color: var(--quiet); }
+/* The foot spans the window as the header does. */
+.foot .wrap { max-width: none; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-5) var(--space-8); min-height: 5.5rem; padding-top: var(--space-6); padding-bottom: var(--space-6); border-top: 1px solid var(--line); }
+.foot nav { display: flex; flex-wrap: wrap; gap: var(--space-7); }
+.foot a { color: var(--quiet); text-decoration: none; }
+.foot a:hover { color: var(--act); text-decoration: underline; }
+
+/* ---- A half-screen window: a scene's title and cx in one row over the conversation ---- */
+@media (max-width: 60rem) {
+  :root { --gutter: 1.5rem; }
+  .bar, .links, .end, .auth { column-gap: var(--space-6); }
+  .stage { grid-template-columns: minmax(0, 1fr); }
+  .side { position: static; display: flex; align-items: flex-end; justify-content: space-between; column-gap: var(--space-6); }
+  .side h2 { padding: 0 0 var(--space-5); }
+  /* cx sits on the conversation's top edge, so the scene still fits one screen. */
+  .side .desk { flex: none; width: 8rem; margin: 0 var(--space-7) 0 0; }
+  .more { grid-column: 1; }
+  .routes { grid-template-columns: minmax(0, 1fr); margin-top: var(--space-9); }
+  .routes a, .pulls { padding: var(--space-6); }
+  .band { grid-template-columns: minmax(0, 1fr); padding: var(--space-7); }
+  .tier, .cards li { padding: var(--space-6); }
+}
+/* ---- A phone: the header in two rows that scroll away ---- */
+@media (max-width: 40rem) {
+  :root { --gutter: 1.25rem; --chat-gap: var(--space-4); }
+  /* On a phone a scene's title takes the product's display size in both languages, so the scene still fits one screen. */
+  :root, :root:lang(en) { --size-scene: var(--size-display); }
+  .top { position: static; }
+  html { scroll-padding-top: 0; }
+  .bar { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "brand auth" "links lang"; column-gap: var(--space-5); row-gap: var(--space-2); padding-top: var(--space-4); padding-bottom: var(--space-4); }
+  .brand { grid-area: brand; }
+  .links { grid-area: links; gap: var(--space-5); }
+  .end { display: contents; }
+  .lang { grid-area: lang; justify-self: end; }
+  .auth { grid-area: auth; justify-self: end; gap: var(--space-5); }
+  .wordmark { font-size: 1.375rem; }
+  .brand svg { width: 2rem; }
+  .hero .wrap { padding-top: var(--space-9); padding-bottom: var(--space-9); }
+  .lede { font-size: var(--size-lead); }
+  .scene + .scene { margin-top: var(--space-9); }
+  .side .desk { width: 7rem; margin-right: var(--space-4); }
+  .chat { padding: var(--space-6); }
+  /* A file's name takes one line, as a file does in a chat. */
+  .file > span { min-width: 0; }
+  .file .draft { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  :root { --size-figure: var(--size-display); }
+  .plan { padding: var(--space-5); }
+  .wallet { margin-top: var(--space-8); }
+  .wallet .wrap, .case .wrap, .close .wrap { padding-top: var(--space-9); padding-bottom: var(--space-9); }
+  .pulls li, .pulls li:lang(en) { grid-template-columns: 3rem minmax(0, 1fr); }
+  .pulls li .what { grid-column: 2; }
+  .page .wrap { min-height: 0; }
+  .doc { min-height: 0; }
+  .doc .intro .wrap { padding-top: var(--space-9); }
+  .doc section + section { margin-top: var(--space-9); }
+  /* The plans one over the other, each whole. */
+  .tiers { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-6); }
+  .tier, .tier dl { display: block; }
+  .tier { grid-row: auto; }
+  .cards { grid-template-columns: minmax(0, 1fr); grid-auto-rows: auto; }
+  .band { padding: var(--space-6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}

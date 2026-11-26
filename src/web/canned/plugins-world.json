@@ -1,0 +1,537 @@
+{
+  "order": [
+    "amazon-seller",
+    "listing-studio",
+    "amazon-ads-bundle",
+    "keepa",
+    "amazon-analysis",
+    "charts",
+    "review-lens",
+    "listing-writer",
+    "xlsx",
+    "keyword-planner",
+    "ad-copy",
+    "pdf-reader",
+    "web-reader",
+    "launch-planner",
+    "cx-sources",
+    "jev",
+    "deepseek",
+    "openai",
+    "google",
+    "z-ai",
+    "anthropic",
+    "minimax",
+    "moonshotai",
+    "x-ai"
+  ],
+  "modelPlugins": [
+    {
+      "id": "openai",
+      "enabled": true,
+      "ways": [
+        "account",
+        "platform"
+      ],
+      "month": 10321500
+    },
+    {
+      "id": "anthropic",
+      "enabled": true,
+      "ways": [
+        "platform"
+      ],
+      "month": 10100000
+    },
+    {
+      "id": "google",
+      "enabled": true,
+      "ways": [
+        "platform"
+      ],
+      "month": 980000
+    },
+    {
+      "id": "deepseek",
+      "enabled": true,
+      "ways": [
+        "key"
+      ],
+      "month": 0
+    },
+    {
+      "id": "moonshotai",
+      "enabled": false,
+      "ways": [
+        "platform"
+      ],
+      "month": 0
+    },
+    {
+      "id": "jev",
+      "enabled": true,
+      "ways": [
+        "platform"
+      ],
+      "month": 0
+    }
+  ],
+  "sourceExtras": {
+    "keepa": {
+      "version": "0.1.5",
+      "rawBound": 50,
+      "freshness": {
+        "amazon/us/<asin>/product": "1h",
+        "amazon/jp/<asin>/product": "1h"
+      },
+      "ownKey": {
+        "held": false
+      }
+    }
+  },
+  "exampleSources": [
+    {
+      "name": "cx-review-lens",
+      "supplier": "Review Lens",
+      "about": {
+        "en": "Review digests for Amazon products.",
+        "zh": "亚马逊商品的评论摘要。"
+      },
+      "description": {
+        "en": "Review Lens reads a product's reviews and sells a digest of what buyers praise and complain about.",
+        "zh": "Review Lens 读取商品评论，把买家称赞和抱怨的地方整理成摘要出售。"
+      },
+      "nativeUnit": "credits",
+      "unitsPerNative": 20000,
+      "aspects": [
+        {
+          "aspect": "amazon/<market>/<asin>/reviews",
+          "native": 2
+        }
+      ],
+      "enabled": false,
+      "spent": 0,
+      "month": {
+        "since": 1788220800000,
+        "spent": 0
+      },
+      "version": "0.1.0",
+      "freshness": {
+        "amazon/<market>/<asin>/reviews": "1d"
+      },
+      "ownKey": {
+        "held": false
+      }
+    }
+  ],
+  "examplePackages": [
+    {
+      "name": "cx-topics",
+      "version": "0.1.0",
+      "source": "/opt/comchatx/packages/cx-topics",
+      "about": {
+        "en": "Lets cx title your work in History and read the messages you quote.",
+        "zh": "让 cx 在历史里给你做的事起标题，并读取你引用的消息。"
+      },
+      "description": {
+        "en": "Lets cx title your work in History and read the messages you quote.",
+        "zh": "让 cx 在历史里给你做的事起标题，并读取你引用的消息。"
+      },
+      "enabled": true
+    },
+    {
+      "name": "@comchatx/amazon-analysis",
+      "version": "0.2.0",
+      "source": "npm:@comchatx/amazon-analysis",
+      "enabled": true,
+      "about": {
+        "en": "Compares competitors, summarises price moves and audits a listing.",
+        "zh": "对比竞品、总结价格变动、诊断 listing。"
+      },
+      "description": {
+        "en": "Compares a product with its competitors, explains its price and BSR moves, and audits its listing, with data bought from Keepa.",
+        "zh": "用从 Keepa 购买的数据对比商品和竞品，解释价格和 BSR 的变化，并诊断 listing。"
+      }
+    },
+    {
+      "name": "@comchatx/charts",
+      "version": "1.0.0",
+      "source": "npm:@comchatx/charts",
+      "enabled": true,
+      "about": {
+        "en": "Draws cx's charts in the chat.",
+        "zh": "把 cx 做的图表直接画在对话里。"
+      },
+      "description": {
+        "en": "Draws the charts cx makes right in the chat. The chart file stays in your files.",
+        "zh": "把 cx 做的图表直接画在对话里，图表文件仍留在你的文件里。"
+      }
+    },
+    {
+      "name": "pi-xlsx-export",
+      "version": "2.4.0",
+      "source": "npm:pi-xlsx-export",
+      "enabled": true,
+      "about": {
+        "en": "Saves a table from the chat as an Excel file.",
+        "zh": "把对话里的表格存成 Excel 文件。"
+      },
+      "description": {
+        "en": "Turns a table cx has made into an Excel workbook in your files, one sheet per table, with its number formats kept.",
+        "zh": "把 cx 做好的表格存成 Excel 工作簿，放在你的文件里，每个表格一个工作表，保留数字格式。"
+      }
+    },
+    {
+      "name": "cx-review-lens",
+      "version": "0.1.0",
+      "source": "npm:cx-review-lens",
+      "enabled": true,
+      "about": {
+        "en": "Review Lens's lookups for cx: what buyers praise and complain about.",
+        "zh": "cx 用来查 Review Lens 的技能：买家夸什么、抱怨什么。"
+      },
+      "description": {
+        "en": "Gives cx the Review Lens skill: how to buy a product's reviews and read what buyers praise and complain about.",
+        "zh": "为 cx 提供 Review Lens 技能：如何购买商品的评论，读出买家夸什么、抱怨什么。"
+      }
+    }
+  ],
+  "ownPackages": [
+    {
+      "name": "pi-fba-fee-notes",
+      "version": "0.3.1",
+      "source": "npm:pi-fba-fee-notes",
+      "author": "Example Author",
+      "enabled": true,
+      "about": {
+        "en": "Placeholder: explains each line of an FBA fee preview.",
+        "zh": "占位示例：解释 FBA 费用预览里的每一行。"
+      },
+      "description": {
+        "en": "A placeholder entry, not a real package. It stands for a package you installed yourself that ships a README.",
+        "zh": "这是占位条目，不是真实的包。它代表你自己安装、并且自带 README 的一类包。"
+      }
+    },
+    {
+      "name": "pi-margin-check",
+      "version": "1.2.0",
+      "source": "npm:pi-margin-check",
+      "enabled": false,
+      "about": {
+        "en": "Placeholder: checks a product's margin after fees.",
+        "zh": "占位示例：核算商品扣除费用后的利润率。"
+      },
+      "description": {
+        "en": "A placeholder entry, not a real package. It stands for a package you installed yourself that ships no README.",
+        "zh": "这是占位条目，不是真实的包。它代表你自己安装、但没有 README 的一类包。"
+      }
+    },
+    {
+      "name": "quick-sku",
+      "version": "",
+      "source": "git:github.com/example/quick-sku",
+      "enabled": true,
+      "about": {
+        "en": "",
+        "zh": ""
+      },
+      "description": {
+        "en": "",
+        "zh": ""
+      }
+    },
+    {
+      "name": "pi-big-manual",
+      "version": "2.0.0",
+      "source": "npm:pi-big-manual",
+      "author": "Example Author",
+      "enabled": true,
+      "about": {
+        "en": "Placeholder: a package whose README is too large to show.",
+        "zh": "占位示例：README 太大、无法显示的包。"
+      },
+      "description": {
+        "en": "",
+        "zh": ""
+      }
+    }
+  ],
+  "largeReadmes": [
+    "pi-big-manual"
+  ],
+  "readmes": {
+    "pi-fba-fee-notes": {
+      "name": "README.md",
+      "text": "# pi-fba-fee-notes\n\nA placeholder README, not a real package's. It stands for the file a package you installed yourself ships.\n\n## What it does\n\nReads an FBA fee preview and says, line by line, what each fee is for:\n\n- the fulfilment fee, by size tier and weight\n- the referral fee, by category\n- storage, monthly and aged\n\n## Use\n\nAsk in the chat:\n\n```\nExplain the fee preview for B0EXAMPLE01.\n```\n\n## Settings\n\n| Setting | Default | What it changes |\n|---|---|---|\n| `marketplace` | `US` | The fee table read |\n| `currency` | `USD` | The currency amounts are shown in |\n\n## Licence\n\nMIT\n"
+    }
+  },
+  "series": {
+    "openai": [
+      {
+        "name": "GPT Sol",
+        "versions": [
+          {
+            "id": "gpt-6-sol",
+            "name": "GPT-6 Sol",
+            "input": 2000000,
+            "output": 10000000,
+            "ways": ["account", "platform"]
+          },
+          {
+            "id": "gpt-5.5-sol",
+            "name": "GPT-5.5 Sol",
+            "input": 2500000,
+            "output": 12000000,
+            "ways": ["account", "platform"]
+          }
+        ]
+      },
+      {
+        "name": "GPT Luna",
+        "versions": [
+          {
+            "id": "gpt-6-luna",
+            "name": "GPT-6 Luna",
+            "input": 100000,
+            "output": 500000,
+            "ways": ["platform"]
+          }
+        ]
+      },
+      {
+        "name": "GPT Terra",
+        "versions": [
+          {
+            "id": "gpt-6-terra",
+            "name": "GPT-6 Terra",
+            "input": 1000000,
+            "output": 6000000,
+            "ways": ["platform"]
+          }
+        ]
+      }
+    ],
+    "anthropic": [
+      {
+        "name": "Claude Opus",
+        "versions": [
+          {
+            "id": "claude-opus-5.5",
+            "name": "Claude Opus 5.5",
+            "input": 4000000,
+            "output": 20000000
+          },
+          {
+            "id": "claude-opus-5",
+            "name": "Claude Opus 5",
+            "input": 5000000,
+            "output": 25000000
+          }
+        ]
+      },
+      {
+        "name": "Claude Sonnet",
+        "versions": [
+          {
+            "id": "claude-sonnet-5",
+            "name": "Claude Sonnet 5",
+            "input": 2000000,
+            "output": 10000000
+          }
+        ]
+      },
+      {
+        "name": "Claude Haiku",
+        "versions": [
+          {
+            "id": "claude-haiku-4.5",
+            "name": "Claude Haiku 4.5",
+            "input": 1000000,
+            "output": 5000000
+          }
+        ]
+      }
+    ],
+    "google": [
+      {
+        "name": "Gemini Pro",
+        "versions": [
+          {
+            "id": "gemini-3.5-pro",
+            "name": "Gemini 3.5 Pro",
+            "input": 2000000,
+            "output": 12000000
+          }
+        ]
+      },
+      {
+        "name": "Gemini Flash",
+        "versions": [
+          {
+            "id": "gemini-3.5-flash",
+            "name": "Gemini 3.5 Flash",
+            "input": 300000,
+            "output": 2500000
+          }
+        ]
+      }
+    ],
+    "deepseek": [
+      {
+        "name": "DeepSeek V4",
+        "versions": [
+          {
+            "id": "deepseek-v4",
+            "name": "DeepSeek V4",
+            "input": 300000,
+            "output": 1200000
+          }
+        ]
+      }
+    ],
+    "moonshotai": [
+      {
+        "name": "Kimi K3",
+        "versions": [
+          {
+            "id": "kimi-k3",
+            "name": "Kimi K3",
+            "input": 600000,
+            "output": 2500000
+          }
+        ]
+      }
+    ],
+    "x-ai": [
+      {
+        "name": "Grok",
+        "versions": [
+          {
+            "id": "grok-5",
+            "name": "Grok 5",
+            "input": 3000000,
+            "output": 15000000
+          }
+        ]
+      },
+      {
+        "name": "Grok Fast",
+        "versions": [
+          {
+            "id": "grok-5-fast",
+            "name": "Grok 5 Fast",
+            "input": 200000,
+            "output": 500000
+          }
+        ]
+      }
+    ],
+    "z-ai": [
+      {
+        "name": "GLM-5",
+        "versions": [
+          {
+            "id": "glm-5",
+            "name": "GLM-5",
+            "input": 600000,
+            "output": 2200000
+          }
+        ]
+      }
+    ],
+    "minimax": [
+      {
+        "name": "MiniMax M3",
+        "versions": [
+          {
+            "id": "minimax-m3",
+            "name": "MiniMax M3",
+            "input": 300000,
+            "output": 1200000
+          }
+        ]
+      }
+    ]
+  },
+  "seriesInChat": {
+    "openai": [
+      "GPT Sol"
+    ],
+    "anthropic": [
+      "Claude Opus",
+      "Claude Sonnet"
+    ],
+    "google": [
+      "Gemini Pro"
+    ],
+    "deepseek": [
+      "DeepSeek V4"
+    ],
+    "moonshotai": [
+      "Kimi K3"
+    ]
+  },
+  "today": "2026-09-28T12:00",
+  "updated": {
+    "amazon-analysis": "2026-09-22",
+    "charts": "2026-09-26",
+    "review-lens": "2026-09-10",
+    "listing-writer": "2026-09-18",
+    "xlsx": "2026-08-30",
+    "keyword-planner": "2026-09-20",
+    "ad-copy": "2026-09-14",
+    "pdf-reader": "2026-09-02",
+    "web-reader": "2026-08-21",
+    "launch-planner": "2026-09-26",
+    "openai": "2026-09-24",
+    "anthropic": "2026-09-24",
+    "google": "2026-09-24",
+    "deepseek": "2026-09-24",
+    "moonshotai": "2026-09-24",
+    "x-ai": "2026-09-24",
+    "z-ai": "2026-09-24",
+    "minimax": "2026-09-24"
+  },
+  "versions": {
+    "amazon-analysis": "0.2.0",
+    "charts": "1.0.0",
+    "review-lens": "0.1.0",
+    "listing-writer": "0.3.1",
+    "xlsx": "2.4.0",
+    "keyword-planner": "0.1.2",
+    "ad-copy": "0.2.0",
+    "pdf-reader": "1.3.0",
+    "web-reader": "0.9.4",
+    "launch-planner": "0.1.0"
+  },
+  "providers": [
+    {
+      "id": "moonshotai",
+      "name": "Moonshot AI",
+      "platformKey": false,
+      "ownKey": false,
+      "rates": []
+    },
+    {
+      "id": "xai",
+      "name": "xAI",
+      "platformKey": false,
+      "ownKey": false,
+      "rates": []
+    },
+    {
+      "id": "zai",
+      "name": "Z.ai",
+      "platformKey": false,
+      "ownKey": false,
+      "rates": []
+    },
+    {
+      "id": "minimax",
+      "name": "MiniMax",
+      "platformKey": false,
+      "ownKey": false,
+      "rates": []
+    }
+  ]
+}

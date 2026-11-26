@@ -1,0 +1,187 @@
+{
+  "night": {
+    "todo": [
+      {
+        "slug": "buy-box",
+        "day": 0,
+        "time": "01:35",
+        "kind": "finding",
+        "title": {
+          "en": "A hijacker took the Buy Box on YM-10-BLU",
+          "zh": "YM-10-BLU 被跟卖，购物车被抢走"
+        },
+        "body": {
+          "en": "Since 01:30, Example Seller Co. has been selling on B0MADEUPYM at $29.99 and has the Buy Box; we are at $32.99. I'll match them for now and go back to our price once we have it again.\n\nIf their mats are fake, you can report them through Brand Registry. That step needs you.\n\nFrom your file `offers-B0MADEUPYM.json`, as of 01:32 today.",
+          "zh": "01:30 起，Example Seller Co. 以 US$29.99 跟卖 B0MADEUPYM，拿走了购物车，我们是 US$32.99。我先跟价，拿回购物车后恢复原价。\n\n如果对方是假货，可以在品牌备案里投诉，这一步需要你本人操作。\n\n数据来自你的文件 `offers-B0MADEUPYM.json`，截至今天 01:32。"
+        }
+      },
+      {
+        "slug": "material",
+        "day": -1,
+        "time": "23:40",
+        "kind": "change",
+        "title": {
+          "en": "Filled in the missing Material on B0EXAMPLE1",
+          "zh": "B0EXAMPLE1 缺“材质”被下架，已补上"
+        },
+        "body": {
+          "en": "The 6mm purple mat was suppressed at 23:10. I filled in “Material: TPE” from your product specs, and it was back on sale at 23:38.\n\nFrom your file `product-specs.md`.",
+          "zh": "6mm 紫色 23:10 下架。我按你的产品资料补上了“材质：TPE”，23:38 恢复在售。\n\n数据来自你的文件 `product-specs.md`。"
+        }
+      },
+      {
+        "slug": "title",
+        "day": 0,
+        "time": "00:50",
+        "kind": "proposal",
+        "title": {
+          "en": "Add “Extra Thick 10mm” to the front of B0MADEUPYM's title?",
+          "zh": "建议在 B0MADEUPYM 的标题前面加上“Extra Thick 10mm”"
+        },
+        "body": {
+          "en": "**Now**\nYoga Mat Non Slip, Exercise Mat for Home Workout, 72\"x24\", Blue\n\n**After**\nExtra Thick 10mm Yoga Mat Non Slip, Exercise Mat for Home Workout, 72\"x24\", Blue\n\nOur search share for “thick yoga mat” fell from 8% to 4%, and 8 of the top 10 put the thickness at the front of the title. I expect 7–9% within 14 days; if it isn't back by October 29, I'll put the old title back.\n\nFrom your file `sqp-B0MADEUPYM-2026-W41.csv`, as of October 11.",
+          "zh": "**现在**\nYoga Mat Non Slip, Exercise Mat for Home Workout, 72\"x24\", Blue\n\n**改成**\nExtra Thick 10mm Yoga Mat Non Slip, Exercise Mat for Home Workout, 72\"x24\", Blue\n\n“thick yoga mat”的搜索份额从 8% 降到了 4%，前 10 名里有 8 个在标题开头写了厚度。预计 14 天内回到 7%～9%，10 月 29 日没有回升就换回原标题。\n\n数据来自你的文件 `sqp-B0MADEUPYM-2026-W41.csv`，截至 10 月 11 日。"
+        }
+      },
+      {
+        "slug": "attribute-rule",
+        "day": -1,
+        "time": "23:45",
+        "kind": "choice",
+        "title": {
+          "en": "Next time a listing is suppressed for a missing attribute, should I fill it in, or ask you first?",
+          "zh": "以后再遇到缺属性导致的下架，要我直接补，还是先问你？"
+        },
+        "body": {
+          "en": "Filled in at once, a listing is back within the hour; asked first, it stays down until you answer. I'd fill it in, since the values come from your own specs.",
+          "zh": "直接补，商品一小时内恢复在售；先问你，在你作答前会一直下架。我建议直接补，填的都是你产品资料里的数值。"
+        },
+        "options": [
+          {
+            "en": "Fill it in and tell me after",
+            "zh": "直接补，事后告诉我"
+          },
+          {
+            "en": "Ask me first",
+            "zh": "先问我"
+          }
+        ]
+      },
+      {
+        "slug": "restock-date",
+        "day": 0,
+        "time": "01:10",
+        "kind": "input",
+        "title": {
+          "en": "When does the next shipment of the 10mm blue mat reach FBA?",
+          "zh": "10mm 蓝色下一批货哪天入仓？"
+        },
+        "body": {
+          "en": "At 23 a day, the FBA stock lasts until around November 2. Once I know the date, I can tell whether to slow the ads down so we don't run out.\n\nFrom your file `inventory-2026-10-14.csv`, as of October 14.",
+          "zh": "按日均 23 件算，FBA 库存能卖到 11 月 2 日左右。知道入仓日期，我好判断要不要放慢广告，避免断货。\n\n数据来自你的文件 `inventory-2026-10-14.csv`，截至 10 月 14 日。"
+        },
+        "hint": {
+          "en": "For example, November 5",
+          "zh": "例如 11 月 5 日"
+        }
+      }
+    ]
+  },
+  "empty": {
+    "todo": []
+  },
+  "afternoon": {
+    "todo": [
+      {
+        "slug": "sites",
+        "day": 0,
+        "time": "09:01",
+        "kind": "choice",
+        "title": {
+          "en": "From next week, which marketplaces should the weekly returns cover?",
+          "zh": "从下周起，每周退货汇总包含哪些站点？"
+        },
+        "body": {
+          "en": "The weekly returns summary covers Amazon US alone today.",
+          "zh": "每周退货汇总目前只含美国站。"
+        },
+        "options": [
+          {
+            "en": "Amazon US only",
+            "zh": "只含美国站"
+          },
+          {
+            "en": "Amazon US and UK",
+            "zh": "美国站和英国站"
+          },
+          {
+            "en": "All marketplaces",
+            "zh": "所有站点"
+          }
+        ]
+      },
+      {
+        "slug": "rival",
+        "day": 0,
+        "time": "15:16",
+        "plain": true,
+        "kind": "",
+        "title": {
+          "en": "A rival to B0MADEUPYM cut its price by 12%",
+          "zh": "B0MADEUPYM 的竞品降价 12%"
+        },
+        "body": {
+          "en": "The rival listing went from $33.99 to $29.99 this afternoon. Your price is unchanged.",
+          "zh": "竞品今天下午从 US$33.99 降到 US$29.99，你的价格未变。"
+        }
+      },
+      {
+        "slug": "week",
+        "day": 0,
+        "time": "09:00",
+        "kind": "finding",
+        "title": {
+          "en": "Returns, week 44",
+          "zh": "第 44 周退货汇总"
+        },
+        "body": {
+          "en": "37 of 421 ordered came back, 8.8%, against 2.5% the week before. Most give DEFECTIVE.",
+          "zh": "订购 421 件，退货 37 件，退货率 8.8%，前一周为 2.5%。退货原因以 DEFECTIVE 为主。"
+        }
+      }
+    ]
+  },
+  "afternoon-files": {
+    "todo": [
+      {
+        "slug": "rival",
+        "day": 0,
+        "time": "15:16",
+        "plain": true,
+        "kind": "",
+        "title": {
+          "en": "A rival to B0MADEUPYM cut its price by 12%",
+          "zh": "B0MADEUPYM 的竞品降价 12%"
+        },
+        "body": {
+          "en": "The rival listing went from $33.99 to $29.99 this afternoon. Your price is unchanged.",
+          "zh": "竞品今天下午从 US$33.99 降到 US$29.99，你的价格未变。"
+        }
+      },
+      {
+        "slug": "week",
+        "day": 0,
+        "time": "09:00",
+        "kind": "finding",
+        "title": {
+          "en": "Returns, week 44",
+          "zh": "第 44 周退货汇总"
+        },
+        "body": {
+          "en": "37 of 421 ordered came back, 8.8%, against 2.5% the week before. Most give DEFECTIVE.",
+          "zh": "订购 421 件，退货 37 件，退货率 8.8%，前一周为 2.5%。退货原因以 DEFECTIVE 为主。"
+        }
+      }
+    ]
+  }
+}

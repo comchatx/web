@@ -1,0 +1,10 @@
+/* The canned preview's bar, which the live pages never draw: served beside the preview alone, never in the platform's bundle. */
+.preview-bar { flex: none; padding: 0.5rem 1rem; border-bottom: 2px solid #111; font-size: 0.8125rem; color: #111; background: repeating-linear-gradient(135deg, #ffe08a, #ffe08a 14px, #ffd25e 14px, #ffd25e 28px); }
+.preview-bar strong { display: block; }
+.preview-bar .row { margin-top: 0.35rem; }
+.preview-bar button, .preview-bar select { padding: 0.1rem 0.5rem; font-size: 0.8125rem; border-color: #555; background: #fffdf5; color: #111; }
+.preview-bar button:disabled { background: #f3ecd6; color: #777; }
+.preview-bar .quiet { color: #333; font-size: 0.8125rem; }
+.preview-note { font-weight: 600; }
+/* Where the payment provider would draw its fields: the preview wires none. */
+.tool-note { min-height: 7rem; margin: 0; padding: 8px 10px; border: 2px dashed GrayText; background: Canvas; color: CanvasText; font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; }

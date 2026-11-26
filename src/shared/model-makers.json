@@ -1,0 +1,1081 @@
+{
+  "providers": {
+    "amazon-bedrock": {
+      "name": "Amazon Bedrock",
+      "baseUrl": "https://bedrock-runtime.us-east-1.amazonaws.com",
+      "carried": true,
+      "card": "amazon-bedrock",
+      "host": true,
+      "key": true
+    },
+    "ant-ling": {
+      "name": "Ant Ling",
+      "baseUrl": "https://api.ant-ling.com/v1",
+      "carried": true,
+      "card": "inclusionai",
+      "key": true
+    },
+    "anthropic": {
+      "name": "Anthropic",
+      "baseUrl": "https://api.anthropic.com",
+      "carried": true,
+      "card": "anthropic",
+      "key": true,
+      "signIn": {
+        "name": "Anthropic (Claude Pro/Max)",
+        "subscription": true
+      }
+    },
+    "azure": {
+      "name": "Azure",
+      "carried": false,
+      "host": true,
+      "key": true
+    },
+    "baseten": {
+      "name": "Baseten",
+      "baseUrl": "https://inference.baseten.co/v1",
+      "carried": true,
+      "card": "baseten",
+      "host": true,
+      "key": true
+    },
+    "cerebras": {
+      "name": "Cerebras",
+      "baseUrl": "https://api.cerebras.ai/v1",
+      "carried": true,
+      "card": "cerebras",
+      "host": true,
+      "key": true
+    },
+    "cloudflare-ai-gateway": {
+      "name": "Cloudflare AI Gateway",
+      "carried": false,
+      "host": true,
+      "key": true
+    },
+    "cloudflare-workers-ai": {
+      "name": "Cloudflare Workers AI",
+      "carried": false,
+      "host": true,
+      "key": true
+    },
+    "deepseek": {
+      "name": "DeepSeek",
+      "baseUrl": "https://api.deepseek.com",
+      "carried": true,
+      "card": "deepseek",
+      "key": true
+    },
+    "fireworks": {
+      "name": "Fireworks",
+      "baseUrl": "https://api.fireworks.ai/inference",
+      "carried": true,
+      "card": "fireworks-ai",
+      "host": true,
+      "key": true
+    },
+    "github-copilot": {
+      "name": "GitHub Copilot",
+      "baseUrl": "https://api.individual.githubcopilot.com",
+      "carried": true,
+      "card": "github-copilot",
+      "host": true,
+      "key": false,
+      "signIn": {
+        "name": "GitHub Copilot",
+        "subscription": true
+      }
+    },
+    "google": {
+      "name": "Google",
+      "baseUrl": "https://generativelanguage.googleapis.com/v1beta",
+      "carried": true,
+      "card": "google",
+      "key": true
+    },
+    "google-vertex": {
+      "name": "Google Vertex AI",
+      "baseUrl": "https://aiplatform.googleapis.com",
+      "carried": true,
+      "card": "google-vertex",
+      "host": true,
+      "key": true
+    },
+    "groq": {
+      "name": "Groq",
+      "baseUrl": "https://api.groq.com/openai/v1",
+      "carried": true,
+      "card": "groq",
+      "host": true,
+      "key": true
+    },
+    "huggingface": {
+      "name": "Hugging Face",
+      "baseUrl": "https://router.huggingface.co/v1",
+      "carried": true,
+      "card": "huggingface",
+      "host": true,
+      "key": true
+    },
+    "kimi-coding": {
+      "name": "Kimi For Coding",
+      "baseUrl": "https://api.kimi.com/coding/v1",
+      "carried": true,
+      "card": "moonshotai",
+      "key": true,
+      "signIn": {
+        "name": "Kimi Code (subscription)",
+        "subscription": true
+      }
+    },
+    "meta": {
+      "name": "Meta",
+      "baseUrl": "https://api.meta.ai/v1",
+      "carried": true,
+      "card": "meta",
+      "key": true,
+      "signIn": {
+        "name": "Meta (Muse subscription)",
+        "subscription": true
+      }
+    },
+    "minimax": {
+      "name": "MiniMax",
+      "baseUrl": "https://api.minimax.io/anthropic",
+      "carried": true,
+      "card": "minimax",
+      "key": true
+    },
+    "minimax-cn": {
+      "name": "MiniMax CN",
+      "baseUrl": "https://api.minimaxi.com/anthropic",
+      "carried": true,
+      "card": "minimax",
+      "key": true
+    },
+    "mistral": {
+      "name": "Mistral",
+      "baseUrl": "https://api.mistral.ai",
+      "carried": true,
+      "card": "mistralai",
+      "key": true
+    },
+    "moonshotai": {
+      "name": "Moonshot AI",
+      "baseUrl": "https://api.moonshot.ai/v1",
+      "carried": true,
+      "card": "moonshotai",
+      "key": true
+    },
+    "moonshotai-cn": {
+      "name": "Moonshot AI CN",
+      "baseUrl": "https://api.moonshot.cn/v1",
+      "carried": true,
+      "card": "moonshotai",
+      "key": true
+    },
+    "nvidia": {
+      "name": "NVIDIA",
+      "baseUrl": "https://integrate.api.nvidia.com/v1",
+      "carried": true,
+      "card": "nvidia-nim",
+      "host": true,
+      "key": true
+    },
+    "openai": {
+      "name": "OpenAI",
+      "baseUrl": "https://api.openai.com/v1",
+      "carried": true,
+      "card": "openai",
+      "key": true,
+      "signIn": {
+        "name": "OpenAI (ChatGPT subscription)",
+        "subscription": true
+      }
+    },
+    "openai-codex": {
+      "name": "OpenAI Codex",
+      "baseUrl": "https://chatgpt.com/backend-api",
+      "carried": false,
+      "card": "openai",
+      "key": false,
+      "signIn": {
+        "name": "OpenAI (ChatGPT Plus/Pro)",
+        "subscription": true
+      }
+    },
+    "opencode": {
+      "name": "OpenCode Zen",
+      "baseUrl": "https://opencode.ai/inference/openai/v1",
+      "modelBases": [
+        "https://opencode.ai/inference/anthropic",
+        "https://opencode.ai/inference/google/v1beta"
+      ],
+      "carried": true,
+      "card": "opencode",
+      "host": true,
+      "key": true
+    },
+    "opencode-go": {
+      "name": "OpenCode Go",
+      "baseUrl": "https://opencode.ai/inference/go/openai/v1",
+      "modelBases": [
+        "https://opencode.ai/inference/go/anthropic",
+        "https://opencode.ai/inference/go/google/v1beta"
+      ],
+      "carried": true,
+      "card": "opencode-go",
+      "host": true,
+      "key": true
+    },
+    "openrouter": {
+      "name": "OpenRouter",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "carried": true,
+      "card": "openrouter",
+      "host": true,
+      "key": true,
+      "signIn": {
+        "name": "OpenRouter OAuth",
+        "subscription": false
+      }
+    },
+    "qwen-token-plan": {
+      "name": "Qwen Token Plan Team",
+      "baseUrl": "https://token-plan.maas.qwencloudapi.com/compatible-mode/v1",
+      "carried": true,
+      "card": "qwen",
+      "key": true
+    },
+    "qwen-token-plan-cn": {
+      "name": "Qwen Token Plan Team CN",
+      "baseUrl": "https://token-plan.maas.qianwenaiapi.com/compatible-mode/v1",
+      "carried": true,
+      "card": "qwen",
+      "key": true
+    },
+    "qwen-token-plan-individual": {
+      "name": "Qwen Token Plan Individual",
+      "baseUrl": "https://token-plan.maas.qwencloudapi.com/compatible-mode/v1",
+      "carried": true,
+      "card": "qwen",
+      "key": true
+    },
+    "qwen-token-plan-individual-cn": {
+      "name": "Qwen Token Plan Individual CN",
+      "baseUrl": "https://token-plan.maas.qianwenaiapi.com/compatible-mode/v1",
+      "carried": true,
+      "card": "qwen",
+      "key": true
+    },
+    "radius": {
+      "name": "Radius",
+      "baseUrl": "https://radius.pi.dev/v1",
+      "carried": true,
+      "card": "radius",
+      "host": true,
+      "key": true,
+      "signIn": {
+        "name": "Radius",
+        "subscription": false
+      }
+    },
+    "relay": {
+      "name": "Relay",
+      "carried": true,
+      "card": "relay",
+      "host": true,
+      "key": true,
+      "api": "openai-completions",
+      "tenantBase": true
+    },
+    "together": {
+      "name": "Together",
+      "baseUrl": "https://api.together.ai/v1",
+      "carried": true,
+      "card": "together",
+      "host": true,
+      "key": true
+    },
+    "typesafe": {
+      "name": "TypeSafe",
+      "carried": false,
+      "key": true
+    },
+    "vercel-ai-gateway": {
+      "name": "Vercel AI Gateway",
+      "baseUrl": "https://ai-gateway.vercel.sh",
+      "carried": true,
+      "card": "vercel-ai-gateway",
+      "host": true,
+      "key": true
+    },
+    "xai": {
+      "name": "xAI",
+      "baseUrl": "https://api.x.ai/v1",
+      "carried": true,
+      "card": "x-ai",
+      "key": true,
+      "signIn": {
+        "name": "xAI (Grok/X subscription)",
+        "subscription": true
+      }
+    },
+    "xiaomi": {
+      "name": "Xiaomi",
+      "baseUrl": "https://api.xiaomimimo.com/v1",
+      "carried": true,
+      "card": "xiaomi",
+      "key": true
+    },
+    "xiaomi-token-plan-ams": {
+      "name": "Xiaomi Token Plan AMS",
+      "baseUrl": "https://token-plan-ams.xiaomimimo.com/v1",
+      "carried": true,
+      "card": "xiaomi",
+      "key": true
+    },
+    "xiaomi-token-plan-cn": {
+      "name": "Xiaomi Token Plan CN",
+      "baseUrl": "https://token-plan-cn.xiaomimimo.com/v1",
+      "carried": true,
+      "card": "xiaomi",
+      "key": true
+    },
+    "xiaomi-token-plan-sgp": {
+      "name": "Xiaomi Token Plan SGP",
+      "baseUrl": "https://token-plan-sgp.xiaomimimo.com/v1",
+      "carried": true,
+      "card": "xiaomi",
+      "key": true
+    },
+    "zai": {
+      "name": "Z.AI",
+      "baseUrl": "https://api.z.ai/api/coding/paas/v4",
+      "carried": true,
+      "card": "z-ai",
+      "key": true
+    },
+    "zai-coding-cn": {
+      "name": "Z.AI Coding CN",
+      "baseUrl": "https://open.bigmodel.cn/api/coding/paas/v4",
+      "carried": true,
+      "card": "z-ai",
+      "key": true
+    }
+  },
+  "cards": {
+    "aion-labs": {
+      "name": "AionLabs",
+      "providers": [],
+      "hosts": [
+        "openrouter"
+      ]
+    },
+    "amazon": {
+      "name": "Amazon",
+      "providers": [],
+      "hosts": [
+        "amazon-bedrock",
+        "openrouter",
+        "vercel-ai-gateway"
+      ]
+    },
+    "amazon-bedrock": {
+      "name": "Amazon Bedrock",
+      "providers": [
+        "amazon-bedrock"
+      ],
+      "hosts": []
+    },
+    "anthropic": {
+      "name": "Anthropic",
+      "providers": [
+        "anthropic"
+      ],
+      "hosts": [
+        "amazon-bedrock",
+        "cloudflare-ai-gateway",
+        "github-copilot",
+        "opencode",
+        "opencode-go",
+        "openrouter",
+        "radius",
+        "vercel-ai-gateway"
+      ]
+    },
+    "baidu": {
+      "name": "Baidu",
+      "providers": [],
+      "hosts": [
+        "openrouter"
+      ]
+    },
+    "baseten": {
+      "name": "Baseten",
+      "providers": [
+        "baseten"
+      ],
+      "hosts": []
+    },
+    "bytedance-seed": {
+      "name": "ByteDance Seed",
+      "providers": [],
+      "hosts": [
+        "openrouter",
+        "vercel-ai-gateway"
+      ]
+    },
+    "cerebras": {
+      "name": "Cerebras",
+      "providers": [
+        "cerebras"
+      ],
+      "hosts": []
+    },
+    "cohere": {
+      "name": "Cohere",
+      "providers": [],
+      "hosts": [
+        "openrouter",
+        "vercel-ai-gateway"
+      ]
+    },
+    "deepseek": {
+      "name": "DeepSeek",
+      "providers": [
+        "deepseek"
+      ],
+      "hosts": [
+        "amazon-bedrock",
+        "azure",
+        "baseten",
+        "cloudflare-ai-gateway",
+        "cloudflare-workers-ai",
+        "huggingface",
+        "opencode",
+        "opencode-go",
+        "openrouter",
+        "radius",
+        "together",
+        "vercel-ai-gateway"
+      ]
+    },
+    "dots-studio": {
+      "name": "Dots Studio",
+      "providers": [],
+      "hosts": [
+        "openrouter"
+      ]
+    },
+    "elorian": {
+      "name": "Elorian",
+      "providers": [],
+      "hosts": [
+        "openrouter"
+      ]
+    },
+    "fireworks": {
+      "name": "Fireworks",
+      "providers": [],
+      "hosts": [
+        "fireworks",
+        "openrouter",
+        "vercel-ai-gateway"
+      ]
+    },
+    "fireworks-ai": {
+      "name": "Fireworks AI",
+      "providers": [
+        "fireworks"
+      ],
+      "hosts": []
+    },
+    "github-copilot": {
+      "name": "GitHub Copilot",
+      "providers": [
+        "github-copilot"
+      ],
+      "hosts": []
+    },
+    "google": {
+      "name": "Google",
+      "providers": [
+        "google"
+      ],
+      "hosts": [
+        "amazon-bedrock",
+        "cloudflare-ai-gateway",
+        "cloudflare-workers-ai",
+        "github-copilot",
+        "google-vertex",
+        "huggingface",
+        "nvidia",
+        "opencode",
+        "opencode-go",
+        "openrouter",
+        "radius",
+        "vercel-ai-gateway"
+      ]
+    },
+    "google-vertex": {
+      "name": "Google Vertex AI",
+      "providers": [
+        "google-vertex"
+      ],
+      "hosts": []
+    },
+    "groq": {
+      "name": "Groq",
+      "providers": [
+        "groq"
+      ],
+      "hosts": []
+    },
+    "huggingface": {
+      "name": "Hugging Face",
+      "providers": [
+        "huggingface"
+      ],
+      "hosts": []
+    },
+    "ibm-granite": {
+      "name": "IBM",
+      "providers": [],
+      "hosts": [
+        "cloudflare-ai-gateway",
+        "cloudflare-workers-ai",
+        "openrouter"
+      ]
+    },
+    "inclusionai": {
+      "name": "inclusionAI",
+      "providers": [
+        "ant-ling"
+      ],
+      "hosts": [
+        "openrouter",
+        "vercel-ai-gateway"
+      ]
+    },
+    "kt": {
+      "name": "KT",
+      "providers": [],
+      "hosts": [
+        "openrouter"
+      ]
+    },
+    "liquid": {
+      "name": "Liquid AI",
+      "providers": [],
+      "hosts": [
+        "openrouter",
+        "vercel-ai-gateway"
+      ]
+    },
+    "meituan": {
+      "name": "Meituan",
+      "providers": [],
+      "hosts": [
+        "opencode-go",
+        "openrouter",
+        "vercel-ai-gateway"
+      ]
+    },
+    "meta": {
+      "name": "Meta",
+      "providers": [
+        "meta"
+      ],
+      "hosts": [
+        "amazon-bedrock",
+        "cloudflare-ai-gateway",
+        "cloudflare-workers-ai",
+        "fireworks",
+        "huggingface",
+        "nvidia",
+        "opencode",
+        "opencode-go",
+        "openrouter",
+        "vercel-ai-gateway"
+      ]
+    },
+    "minimax": {
+      "name": "MiniMax",
+      "providers": [
+        "minimax",
+        "minimax-cn"
+      ],
+      "hosts": [
+        "amazon-bedrock",
+        "fireworks",
+        "huggingface",
+        "nvidia",
+        "opencode",
+        "opencode-go",
+        "openrouter",
+        "radius",
+        "together",
+        "vercel-ai-gateway"
+      ]
+    },
+    "mistralai": {
+      "name": "Mistral",
+      "providers": [
+        "mistral"
+      ],
+      "hosts": [
+        "amazon-bedrock",
+        "cloudflare-ai-gateway",
+        "cloudflare-workers-ai",
+        "opencode",
+        "openrouter",
+        "radius",
+        "vercel-ai-gateway"
+      ]
+    },
+    "moonshotai": {
+      "name": "Moonshot AI",
+      "providers": [
+        "moonshotai",
+        "kimi-coding",
+        "moonshotai-cn"
+      ],
+      "hosts": [
+        "amazon-bedrock",
+        "baseten",
+        "cloudflare-ai-gateway",
+        "cloudflare-workers-ai",
+        "fireworks",
+        "github-copilot",
+        "huggingface",
+        "opencode",
+        "opencode-go",
+        "openrouter",
+        "radius",
+        "together",
+        "vercel-ai-gateway"
+      ]
+    },
+    "motif-technologies": {
+      "name": "Motif Technologies",
+      "providers": [],
+      "hosts": [
+        "openrouter"
+      ]
+    },
+    "nex-agi": {
+      "name": "Nex AGI",
+      "providers": [],
+      "hosts": [
+        "openrouter"
+      ]
+    },
+    "nvidia": {
+      "name": "NVIDIA",
+      "providers": [],
+      "hosts": [
+        "amazon-bedrock",
+        "baseten",
+        "cloudflare-ai-gateway",
+        "cloudflare-workers-ai",
+        "nvidia",
+        "opencode",
+        "openrouter",
+        "together",
+        "vercel-ai-gateway"
+      ]
+    },
+    "nvidia-nim": {
+      "name": "NVIDIA NIM",
+      "providers": [
+        "nvidia"
+      ],
+      "hosts": []
+    },
+    "openai": {
+      "name": "OpenAI",
+      "providers": [
+        "openai",
+        "openai-codex"
+      ],
+      "hosts": [
+        "amazon-bedrock",
+        "azure",
+        "baseten",
+        "cerebras",
+        "cloudflare-ai-gateway",
+        "cloudflare-workers-ai",
+        "github-copilot",
+        "groq",
+        "huggingface",
+        "opencode",
+        "opencode-go",
+        "openrouter",
+        "radius",
+        "together",
+        "vercel-ai-gateway"
+      ]
+    },
+    "opencode": {
+      "name": "OpenCode Zen",
+      "providers": [
+        "opencode"
+      ],
+      "hosts": []
+    },
+    "opencode-go": {
+      "name": "OpenCode Go",
+      "providers": [
+        "opencode-go"
+      ],
+      "hosts": []
+    },
+    "openrouter": {
+      "name": "OpenRouter",
+      "providers": [
+        "openrouter"
+      ],
+      "hosts": []
+    },
+    "particle-ai": {
+      "name": "Particle AI",
+      "providers": [],
+      "hosts": [
+        "openrouter"
+      ]
+    },
+    "perceptron": {
+      "name": "Perceptron",
+      "providers": [],
+      "hosts": [
+        "openrouter"
+      ]
+    },
+    "prism-ml": {
+      "name": "PrismML",
+      "providers": [],
+      "hosts": [
+        "openrouter"
+      ]
+    },
+    "qwen": {
+      "name": "Qwen",
+      "providers": [
+        "qwen-token-plan",
+        "qwen-token-plan-cn",
+        "qwen-token-plan-individual",
+        "qwen-token-plan-individual-cn"
+      ],
+      "hosts": [
+        "amazon-bedrock",
+        "cerebras",
+        "cloudflare-ai-gateway",
+        "cloudflare-workers-ai",
+        "groq",
+        "huggingface",
+        "opencode",
+        "opencode-go",
+        "openrouter",
+        "together",
+        "vercel-ai-gateway"
+      ]
+    },
+    "radius": {
+      "name": "Radius",
+      "providers": [
+        "radius"
+      ],
+      "hosts": []
+    },
+    "recursive": {
+      "name": "Recursive",
+      "providers": [],
+      "hosts": [
+        "openrouter",
+        "radius",
+        "vercel-ai-gateway"
+      ]
+    },
+    "reflection": {
+      "name": "Reflection",
+      "providers": [],
+      "hosts": [
+        "openrouter",
+        "together",
+        "vercel-ai-gateway"
+      ]
+    },
+    "rekaai": {
+      "name": "Reka",
+      "providers": [],
+      "hosts": [
+        "openrouter"
+      ]
+    },
+    "relace": {
+      "name": "Relace",
+      "providers": [],
+      "hosts": [
+        "openrouter"
+      ]
+    },
+    "relay": {
+      "name": "Relay",
+      "providers": [
+        "relay"
+      ],
+      "hosts": []
+    },
+    "ricursiveai": {
+      "name": "Ricursive",
+      "providers": [],
+      "hosts": [
+        "openrouter"
+      ]
+    },
+    "sakana": {
+      "name": "Sakana AI",
+      "providers": [],
+      "hosts": [
+        "openrouter",
+        "vercel-ai-gateway"
+      ]
+    },
+    "stepfun": {
+      "name": "StepFun",
+      "providers": [],
+      "hosts": [
+        "huggingface",
+        "nvidia",
+        "opencode-go",
+        "openrouter",
+        "vercel-ai-gateway"
+      ]
+    },
+    "tencent": {
+      "name": "Tencent",
+      "providers": [],
+      "hosts": [
+        "huggingface",
+        "opencode-go",
+        "openrouter",
+        "vercel-ai-gateway"
+      ]
+    },
+    "thinkingmachines": {
+      "name": "Thinking Machines Lab",
+      "providers": [],
+      "hosts": [
+        "cloudflare-ai-gateway",
+        "cloudflare-workers-ai",
+        "huggingface",
+        "openrouter",
+        "together",
+        "vercel-ai-gateway"
+      ]
+    },
+    "together": {
+      "name": "Together",
+      "providers": [
+        "together"
+      ],
+      "hosts": []
+    },
+    "unbiased": {
+      "name": "Unbiased",
+      "providers": [],
+      "hosts": [
+        "openrouter"
+      ]
+    },
+    "upstage": {
+      "name": "Upstage",
+      "providers": [],
+      "hosts": [
+        "openrouter"
+      ]
+    },
+    "vercel-ai-gateway": {
+      "name": "Vercel AI Gateway",
+      "providers": [
+        "vercel-ai-gateway"
+      ],
+      "hosts": []
+    },
+    "x-ai": {
+      "name": "xAI",
+      "providers": [
+        "xai"
+      ],
+      "hosts": [
+        "amazon-bedrock",
+        "github-copilot",
+        "opencode",
+        "opencode-go",
+        "openrouter",
+        "radius",
+        "vercel-ai-gateway"
+      ]
+    },
+    "xiaomi": {
+      "name": "Xiaomi",
+      "providers": [
+        "xiaomi",
+        "xiaomi-token-plan-ams",
+        "xiaomi-token-plan-cn",
+        "xiaomi-token-plan-sgp"
+      ],
+      "hosts": [
+        "huggingface",
+        "opencode-go",
+        "openrouter",
+        "vercel-ai-gateway"
+      ]
+    },
+    "z-ai": {
+      "name": "Z.ai",
+      "providers": [
+        "zai",
+        "zai-coding-cn"
+      ],
+      "hosts": [
+        "amazon-bedrock",
+        "baseten",
+        "cloudflare-ai-gateway",
+        "cloudflare-workers-ai",
+        "huggingface",
+        "nvidia",
+        "opencode",
+        "opencode-go",
+        "openrouter",
+        "radius",
+        "together",
+        "vercel-ai-gateway"
+      ]
+    }
+  },
+  "aliases": {
+    "alibaba": "qwen",
+    "ant-ling": "inclusionai",
+    "bytedance": "bytedance-seed",
+    "deepseek-ai": "deepseek",
+    "kimi-coding": "moonshotai",
+    "meta-llama": "meta",
+    "minimax-cn": "minimax",
+    "minimaxai": "minimax",
+    "mistral": "mistralai",
+    "moonshot": "moonshotai",
+    "moonshotai-cn": "moonshotai",
+    "openai-codex": "openai",
+    "qwen-token-plan": "qwen",
+    "qwen-token-plan-cn": "qwen",
+    "qwen-token-plan-individual": "qwen",
+    "qwen-token-plan-individual-cn": "qwen",
+    "spacexai": "x-ai",
+    "stepfun-ai": "stepfun",
+    "xai": "x-ai",
+    "xiaomi-token-plan-ams": "xiaomi",
+    "xiaomi-token-plan-cn": "xiaomi",
+    "xiaomi-token-plan-sgp": "xiaomi",
+    "xiaomimimo": "xiaomi",
+    "zai": "z-ai",
+    "zai-coding-cn": "z-ai",
+    "zai-org": "z-ai"
+  },
+  "series": {
+    "anthropic": [
+      {
+        "id": "~anthropic/claude-fable-latest",
+        "name": "Claude Fable"
+      },
+      {
+        "id": "~anthropic/claude-haiku-latest",
+        "name": "Claude Haiku"
+      },
+      {
+        "id": "~anthropic/claude-opus-latest",
+        "name": "Claude Opus"
+      },
+      {
+        "id": "~anthropic/claude-sonnet-latest",
+        "name": "Claude Sonnet"
+      }
+    ],
+    "deepseek": [
+      {
+        "id": "~deepseek/deepseek-flash-latest",
+        "name": "DeepSeek Flash"
+      },
+      {
+        "id": "~deepseek/deepseek-pro-latest",
+        "name": "DeepSeek Pro"
+      },
+      {
+        "id": "~deepseek/deepseek-v4-flash-latest",
+        "name": "DeepSeek V4 Flash"
+      }
+    ],
+    "google": [
+      {
+        "id": "~google/gemini-flash-latest",
+        "name": "Gemini Flash"
+      },
+      {
+        "id": "~google/gemini-pro-latest",
+        "name": "Gemini Pro"
+      }
+    ],
+    "moonshotai": [
+      {
+        "id": "~moonshotai/kimi-latest",
+        "name": "Kimi"
+      }
+    ],
+    "openai": [
+      {
+        "id": "~openai/gpt-astra-latest",
+        "name": "GPT Astra"
+      },
+      {
+        "id": "~openai/gpt-luna-latest",
+        "name": "GPT Luna"
+      },
+      {
+        "id": "~openai/gpt-mini-latest",
+        "name": "GPT Mini"
+      },
+      {
+        "id": "~openai/gpt-sol-latest",
+        "name": "GPT Sol"
+      },
+      {
+        "id": "~openai/gpt-terra-latest",
+        "name": "GPT Terra"
+      }
+    ],
+    "unbiased": [
+      {
+        "id": "~unbiased/pareto-latest",
+        "name": "Pareto"
+      }
+    ],
+    "x-ai": [
+      {
+        "id": "~x-ai/grok-latest",
+        "name": "Grok"
+      }
+    ],
+    "z-ai": [
+      {
+        "id": "~z-ai/glm-flash-latest",
+        "name": "GLM Flash"
+      },
+      {
+        "id": "~z-ai/glm-latest",
+        "name": "GLM"
+      }
+    ]
+  }
+}
