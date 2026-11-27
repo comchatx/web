@@ -2,8 +2,10 @@
 import { afterEach, expect, it, vi } from "vitest";
 import { TOO_LONG_ENTRY } from "../shared/too-long.js";
 import { WAY_MOVED_ENTRY, wayUsedUpMessage } from "../shared/way-moves.js";
-import { EMPTY, reduce, type StreamEvent, type StreamState } from "./stream-model.js";
+import { cxSays, EMPTY, reduce, type StreamEvent, type StreamState } from "./stream-model.js";
 import { StreamView } from "./stream-view.js";
+import { catalogueWith } from "./catalogue.js";
+import type { NpmPackage } from "./backend.js";
 import { fromBoard } from "./board-message.js";
 import { text } from "./strings.js";
 import { h } from "./dom.js";
@@ -115,6 +117,23 @@ it("says the latest message is in view exactly while the box of the last item sh
   // The day line over the first message is never the latest: with both messages hidden, nothing shown lies out of sight.
   asked!.hidden = true;
   expect([page.element.querySelector(".day-line")?.textContent, page.latestSeen()]).toEqual(["Today", true]);
+});
+
+it("reads the latest message, not a tutorial line drawn below it, for History's current mark and for where cx stands", () => {
+  const page = new StreamView({ say: (key, values) => text("en", key, values), now: () => 0, day: () => "Today" });
+  const scroller = document.createElement("div");
+  scroller.append(page.element);
+  document.body.append(scroller);
+  Object.defineProperty(scroller, "clientHeight", { get: () => 600, configurable: true });
+  scroller.getBoundingClientRect = (): DOMRect => new DOMRect(0, 100, 800, 600);
+  page.update(cxSays(state(entry(1, { form: "message", role: "assistant", content: [{ form: "text", text: "Done." }], stopReason: "stop" })), { key: "t6", line: "T6" }));
+  const [answered, said] = [...page.element.querySelectorAll<HTMLElement>(".item")];
+  expect(said!.dataset["said"]).toBe("guide");
+  // The view stands from 100 to 700: the answer in it, the line below it.
+  answered!.getBoundingClientRect = (): DOMRect => new DOMRect(0, 300, 800, 40);
+  said!.getBoundingClientRect = (): DOMRect => new DOMRect(0, 750, 800, 40);
+  expect(page.latestSeen()).toBe(true);
+  expect(page.lastLine()?.top).toBe(300);
 });
 
 it("draws each card a script wrote, as pi records it, as the card's row under the script's step; none for a write that failed or whose path pi left out", () => {
@@ -257,4 +276,76 @@ it("takes a message mark's tip away as the stream draws that message again or le
   rest();
   page.redraw();
   expect(shown()).toBe(false);
+});
+
+it("heads a package's notice in the page's language where the package gives its type a heading, and a notice of a type it does not name, or with no type, by its first line", () => {
+  // A fixture package of ours that heads one type, read as the page reads ours.
+  const fixture: NpmPackage = { name: "@comchatx/cx-helpers", description: "Helpers.", kinds: [], version: "1.0.0", updated: "2026-11-25T09:00:00.000Z", readme: "", readme_cut: false, ours: true,
+    shipped: { skills: [], prompts: [], unread: [] }, uses: [], comchatx: { notices: { subagent_supervisor_request: { zh: "帮手需要你决定", en: "A helper needs your decision" } } } };
+  const headings = catalogueWith([fixture], [], () => {}).headings!;
+  const notices = state(
+    entry(1, { form: "custom_message", customType: "subagent_supervisor_request", display: true, content: "Subagent needs a supervisor decision.\n\nRun: r1" }),
+    entry(2, { form: "custom_message", customType: "subagent-notify", display: true, content: "Background task failed: **helper**\n\nexit 1" }),
+    entry(3, { form: "custom_message", display: true, content: "A note with no type" }),
+  );
+  const heads = (language: "zh" | "en"): readonly string[] => {
+    document.body.replaceChildren();
+    const page = new StreamView({ say: (key, values) => text(language, key, values), now: () => 0, day: () => "Today", language: () => language, headings: () => headings });
+    document.body.append(page.element);
+    page.update(notices);
+    return [...page.element.querySelectorAll(".note-head")].map((one) => one.textContent ?? "");
+  };
+  expect(heads("zh")).toEqual(["帮手需要你决定", "Background task failed: helper", "A note with no type"]);
+  expect(heads("en")).toEqual(["A helper needs your decision", "Background task failed: helper", "A note with no type"]);
+  // Opened, the notice shows its content as before.
+  const open = document.querySelector<HTMLButtonElement>(".note-head")!;
+  open.click();
+  expect(document.querySelector(".note")!.textContent).toContain("Subagent needs a supervisor decision.");
+});
+
+it("draws a line cx says for the tutorial as its answers are drawn, its plugins opening in place, with nothing under it to copy or quote", () => {
+  const page = new StreamView({ say: (key, values) => text("zh", key, values), now: () => 0, day: () => "今天" });
+  document.body.append(page.element);
+  let state = cxSays(EMPTY, { key: "a1", line: "A1" });
+  state = cxSays(state, { key: "t7", line: "T7" });
+  page.update(state);
+  const [a1, t7] = [...page.element.querySelectorAll<HTMLElement>("article[data-said='guide']")];
+  expect([...a1!.querySelectorAll(":scope > .markdown > *")].map((one) => one.tagName)).toEqual(["P", "OL"]);
+  expect(a1!.querySelectorAll("ol > li")).toHaveLength(3);
+  expect(a1!.querySelector("p")!.textContent).toBe("先说几点不看数据也成立的：");
+  expect(t7!.textContent!.trim()).toBe("我们先去「插件」安装 Keepa 数据接口，再装亚马逊卖家整合包，最后在亚马逊卖家接口里连接你的店铺。");
+  expect([...t7!.querySelectorAll("a")].map((one) => [one.textContent, one.getAttribute("href"), one.getAttribute("target")])).toEqual([
+    ["Keepa 数据接口", "#/plugins/n/cx-keepa", null], ["亚马逊卖家整合包", "#/plugins/b/amazon-seller", null], ["亚马逊卖家接口", "#/plugins/n/cx-amazon-sp-api", null],
+  ]);
+  // Not an answer to any reader of answers: an answer drawn with the same rows has its row under it, the line none.
+  const rows = { quoted: () => undefined, filed: () => undefined, under: () => h("div", { class: "under-row" }), waiting: () => h("div", { class: "under-row" }) };
+  const beside = new StreamView({ say: (key, values) => text("zh", key, values), now: () => 0, day: () => "今天", rows });
+  document.body.append(beside.element);
+  beside.update(cxSays([entry(1, { form: "message", role: "assistant", content: [{ form: "text", text: "Done." }], stopReason: "stop" })].reduce(reduce, EMPTY), { key: "t7", line: "T7" }));
+  expect([beside.element.querySelectorAll(".item.assistant .under-row").length, beside.element.querySelectorAll("[data-said='guide'] .under-row").length]).toEqual([1, 0]);
+  expect(beside.element.querySelectorAll("[data-said='guide'].assistant, [data-said='guide'] .actions")).toHaveLength(0);
+});
+
+it("draws the growing and whole greeting", () => {
+  const page = view();
+  page.update(cxSays(EMPTY, { key: "t1", line: "T1", values: { name: "*Ana*" }, shown: 9 }));
+  expect(page.element.querySelector("[data-said='guide']")!.textContent!.trim()).toBe("Hey *Ana*");
+  page.update(cxSays(EMPTY, { key: "t1", line: "T1", values: { name: "*Ana*" } }));
+  expect(page.element.querySelector("[data-said='guide']")!.textContent!.trim()).toBe("Hey *Ana*, I'm cx, your Amazon store assistant.");
+});
+
+it("draws a name in a tutorial line as the characters it is, never a link, a list or a tag, growing or whole", () => {
+  for (const language of ["zh", "en"] as const) {
+    const page = new StreamView({ say: (key, values) => text(language, key, values), now: () => 0, day: () => "Today" });
+    document.body.append(page.element);
+    for (const name of ["Keepa API", "{亚马逊卖家整合包}", "1. Li", "example.com", "[x](y)", "<b>x</b>"]) {
+      const whole = text(language, "guide.t1", { name });
+      for (const shown of [undefined, [...whole].indexOf(name[0]!) + 3]) {
+        page.update(cxSays(EMPTY, { key: "t1", line: "T1", values: { name }, ...(shown === undefined ? {} : { shown }) }));
+        const drawn = page.element.querySelector<HTMLElement>("[data-said='guide'] .markdown")!;
+        expect(drawn.textContent!.trim(), `${language} ${name} ${shown}`).toBe((shown === undefined ? whole : [...whole].slice(0, shown).join("")).trim());
+        expect(drawn.querySelectorAll("a, ol, ul, li, b, strong, em, code"), `${language} ${name} ${shown}`).toHaveLength(0);
+      }
+    }
+  }
 });

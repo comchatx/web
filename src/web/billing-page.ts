@@ -6,6 +6,7 @@ import { cardForm, confirmStep, formStep, type FormPlace } from "./pay-step.js";
 import type { Paid, Paying } from "./paying.js";
 import { parts, type Writer } from "./settings-words.js";
 import type { Say } from "./stream-view.js";
+import { UNITS_PER_DOLLAR } from "../shared/unit.js";
 import { amount, around, leadsOf, ownModel, termsLink, type UsageReads } from "./usage-page.js";
 
 export const BILLING_PAGES = ["top-up", "subscribe"] as const;
@@ -28,6 +29,10 @@ export type BillingPorts = {
   readonly base: string;
   /** 组织设置's: the organization's seats, which take Pro's place on 账单, and its name. */
   readonly organization?: () => { readonly seats: Seats | undefined; readonly name: string | undefined };
+  /** 组织's seats step, opened from the control `at` names, and the sum it paid said once at the head of the page it was paid from. */
+  readonly seats?: { readonly ask: (w: Writer, at: string) => void; readonly lead: (w: Writer) => readonly HTMLElement[] };
+  /** A person's 账单 where the page has the plans page: 调整方案 on 方案's head opens it. */
+  readonly plans?: () => void;
 };
 
 /** A long list shows its first rows and folds the rest. */
@@ -295,7 +300,10 @@ export class BillingView {
       : balanceRenews ? this.#row({ label: say("sw.renew"), ctl: [this.#answered("moveFailed", "cancel"), this.#button("cancel", say("sw.cancelPlan"), () => this.#ask("renew", money, w, "cancel"))], under: true })
       // Ended here, the renewal answers here: 已关闭 where the button was, and the switch above is the way back.
       : this.#said?.what === "off" ? this.#row({ label: say("sw.renew"), ctl: [h("span", { class: "sw-said", tabindex: "-1", "data-key": "cancel" }, say("sw.off"))], under: true }) : undefined;
-    return [...this.#leads(reads, money, w), this.#group("plan", [plan, renewRow]), ...(offers ? [...this.#methods(w), ...this.#pays(w)] : []), cancelRow !== undefined && this.#group("cancel", [cancelRow])];
+    // 调整方案 is a person's: in an organisation's session the money read is the organisation's, whose plan is its seats.
+    const plans = this.ports.plans;
+    const adjust = plans === undefined || !offers || reads.me?.organization !== undefined ? [] : [this.#button("plans", say("sw.plan.adjust"), plans)];
+    return [...this.#leads(reads, money, w), this.#group("plan", [plan, renewRow], adjust), ...(offers ? [...this.#methods(w), ...this.#pays(w)] : []), cancelRow !== undefined && this.#group("cancel", [cancelRow])];
   }
 
   /**
@@ -318,7 +326,8 @@ export class BillingView {
     const n = seats?.thisPeriod;
     const plan = retrying ? row(say("sw.plan.retrying"), nextTry === undefined ? undefined : say("sw.retryLine", { day: w.dayName(nextTry) }),
       detail === undefined ? undefined : [say("bill.retrySum", { price: w.money(detail.amount), span: w.daysBetween(detail.first_day, detail.last_day) })], this.#cardButton())
-      : seats?.state === "none" ? row(say("orgs.noSeats"), say("seats.noneHelp"), undefined, [])
+      // No paid seat, no top-up: 购买席位 stands where 充值 stood.
+      : seats?.state === "none" ? row(say("orgs.noSeats"), say("seats.noneHelp"), undefined, [this.#button("seats", say("seats.buy"), () => this.ports.seats?.ask(w, "seats"), { class: "f-btn primary sw-btn" })])
       // Seats held whose count the vendor did not give are not said to be none.
       : n === undefined ? row(say("sw.unread"), undefined, undefined, topUp)
       : seats?.state === "cancelling" ? row(say("seats.planRow", { n: String(n) }), seats.on === undefined ? undefined : say("sw.plan.cancelled", { day: w.dayName(seats.on) }), undefined, topUp)
@@ -336,7 +345,7 @@ export class BillingView {
       : seats?.state === "cancelling" ? this.#row({ label: say("sw.retryRenew"), help: money.renewal.price === undefined ? undefined : say("sw.plan.resumeHelp", { price: w.money(money.renewal.price) }), under: true,
         ctl: [this.#answered("moveFailed", "resume") ?? this.#answered("cancelled", "resume"), this.#button("resume", say("sw.resumeRenewal"), () => { void this.#move(() => this.ports.backend.resumeRenewal(), { what: "resumed", at: "cancel" }, "cancel", "resume"); })] })
       : this.#row({ label: say("sw.retryRenew"), under: true, ctl: [this.#answered("moveFailed", "cancel") ?? this.#answered("resumed", "cancel"), this.#button("cancel", say("sw.cancelPlan"), cancel)] });
-    return [...this.#leads(reads, money, w), this.#group("plan", [plan]), ...(offers ? [...this.#methods(w), ...this.#pays(w)] : []), cancelRow !== undefined && this.#group("cancel", [cancelRow])];
+    return [...(this.ports.seats?.lead(w) ?? []), ...this.#leads(reads, money, w), this.#group("plan", [plan]), ...(offers ? [...this.#methods(w), ...this.#pays(w)] : []), cancelRow !== undefined && this.#group("cancel", [cancelRow])];
   }
 
   /** 付款方式: the cards the provider keeps, the default first. 更新 and 添加付款方式 open the card form; an added card becomes the default. */
@@ -427,6 +436,31 @@ export class BillingView {
 
   /** 更新银行卡 pressed on another section while a failed charge is tried again: the same card form, answered where it was pressed. */
   updateCard(from: string): void { this.#saveCard(true, from); }
+  /**
+   * 购买席位's second step (§六): 账单's card form, paying for `seats` seats. Over the card's choice stand today's sum and the next bill's,
+   * both the provider's own total, and what a seat brings where its price is read; 返回 is the count again; the button is the sheet's
+   * 确认并购买. Answered, the window reads the account again and `paid` is told the sum where the provider said paid, and nothing otherwise.
+   */
+  buySeats(seats: number, w: Writer, ask: { readonly price: number | undefined; readonly back: () => void; readonly paid: (units: number | undefined) => void }): void {
+    const { say, backend } = this.ports;
+    const saved = this.#cards?.find((card) => card.default) ?? this.#cards?.[0];
+    let units: number | undefined;
+    const sums = (total: { readonly text: string; readonly minor: number } | undefined): readonly Child[] => {
+      if (total === undefined) return [];
+      units = total.minor * (UNITS_PER_DOLLAR / 100);
+      return [h("dl", { class: "st-sums" }, ...[[say("seats.dueToday"), total.text], [say("seats.next"), say("seats.nextSum", { amount: total.text })]].map(([name, value]) => h("div", {}, h("dt", {}, name), h("dd", {}, value)))),
+        ask.price !== undefined && h("p", { class: "quiet st-help" }, say("hive.seats.brings", { amount: w.money(ask.price) }))];
+    };
+    const form = cardForm({ kind: "step", home: this.ports.home(), title: say("seats.buy"), back: ask.back, backWord: say("seats.back") }, say, (secret) => backend.payForm(secret), {
+      secret: backend.payIn({ kind: "seats", seats }, "card"), pays: true, payWord: say("seats.confirm"), head: sums, ...(saved === undefined ? {} : { saved, savedName: this.#cardName(saved) }),
+      done: (answer) => {
+        if (answer === "open") { ask.back(); return; }
+        // Only the provider's paid is a payment: a card saved, or one it has not confirmed, is read again and said as the read finds it.
+        void this.ports.reread().then(() => { ask.paid(answer === "paid" ? units ?? 0 : undefined); });
+      },
+    });
+    form.classList.add("st-step");
+  }
   /** 已更新 beside the control a card was replaced from, where that control is drawn by another pane. */
   cardSaid(at: string): HTMLElement | undefined { return this.#answered("methodUpdated", at); }
 

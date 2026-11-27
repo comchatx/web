@@ -32,7 +32,7 @@ describe("the message box's lines, in the settings window's words", () => {
     expect(closed(readsOf("free"))).toBe("试用已结束，{订阅}后可继续 → #/settings/billing/subscribe");
     expect(closed(readsOf("free-lapsed", { balance: short }))).toBe("Pro 已到期，{恢复订阅}后可继续 → #/settings/billing/subscribe");
     expect(closed(readsOf("free-lapsed", { balance: short }), "en")).toBe("Your Pro plan has expired. {Resume} to continue. → #/settings/billing/subscribe");
-    expect(closed(readsOf("free-failed", { balance: short }))).toBe("扣款失败，9 月 30 日将再次尝试扣款；可先更新银行卡。{查看余额} → #/settings/billing");
+    expect(closed(readsOf("free-failed", { balance: short }))).toBe("扣款失败，9 月 30 日将再次尝试扣款；可先{更新银行卡}。 → #/settings/billing");
     expect(closed(readsOf("free-lapsed", { balance: short, starting: true, waiting: true }))).toBe("Pro 生效后可继续");
     // Its lots pay the box as any account's do.
     expect([closed(readsOf("free-lapsed")), closed(readsOf("free-failed"))]).toEqual([undefined, undefined]);
@@ -102,7 +102,7 @@ describe("an organisation's message box", () => {
     closed(readsOf(world, { balance: short, organization: seated(state, role) }), language);
   it("gives the admin the way on in 组织设置, and tells a member to ask the admin, by what the seats are doing", () => {
     expect([shut("free-failed", "retrying", "admin"), shut("free-failed", "retrying", "member")])
-      .toEqual(["扣款失败，9 月 30 日将再次尝试扣款；可先更新银行卡。{查看余额} → #/organization/billing", "组织的席位已到期，请联系管理员续费"]);
+      .toEqual(["扣款失败，9 月 30 日将再次尝试扣款；可先{更新银行卡}。 → #/organization/billing", "组织的席位已到期，请联系管理员续费"]);
     expect([shut("member", "seats", "admin"), shut("member", "seats", "member"), shut("member", "seats", "member", "en")])
       .toEqual(["余额不足，{充值}后可继续 → #/organization/billing/top-up", "组织余额不足，请联系管理员充值", "The organisation's balance is too low. Ask your admin to top up."]);
   });
@@ -110,21 +110,26 @@ describe("an organisation's message box", () => {
     const retrying = (role: "admin" | "member", on?: string): string | undefined => closed(readsOf("member", { balance: short,
       organization: { id: "org_1", role, name: "Example Trading", seats: { least: 2, most: 150, inUse: 2, state: "retrying", thisPeriod: 2, ...(on === undefined ? {} : { on }) } } }));
     expect([retrying("admin", "2026-10-02"), retrying("admin"), retrying("member")]).toEqual([
-      "扣款失败，10 月 2 日将再次尝试扣款；可先更新银行卡。{查看余额} → #/organization/billing",
-      "扣款失败，将再次尝试扣款；可先更新银行卡。{查看余额} → #/organization/billing",
+      "扣款失败，10 月 2 日将再次尝试扣款；可先{更新银行卡}。 → #/organization/billing",
+      "扣款失败，将再次尝试扣款；可先{更新银行卡}。 → #/organization/billing",
       "组织的席位已到期，请联系管理员续费"]);
   });
-  it("tells a member of an organisation with no seats to ask for them, and draws no line for the admin, whose purchase this page does not hold", () => {
-    expect([shut("free", "none", "member"), shut("free", "none", "admin")]).toEqual(["这个组织还没有席位，请联系管理员购买", undefined]);
+  it("tells a member of an organisation with no seats to ask for them, and gives the admin 购买席位's step", () => {
+    expect([shut("free", "none", "member"), shut("free", "none", "admin")]).toEqual(["组织的席位已到期，请联系管理员购买席位", "{购买席位}后可立即使用 → #/organization/org/seats"]);
   });
   it("takes its branch from the seat state `/me` gives: an earlier retry answer turns no other state into a retry", () => {
     // `free-failed` holds a subscription answer in retry, with its next try.
     for (const state of ["none", "cancelling", "cut_pending"] as const) {
       const [admin, member] = [shut("free-failed", state, "admin"), shut("free-failed", state, "member")];
-      expect([state, admin?.includes("扣款失败") ?? false, member]).toEqual([state, false, state === "none" ? "这个组织还没有席位，请联系管理员购买" : "组织余额不足，请联系管理员充值"]);
+      expect([state, admin?.includes("扣款失败") ?? false, member]).toEqual([state, false, state === "none" ? "组织的席位已到期，请联系管理员购买席位" : "组织余额不足，请联系管理员充值"]);
     }
   });
   it("stays open while the balance passes the floor, whatever the seats are doing", () => {
     expect(closed(readsOf("free-failed", { organization: seated("retrying", "member") }))).toBeUndefined();
+  });
+  it("warns the admin under the warning with the way to 组织设置 › 账单, and warns a member not at all", () => {
+    expect([over(readsOf("member-low", { organization: seated("seats", "admin") })), over(readsOf("member-low", { organization: seated("seats", "admin") }), "en"),
+      over(readsOf("member-low", { organization: seated("seats", "member") }))])
+      .toEqual(["余额低于 $1.00 {查看余额} → #/organization/billing", "Balance under $1.00 {See balance} → #/organization/billing", undefined]);
   });
 });

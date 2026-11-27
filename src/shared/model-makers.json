@@ -462,13 +462,6 @@
         "vercel-ai-gateway"
       ]
     },
-    "dots-studio": {
-      "name": "Dots Studio",
-      "providers": [],
-      "hosts": [
-        "openrouter"
-      ]
-    },
     "elorian": {
       "name": "Elorian",
       "providers": [],
@@ -546,6 +539,7 @@
       "hosts": [
         "cloudflare-ai-gateway",
         "cloudflare-workers-ai",
+        "huggingface",
         "openrouter"
       ]
     },
@@ -555,6 +549,7 @@
         "ant-ling"
       ],
       "hosts": [
+        "huggingface",
         "openrouter",
         "vercel-ai-gateway"
       ]
@@ -574,15 +569,6 @@
         "vercel-ai-gateway"
       ]
     },
-    "meituan": {
-      "name": "Meituan",
-      "providers": [],
-      "hosts": [
-        "opencode-go",
-        "openrouter",
-        "vercel-ai-gateway"
-      ]
-    },
     "meta": {
       "name": "Meta",
       "providers": [
@@ -594,7 +580,6 @@
         "cloudflare-workers-ai",
         "fireworks",
         "huggingface",
-        "nvidia",
         "opencode",
         "opencode-go",
         "openrouter",
@@ -629,6 +614,7 @@
         "amazon-bedrock",
         "cloudflare-ai-gateway",
         "cloudflare-workers-ai",
+        "huggingface",
         "opencode",
         "openrouter",
         "radius",
@@ -680,6 +666,7 @@
         "baseten",
         "cloudflare-ai-gateway",
         "cloudflare-workers-ai",
+        "huggingface",
         "nvidia",
         "opencode",
         "openrouter",
@@ -757,7 +744,8 @@
       "name": "PrismML",
       "providers": [],
       "hosts": [
-        "openrouter"
+        "openrouter",
+        "together"
       ]
     },
     "qwen": {
@@ -773,6 +761,7 @@
         "cerebras",
         "cloudflare-ai-gateway",
         "cloudflare-workers-ai",
+        "fireworks",
         "groq",
         "huggingface",
         "opencode",
@@ -789,6 +778,13 @@
       ],
       "hosts": []
     },
+    "radixark": {
+      "name": "RadixArk",
+      "providers": [],
+      "hosts": [
+        "openrouter"
+      ]
+    },
     "recursive": {
       "name": "Recursive",
       "providers": [],
@@ -802,6 +798,8 @@
       "name": "Reflection",
       "providers": [],
       "hosts": [
+        "baseten",
+        "huggingface",
         "openrouter",
         "together",
         "vercel-ai-gateway"
@@ -858,9 +856,11 @@
       "name": "Tencent",
       "providers": [],
       "hosts": [
+        "fireworks",
         "huggingface",
         "opencode-go",
         "openrouter",
+        "together",
         "vercel-ai-gateway"
       ]
     },

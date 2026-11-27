@@ -17,8 +17,10 @@
   "devDependencies": {
     "@types/node": "26.2.0",
     "esbuild": "0.27.2",
+    "free-email-domains": "1.16.14",
     "happy-dom": "20.14.5",
-    "markdown-it": "15.0.2",
+    "markdown-it": "15.0.3",
+    "markdown-it-cjk-friendly": "3.0.0",
     "typescript": "7.0.2",
     "validate-npm-package-name": "8.0.0",
     "vitest": "4.1.11"

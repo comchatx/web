@@ -3,7 +3,7 @@ import { isProviderPackage, PLUGIN_PROVIDERS } from "./provider-packages.js";
 
 /**
  * What a plugin builds on, read once for the Plugins page and the platform alike: the links a package of ours names, and the walk down
- * them. The page's records and a new account's first packages are read by these functions, so a press and a first open install the same.
+ * them. The page's records are read by these functions, so a press and a first open install the same.
  */
 
 export type Need = "required" | "optional";
@@ -121,12 +121,4 @@ export function dependencyOrder<T extends Linked>(byId: (id: string) => T | unde
   };
   roots.forEach(visit);
   return order;
-}
-
-/** The model plugins that install with the packages named, by npm name, among ours as their records read: what a press of them installs beside them. */
-export function modelPluginsWith(ours: readonly OurPackage[], names: readonly string[]): readonly string[] {
-  const byId = linkedOurs(ours);
-  const on = idsOf(ours);
-  const roots = names.flatMap((name) => { const id = on(name); return id === undefined ? [] : byId(id) ?? []; });
-  return installsWith(byId, roots).flatMap((plugin) => (MODEL_PLUGINS.has(plugin.id) ? [plugin.id] : []));
 }

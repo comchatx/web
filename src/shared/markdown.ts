@@ -1,11 +1,14 @@
 import MarkdownIt from "markdown-it";
+import cjkFriendly from "markdown-it-cjk-friendly";
 
 type Token = ReturnType<InstanceType<typeof MarkdownIt>["parse"]>[number];
 
 // The model's words never become markup of their own: raw HTML — a stray `</think>` too — is shown as the text it is, as pi shows it.
 // A single newline breaks the line, as pi's markdown keeps the model's line breaks. Images are off because an image address is fetched
 // the moment it is shown, and a model can be led to write one that carries what it has read to someone else's server.
-const markdown = new MarkdownIt({ html: false, linkify: true, breaks: true }).disable("image");
+// Emphasis that ends on full-width punctuation before a Chinese word (「**核实：**亚马逊」) closes, as CommonMark's own flanking rule would
+// not let it: markdown-it-cjk-friendly is that rule's CJK amendment.
+const markdown = new MarkdownIt({ html: false, linkify: true, breaks: true }).use(cjkFriendly).disable("image");
 
 /** The session's markdown as HTML, before any file path in it is made a way to its file. */
 export const markdownHtml = (source: string): string => markdown.render(source);

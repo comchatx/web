@@ -133,6 +133,7 @@ export function hideTipWithin(root: Element): void {
  * reader, so the target carries its own name (`aria-label`) and no `title`.
  */
 export function tip<T extends HTMLElement>(target: T, words: Words, options: TipOptions = {}): T {
+  tips.set(target, { words, options });
   target.addEventListener("pointerenter", (event) => { if (event.pointerType !== "touch") showTip(target, words, options, "pointer"); });
   target.addEventListener("pointerleave", (event) => {
     if (event.pointerType !== "touch" && !(options.card === true && tipBox?.contains(event.relatedTarget as Node | null) === true)) hideTip(target);
@@ -151,6 +152,27 @@ export function tip<T extends HTMLElement>(target: T, words: Words, options: Tip
     });
   }
   return target;
+}
+
+/** What each target's tip says, for `tipWouldStand`. */
+const tips = new WeakMap<Element, { readonly words: Words; readonly options: TipOptions }>();
+
+/**
+ * Where the tip on `target` would stand were it shown now, in the window's pixels, without showing it: laid out by `seat` as `showTip`
+ * lays it, out of sight, then taken away. Null where `target` has no tip, or nothing to say at this moment. What stands beside a target
+ * (cx beside a key a step leads to) keeps clear of its tip by it.
+ */
+export function tipWouldStand(target: HTMLElement): DOMRect | null {
+  const says = tips.get(target);
+  if (says === undefined) return null;
+  const said = typeof says.words === "string" ? [says.words] : says.words().filter((one): one is Node | string => one !== undefined && one !== false && one !== "");
+  if (said.length === 0) return null;
+  const box = h("div", { class: says.options.card === true ? "f-tip f-tip-card" : "f-tip", "aria-hidden": "true", style: "visibility: hidden" }, ...said);
+  (target.closest("dialog[open]") ?? document.body).append(box);
+  seat(box, target.getBoundingClientRect(), ORDER[says.options.at ?? "above"], says.options.end, roomOf(target));
+  const at = box.getBoundingClientRect();
+  box.remove();
+  return at;
 }
 
 /** The tip showing now said and placed again: the call of a page whose target's words or place change while its tip shows. */
@@ -254,6 +276,8 @@ export interface SelectOptions {
   readonly take: (index: number) => void;
   /** Its list's left edge with the control's, not its right. */
   readonly start?: boolean;
+  /** A quiet line under each value's words in its list, as a role's list says what each role can do; the control shows the words alone. */
+  readonly helps?: readonly string[];
 }
 
 /**
@@ -265,8 +289,8 @@ export function select(options: SelectOptions): { readonly button: HTMLButtonEle
   const words = h("span", {}, options.values[options.held] ?? "");
   const button = h("button", { type: "button", class: "f-select", "aria-label": named(options.held) }, words, chevron());
   const rows = options.values.map((value, index) => h("button", { type: "button", class: "f-menu-row", role: "option", tabindex: "-1", "aria-selected": String(index === options.held), "data-index": String(index) },
-    h("span", { class: "f-words" }, value), tick()));
-  const list = h("div", { class: options.values.length > 8 ? "f-menu f-list" : "f-menu", role: "listbox", "aria-label": options.label }, ...rows);
+    h("span", { class: "f-words" }, value, options.helps?.[index] !== undefined && h("span", { class: "quiet f-help" }, options.helps[index])), tick()));
+  const list = h("div", { class: `${options.values.length > 8 ? "f-menu f-list" : "f-menu"}${options.helps === undefined ? "" : " f-helps"}`, role: "listbox", "aria-label": options.label }, ...rows);
   const hold = (index: number): void => {
     rows.forEach((row, n) => row.setAttribute("aria-selected", String(n === index)));
     words.textContent = options.values[index] ?? "";
@@ -316,10 +340,14 @@ export function scrimCloses(box: HTMLDialogElement, shut: () => void): void {
  * The browser's own modal: it opens with the keyboard on `back`, the way back. Escape closes it, as does a press that starts and ends on the
  * dimmed page outside the box's border; a press on its own padding does nothing, nor one that starts inside and ends outside, or the other
  * way. The focus returns to what opened it. Tab past its last control leaves the page, which is inert behind it: no trap is added.
+ * While `held` says so, as while a press it sent waits for its answer, neither Escape nor the dimmed page closes it, as the card form holds.
  */
-export function dialog(box: HTMLDialogElement, back: HTMLElement): (opener: HTMLElement) => void {
+export function dialog(box: HTMLDialogElement, back: HTMLElement, held?: () => boolean): (opener: HTMLElement) => void {
   let opener: HTMLElement | undefined;
-  scrimCloses(box, () => box.close());
+  scrimCloses(box, () => { if (held?.() !== true) box.close(); });
+  box.addEventListener("cancel", (event) => { if (held?.() === true) event.preventDefault(); });
+  // Escape closes this box alone: the browser can close a box opened over another together with it, where nothing was pressed between.
+  box.addEventListener("keydown", (event) => { if (event.key === "Escape" && box.open) { event.preventDefault(); event.stopPropagation(); if (held?.() !== true) box.close(); } });
   box.addEventListener("close", () => { hideTip(); if (opener !== undefined) giveBack(opener); opener = undefined; });
   return (from) => {
     opener = from;
@@ -345,7 +373,7 @@ export function toastStay(words: string, asks: boolean): number {
 
 /** One line at the window's foot, a status; it stays while the pointer or the focus is on it, and leaves by itself after. */
 export function toast(): { readonly element: HTMLElement; readonly tell: (words: string, asks?: boolean) => void } {
-  const element = h("p", { class: "f-toast", role: "status", hidden: true });
+  const element = h("p", { class: "f-toast", "data-zone": "", role: "status", hidden: true });
   let leaving: ReturnType<typeof setTimeout> | undefined;
   // The pointer and the focus each hold it, apart: one leaving does not end the other's hold.
   const holds = { pointer: false, focus: false };

@@ -54,11 +54,57 @@ export const ROAD_WORDS = Object.freeze({
   "ask.next.media": { zh: "生成商品图片和视频", en: "Product images and videos" },
   "ask.line": { zh: "还有什么要补充的吗？", en: "Anything else to add?" },
   "back": { zh: "返回", en: "Back" },
+  // The organization's invitation card: the road's signed card (2026-11-13), its two presses Claude's, and the lines of the members sheet
+  // (`spike/hive-invite` @ a5add8c7d, its words table), by key.
+  "invite.title": { zh: "邀请你加入 {org}", en: "You've been invited to the {org} organisation" },
+  "invite.by": { zh: "邀请人：{who}", en: "Invited by {who}" },
+  "invite.shared": { zh: "组织的电脑里的对话、看板、API Key、登录信息和授权都归组织所有，其他成员的 cx 都能读取或使用。只属于你自己的内容，请放在个人账户。", en: "Conversations, boards, API keys, logins and connections on the organisation's computer belong to the organisation, and other members' cx can read or use them. Keep what is only yours in your personal account." },
+  "invite.go": { zh: "接受邀请", en: "Accept invite" },
+  "invite.no": { zh: "拒绝邀请", en: "Decline invite" },
+  "invite.gone": { zh: "该邀请无法使用", en: "This invitation isn't available" },
+  "invite.goneWhat": { zh: "当前登录的邮箱是 {me}。如果邀请发送至其他邮箱，请使用该邮箱登录。邀请也可能已过期或已撤销。", en: "You're logged in as {me}. If this invitation was sent to a different email address, log in with that one. Invitations can also expire or be withdrawn." },
+  "invite.otherWhat": { zh: "当前登录的邮箱是 {me}。请使用收到邀请的邮箱登录。", en: "You're logged in as {me}. Log in with the email address this invitation was sent to." },
+  "invite.own": { zh: "使用个人账户", en: "Use a personal account" },
+  "invite.full": { zh: "{org}的成员数已达上限，暂时无法加入。请联系{inviter}。", en: "{org} has reached its member limit, so you can't join yet. Ask {inviter} for help." },
+  // The organisation's card and the pages that make one: the signed creation pages (`spike/hive-create` @ e87f3ff39, its words table), with
+  // `created.later` as the copy seat's correction 20 signed it on the members sheet.
+  "fork.org.name": { zh: "组织", en: "Organisation" },
+  "fork.org.note": { zh: "每个席位每月，{price} 全部计入组织余额，当期有效", en: "Per seat per month, all {price} added to the organisation's balance, valid for the period" },
+  "fork.org.go": { zh: "创建组织", en: "Create organisation" },
+  "fork.org.l.shared": { zh: "成员共用 cx 的电脑", en: "Members share cx's computer" },
+  "fork.org.l.invite": { zh: "通过邮件邀请成员", en: "Invite members by email" },
+  "fork.org.l.money": { zh: "余额和账单归组织所有", en: "A balance and billing of its own" },
+  "fork.org.l.range": { zh: "适合 {least} 至 {most} 人的团队", en: "For teams of {least} to {most}" },
+  "pay.org.title": { zh: "创建组织", en: "Create organisation" },
+  "pay.org.lead": { zh: "组织最适合 {most} 人以内的团队。请起一个受邀成员容易认出的名称。", en: "Organisations are best for groups up to {most} people. Choose an organisation name that invited members will easily recognise." },
+  "pay.org.name": { zh: "组织名称", en: "Organisation name" },
+  "pay.org.nameMissed": { zh: "请输入组织名称。", en: "Enter the organisation's name." },
+  "pay.org.paid": { zh: "已支付 {amount}。", en: "{amount} paid." },
+  "hive.seats.title": { zh: "选择席位数", en: "Choose your seats" },
+  "hive.seats.lead": { zh: "组织至少需要 {least} 个席位，之后还可以增加。", en: "Organisations have a minimum of {least} seats. You can add more later." },
+  "hive.seats.noRefund": { zh: "席位费用不退款。", en: "Seat fees are not refunded." },
+  "hive.order.title": { zh: "订单详情", en: "Order details" },
+  "hive.order.seats": { zh: "{count} 个席位", en: "{count} seats" },
+  "hive.order.adjust": { zh: "调整席位数", en: "Adjust seats" },
+  "hive.order.total": { zh: "今日应付总额", en: "Total due today" },
+  "created.title": { zh: "邀请成员加入{org}", en: "Invite members to {org}" },
+  "created.later": { zh: "现在添加成员，或稍后在「组织设置」中邀请。", en: "Add members now or invite them later from Organisation settings." },
+  "created.ownStays": { zh: "个人账户保持不变，可随时与{org}相互切换。", en: "Your personal account stays as-is. You can switch between it and {org} anytime." },
+  "created.ownElsewhere": { zh: "对话、文件、插件和余额仍留在个人邮箱的账户里。之后要查看，用那个邮箱重新登录即可。", en: "Your conversations, files, plugins and balance stay under your personal email. To see them later, log back in with that email." },
+  "work.lead": { zh: "输入工作邮箱即可开始，我们会向这个邮箱发送验证码。", en: "Enter your work email to get started. We'll send you a code." },
+  "work.email": { zh: "工作邮箱", en: "Work email" },
+  "work.note": { zh: "组织使用工作邮箱下的独立账户。对话、文件、插件和余额仍留在个人邮箱的账户里。", en: "Your organisation uses a separate account under your work email. Your conversations, files, plugins and balance stay under your personal email." },
+  "work.public": { zh: "创建组织需要工作邮箱，请换成公司邮箱。", en: "Organisations require a work email. Try your company address." },
+  "door.continue": { zh: "继续", en: "Continue" },
+  "door.emailMissed": { zh: "请输入邮箱。", en: "Enter your email." },
+  "door.emailBad": { zh: "请输入正确的邮箱地址。", en: "Enter a valid email address." },
 } as const);
 export type RoadKey = keyof typeof ROAD_WORDS;
 type DoorKey = "note.invited" | "legal.terms" | "legal.privacy" | "legal.newTab";
-type BuildKey = Extract<StringKey, "pl.toastNotDone" | "status.unreachable" | "status.reconnecting" | "road.payChecking" | "road.payUnread" | "road.payOnce">;
-const BUILD_KEYS: ReadonlySet<string> = new Set<BuildKey>(["pl.toastNotDone", "status.unreachable", "status.reconnecting", "road.payChecking", "road.payUnread", "road.payOnce"]);
+type BuildKey = Extract<StringKey, "pl.toastNotDone" | "status.unreachable" | "status.reconnecting" | "road.payChecking" | "road.payUnread" | "road.payOnce"
+  | "hive.seats.count" | "hive.seats.fewer" | "hive.seats.more" | "hive.seats.each" | "hive.seats.brings" | "hive.seats.pay" | "seats.most" | "sw.g.method" | "sw.cardWait" | "sw.cardDeclined" | "sw.cardFields">;
+const BUILD_KEYS: ReadonlySet<string> = new Set<BuildKey>(["pl.toastNotDone", "status.unreachable", "status.reconnecting", "road.payChecking", "road.payUnread", "road.payOnce",
+  "hive.seats.count", "hive.seats.fewer", "hive.seats.more", "hive.seats.each", "hive.seats.brings", "hive.seats.pay", "seats.most", "sw.g.method", "sw.cardWait", "sw.cardDeclined", "sw.cardFields"]);
 export type RoadSay = (key: RoadKey | DoorKey | BuildKey, values?: Readonly<Record<string, string | number>>) => string;
 
 // Words a Chinese line must not turn inside, as the door holds 「使用 ComChatX」 whole.

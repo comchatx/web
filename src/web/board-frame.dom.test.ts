@@ -5,9 +5,10 @@ import { join } from "node:path";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { BOARD_READ_MAX_BYTES, ENTRY_MAX_BYTES, TASKS_TAB, type BoardEntry, type PageMaker } from "../shared/board.js";
 import { BoardRefused, type BoardPageRead, type BoardRead } from "./backend.js";
-import { BoardFrame, FAILED_AFTER_MS, FIGURE_VALUES, LOADING_AFTER_MS, MOST_PAGES, THEME_VALUES } from "./board-frame.js";
+import { BoardFrame, FAILED_AFTER_MS, FIGURE_VALUES, LOADING_AFTER_MS, MOST_PAGES, QUOTE_MAX_BYTES, THEME_VALUES } from "./board-frame.js";
 import { BoardView } from "./board-view.js";
 import { renderMarkdown } from "./markdown.js";
+import { FileNames } from "./paths.js";
 import type { Off } from "./board-off.js";
 import { text, type StringKey } from "./strings.js";
 
@@ -43,6 +44,9 @@ function framed(read: (tab: string) => Promise<BoardPageRead>, plugin?: (npm: st
   return { frame, ports };
 }
 
+/** The address row's box as a seller reads it: whose, then which. */
+const byLine = (): string => [...document.querySelectorAll(".frame-by .address-who, .frame-by .address-where")].map((one) => one.textContent).join(" | ");
+
 describe("a board's page in a frame", () => {
   it("gives a page exactly the values the ready-made elements read, each the app's own token of the same name, in both themes where it is a colour", () => {
     const kit = Object.keys(JSON.parse(readFileSync(join(process.cwd(), "src/web/testing/kit/theme.json"), "utf8")) as object);
@@ -70,7 +74,7 @@ describe("a board's page in a frame", () => {
     frame.show("Helpers", { kind: "cx" });
     const one = shownFrame()!;
     expect([one.getAttribute("src"), one.getAttribute("sandbox"), one.getAttribute("referrerpolicy"), one.title]).toEqual([`${PAGES}/frame#origin=${encodeURIComponent(APP)}`, "allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-downloads", "no-referrer", "Helpers"]);
-    expect([document.querySelector(".frame-by")!.textContent, document.querySelector(".frame-reload")!.getAttribute("aria-label")]).toEqual(["A page made by cx", "Reload"]);
+    expect([byLine(), document.querySelector(".frame-reload")!.getAttribute("aria-label")]).toEqual(["cx | Helpers/page.html", "Reload"]);
     await settle();
     expect(posted(one)).toEqual([]);
     from(one, { cx: "ready" });
@@ -105,17 +109,29 @@ describe("a board's page in a frame", () => {
     const { frame } = framed(async () => ({ html: "", by: makers.shift()! }));
     frame.show("A", { kind: "cx" });
     await settle();
-    expect(document.querySelector(".frame-by")!.textContent).toBe("A page from the plugin “cx-board-tasks”");
+    expect(byLine()).toBe("Plugin | cx-board-tasks");
     frame.show("B", undefined);
     await settle();
-    expect(document.querySelector(".frame-by")!.textContent).toBe("A page from the third-party plugin “restock-helper”");
+    expect(byLine()).toBe("Third-party plugin | restock-helper");
+  });
+
+  it("gives cx's page its place in the tree where the board's list holds the page, else the tab's own address, and a plugin's page its name", () => {
+    const names = new FileNames([{ path: "Reports/page.html", tree: "board/user_2abc/Reports/page.html", modified: 1 }, { path: "Watch/notes.md", tree: "board/user_2abc/Watch/notes.md", modified: 2 }]);
+    const frame = new BoardFrame({ origin: PAGES, appOrigin: APP, read: async () => ({ html: "", by: { kind: "cx" } }), say, names: () => names });
+    document.body.append(frame.element);
+    frame.show("Reports", { kind: "cx" });
+    const listed = byLine();
+    frame.show("Watch", { kind: "cx" });
+    const absent = byLine();
+    frame.show("Ads", { kind: "ours", name: "cx-ads", package: "@comchatx/cx-ads" });
+    expect([listed, absent, byLine()]).toEqual(["cx | board/user_2abc/Reports/page.html", "cx | Watch/page.html", "Plugin | cx-ads"]);
   });
 
   it("names a page of ours by its card's name where the page holds the package's record, and by its npm name where it holds none or the maker came without its package", async () => {
     const makers: PageMaker[] = [{ kind: "ours", name: "cx-board-tasks", package: "@comchatx/cx-board-tasks" }, { kind: "ours", name: "cx-helper", package: "@comchatx/cx-helper" }, { kind: "ours", name: "cx-board-tasks" }];
     const { frame } = framed(async () => ({ html: "", by: makers.shift()! }), (npm) => (npm === "@comchatx/cx-board-tasks" ? "Board Inbox" : undefined));
-    const caption = async (tab: string): Promise<string | null> => { frame.show(tab, undefined); await settle(); return document.querySelector(".frame-by")!.textContent; };
-    expect([await caption("A"), await caption("B"), await caption("C")]).toEqual(["A page from the plugin “Board Inbox”", "A page from the plugin “cx-helper”", "A page from the plugin “cx-board-tasks”"]);
+    const caption = async (tab: string): Promise<string | null> => { frame.show(tab, undefined); await settle(); return byLine(); };
+    expect([await caption("A"), await caption("B"), await caption("C")]).toEqual(["Plugin | Board Inbox", "Plugin | cx-helper", "Plugin | cx-board-tasks"]);
   });
 
   it("says Loading for a page still on its way after a moment, that it did not load with Try again when it does not come, and loads it again on Try again", async () => {
@@ -134,7 +150,7 @@ describe("a board's page in a frame", () => {
     expect([note(), retry.hidden, retry.textContent, shownFrame(), document.querySelectorAll("#board-frame iframe").length]).toEqual(["This page did not load.", false, "Try again", null, 1]);
     retry.focus();
     retry.click();
-    expect([note(), ports.read.mock.calls.length, document.activeElement?.className]).toEqual([undefined, 2, "page-icon frame-reload"]);
+    expect([note(), ports.read.mock.calls.length, document.activeElement?.className]).toEqual([undefined, 2, "page-icon f-icon frame-reload"]);
     from(shownFrame(), { cx: "ready" });
     answer({ html: "<p>now</p>", by: { kind: "cx" } });
     await settle();
@@ -162,7 +178,7 @@ describe("a board's page in a frame", () => {
     from(one, { cx: "shown" });
     from(one, { cx: "size", height: 0 });
     vi.advanceTimersByTime(FAILED_AFTER_MS);
-    expect([note(), one.style.height, document.querySelector(".frame-by")!.textContent, document.querySelector<HTMLElement>(".frame-reload")!.hidden]).toEqual([undefined, "0px", "A page made by cx", false]);
+    expect([note(), one.style.height, byLine(), document.querySelector<HTMLElement>(".frame-reload")!.hidden]).toEqual([undefined, "0px", "cx | Blank/page.html", false]);
   });
 
   it("tells the page the theme and the language again when they change, out of sight too, and nothing once it is let go", async () => {
@@ -288,7 +304,7 @@ describe("what a page asks of the board", () => {
   });
   async function asking(page = "Restock") {
     const answered = asks();
-    const frame = new BoardFrame({ origin: PAGES, appOrigin: APP, read: async () => ({ html: "<p>page</p>", by: { kind: "third", name: "example-restock" } }), say, asks: answered });
+    const frame = new BoardFrame({ origin: PAGES, appOrigin: APP, read: async () => ({ html: "<p>page</p>", by: { kind: "third", name: "example-restock" } }), say, asks: answered, names: () => new FileNames([{ path: "reports/w46.md", tree: "board/acct-1/reports/w46.md", modified: 1 }]) });
     document.body.append(frame.element);
     frame.show(page, undefined);
     await settle();
@@ -314,6 +330,44 @@ describe("what a page asks of the board", () => {
     expect(answered.count).toHaveBeenLastCalledWith("Restock", 0, undefined);
     expect((await ask(8, { verb: "show", name: "新的补货建议" }))?.[0]).toEqual({ cx: "answer", id: 8, ok: true });
     expect(answered.show).toHaveBeenCalledWith("Restock", "新的补货建议");
+  });
+
+  it("quotes a page's words with the card they were in, or the card whole, and tells the page whether a chat stands to take them", async () => {
+    const quote = vi.fn();
+    const answered = { ...asks(), quote };
+    const frame = new BoardFrame({ origin: PAGES, appOrigin: APP, read: async () => ({ html: "<p>page</p>", by: { kind: "ours", name: "cx-board-tasks", package: "@comchatx/cx-board-tasks" } }), say, asks: answered });
+    document.body.append(frame.element);
+    frame.show("待办", undefined);
+    await settle();
+    const one = shownFrame()!;
+    from(one, { cx: "ready" });
+    await settle();
+    expect((posted(one).find(([sent]) => (sent as { cx?: string }).cx === "page")?.[0] as { context: { quote: boolean } }).context.quote).toBe(true);
+    const ask = async (id: number, data: Record<string, unknown>) => { from(one, { cx: "ask", id, ...data }); await settle(); return posted(one).find(([sent]) => (sent as { cx?: string; id?: number }).cx === "answer" && (sent as { id: number }).id === id)?.[0]; };
+    expect(await ask(1, { verb: "quote", text: "退货率 12%", card: "inbox/returns.md", title: " 退货报告 " })).toEqual({ cx: "answer", id: 1, ok: true, value: "quoted" });
+    expect(quote).toHaveBeenLastCalledWith("待办", { text: "退货率 12%", card: "inbox/returns.md", title: "退货报告", whole: false });
+    await ask(2, { verb: "quote", text: "退货报告\n\n退货率 12%", card: "inbox/returns.md", title: "退货报告", whole: true });
+    expect(quote).toHaveBeenLastCalledWith("待办", { text: "退货报告\n\n退货率 12%", card: "inbox/returns.md", title: "退货报告", whole: true });
+    await ask(3, { verb: "quote", text: "竞品的价格" });
+    expect(quote).toHaveBeenLastCalledWith("待办", { text: "竞品的价格", whole: false });
+    for (const [at, data] of [{ verb: "quote", text: "" }, { verb: "quote", text: "x", card: "../x" }, { verb: "quote", text: "x", title: 3 }, { verb: "quote", text: "x", whole: "yes" }].entries())
+      expect(await ask(10 + at, data), JSON.stringify(data)).toEqual({ cx: "answer", id: 10 + at, ok: false, reason: "malformed" });
+    // A quote is not a draft: a long card is quoted whole, its long title with it, as far as the card's own read holds, and no further.
+    const long = `${"退货率 12%，比上月高。".repeat(160)}`;
+    expect(long.length).toBeGreaterThan(2_000);
+    expect(await ask(14, { verb: "quote", text: long, card: "inbox/returns.md", title: "退".repeat(200), whole: true })).toEqual({ cx: "answer", id: 14, ok: true, value: "quoted" });
+    expect(quote).toHaveBeenLastCalledWith("待办", { text: long, card: "inbox/returns.md", title: "退".repeat(200), whole: true });
+    expect(await ask(15, { verb: "quote", text: "a".repeat(QUOTE_MAX_BYTES - 1), title: "bb" })).toEqual({ cx: "answer", id: 15, ok: false, reason: "too_large" });
+    expect(quote).toHaveBeenCalledTimes(4);
+    // At no press, the app refuses, and the page hears why.
+    quote.mockImplementationOnce(() => { throw new BoardRefused("no_press"); });
+    expect(await ask(20, { verb: "quote", text: "x" })).toEqual({ cx: "answer", id: 20, ok: false, reason: "no_press" });
+  });
+
+  it("refuses a quote where no chat stands beside the board, and says so in what the page is told", async () => {
+    const { one, ask } = await asking();
+    expect((posted(one).find(([sent]) => (sent as { cx?: string }).cx === "page")?.[0] as { context: { quote: boolean } }).context.quote).toBe(false);
+    expect((await ask(1, { verb: "quote", text: "x" }))?.[0]).toEqual({ cx: "answer", id: 1, ok: false, reason: "unavailable" });
   });
 
   it("refuses an ask of the wrong shape, says why a refused read or write was refused, and hears no ask from another frame or origin", async () => {
@@ -348,7 +402,7 @@ describe("what a page asks of the board", () => {
     const holder = document.createElement("div");
     holder.innerHTML = boxed.value;
     const box = holder.querySelector<HTMLButtonElement>("button[data-cx-file]");
-    expect([box?.dataset["cxFile"], box?.getAttribute("aria-label"), box?.textContent]).toEqual(["reports/w46.md", "w46.md, show on the board", "w46.md"]);
+    expect([box?.dataset["cxFile"], box?.getAttribute("aria-label"), box?.textContent]).toEqual(["board/acct-1/reports/w46.md", "w46.md, show on the board", "w46.md"]);
     const card = "字".repeat(Math.floor(ENTRY_MAX_BYTES / 3));
     expect([(await ask(3, { verb: "markdown", text: card }))?.[0], (await ask(4, { verb: "markdown", text: `${card}xxx` }))?.[0]]).toEqual([
       { cx: "answer", id: 3, ok: true, value: renderMarkdown(card, undefined).innerHTML }, { cx: "answer", id: 4, ok: false, reason: "too_large" },
@@ -376,9 +430,11 @@ describe("what a page asks of the board", () => {
     Object.assign(answered, { open });
     expect((await ask(1, { verb: "open", path: "reports/ads-week-46.md" }))?.[0]).toEqual({ cx: "answer", id: 1, ok: true });
     expect((await ask(2, { verb: "open", path: ".pi/notes.txt" }))?.[0]).toEqual({ cx: "answer", id: 2, ok: true });
-    expect(open.mock.calls).toEqual([["Restock", "reports/ads-week-46.md"], ["Restock", ".pi/notes.txt"]]);
-    for (const [at, path] of ["../x.md", "/etc/passwd", "a//b.md", "", 3].entries()) expect((await ask(100 + at, { verb: "open", path }))?.[0], String(path)).toEqual({ cx: "answer", id: 100 + at, ok: false, reason: "malformed" });
-    expect(open).toHaveBeenCalledTimes(2);
+    // A box the page's words drew for a file the board lists hands back the file's path in the tree, as any other.
+    expect((await ask(3, { verb: "open", path: "board/acct-1/reports/w46.md" }))?.[0]).toEqual({ cx: "answer", id: 3, ok: true });
+    expect(open.mock.calls).toEqual([["Restock", "reports/ads-week-46.md"], ["Restock", ".pi/notes.txt"], ["Restock", "board/acct-1/reports/w46.md"]]);
+    for (const [at, path] of ["../x.md", "/reports/w46.md", "/etc/passwd", "a//b.md", "", 3].entries()) expect((await ask(100 + at, { verb: "open", path }))?.[0], String(path)).toEqual({ cx: "answer", id: 100 + at, ok: false, reason: "malformed" });
+    expect(open).toHaveBeenCalledTimes(3);
     document.body.replaceChildren();
     const { ask: without } = await asking("Other");
     expect((await without(1, { verb: "open", path: "a.md" }))?.[0]).toEqual({ cx: "answer", id: 1, ok: false, reason: "unavailable" });
@@ -386,7 +442,7 @@ describe("what a page asks of the board", () => {
 
   it("hands a viewer its file once its page is shown and again when it is read anew, hands an HTML file's page nothing, and gives a viewer no tab of its own", async () => {
     const opened = { path: "reports/sales.csv", name: "sales.csv", size: 9, modified: 7, text: "sku,units" };
-    const answered = asks();
+    const answered = { ...asks(), quote: vi.fn() };
     const pages: Record<string, BoardPageRead> = {
       "file:reports/sales.csv": { html: "<p>table</p>", by: { kind: "ours", name: "cx-board" }, opened },
       "file:out/report.html": { html: "<p>report</p>", by: { kind: "cx" }, opened: { path: "out/report.html", name: "report.html", size: 13, modified: 8 } },
@@ -406,8 +462,15 @@ describe("what a page asks of the board", () => {
     frame.file("file:reports/sales.csv", { ...opened, text: "sku,units\nB01,3", size: 15, modified: 9 });
     expect(files()).toEqual([{ cx: "file", file: opened }, { cx: "file", file: { ...opened, text: "sku,units\nB01,3", size: 15, modified: 9 } }]);
     const ask = async (id: number, data: Record<string, unknown>) => { from(one, { cx: "ask", id, ...data }); await settle(); return posted(one).find(([sent]) => (sent as { cx?: string; id?: number }).cx === "answer" && (sent as { id: number }).id === id)?.[0]; };
-    for (const [at, data] of [{ verb: "list" }, { verb: "read", file: "a.txt" }, { verb: "write", file: "a.txt", text: "x" }, { verb: "count", n: 1 }, { verb: "save", name: "a.csv", text: "x" }, { verb: "draft", text: "x" }, { verb: "send", text: "x" }, { verb: "show", name: "x" }].entries()) expect(await ask(10 + at, data), JSON.stringify(data)).toEqual({ cx: "answer", id: 10 + at, ok: false, reason: "no_tab" });
+    for (const [at, data] of [{ verb: "list" }, { verb: "read", file: "a.txt" }, { verb: "write", file: "a.txt", text: "x" }, { verb: "count", n: 1 }, { verb: "save", file: "a.txt" }, { verb: "draft", text: "x" }, { verb: "send", text: "x" }, { verb: "show", name: "x" }].entries()) expect(await ask(10 + at, data), JSON.stringify(data)).toEqual({ cx: "answer", id: 10 + at, ok: false, reason: "no_tab" });
+    // Its words are quoted as the file's, never as a card's: a file has no cards.
+    expect(await ask(40, { verb: "quote", text: "B01,3" })).toEqual({ cx: "answer", id: 40, ok: true, value: "quoted" });
+    expect(answered.quote).toHaveBeenLastCalledWith("file:reports/sales.csv", { text: "B01,3", whole: false });
+    expect(await ask(41, { verb: "quote", text: "B01,3", card: "a.md" })).toEqual({ cx: "answer", id: 41, ok: false, reason: "malformed" });
     expect([answered.files, answered.read, answered.write, answered.count, answered.save].map((each) => each.mock.calls.length)).toEqual([0, 0, 0, 0, 0]);
+    // Words it makes it hands the seller, as a page with a tab does.
+    expect(await ask(30, { verb: "save", name: "a.csv", text: "x" })).toEqual({ cx: "answer", id: 30, ok: true, value: "saved" });
+    expect(answered.save.mock.calls.at(-1)?.slice(1)).toEqual(["a.csv", { text: "x" }]);
     // A viewer draws its own file through the chat's pipeline up to a read's bound, past a card's.
     const long = "x".repeat(ENTRY_MAX_BYTES * 4);
     expect(await ask(20, { verb: "markdown", text: long })).toEqual({ cx: "answer", id: 20, ok: true, value: renderMarkdown(long, undefined).innerHTML });

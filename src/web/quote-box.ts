@@ -57,7 +57,7 @@ export class QuoteBox {
   constructor(readonly ports: QuoteBoxPorts) {}
 
   get held(): readonly Held[] { return this.#quotes; }
-  get quotes(): readonly Quote[] { return this.#quotes.map(({ entry, at, words }) => ({ entry, at, words })); }
+  get quotes(): readonly Quote[] { return this.#quotes.map(({ entry, at, words, from }) => ({ entry, at, words, ...(from === undefined ? {} : { from }) })); }
 
   /** A quote joins the cards, once, the newest in view, and the message box takes the focus. */
   add(quote: Held): void {
@@ -104,7 +104,9 @@ export class QuoteBox {
         ...this.#quotes.map((quote, at) => {
           const remove = say("quote.remove", { words: opening(quote.words) });
           return h("div", { class: "quote-card", "data-card": `quote-${at}`, role: "group", "aria-label": say("quote.card", { words: opening(quote.words) }) },
-            h("div", { class: "quote-body", id: `${DESCRIBED}-${at}` }, h("span", { class: "excerpt" }, quote.words), quote.time !== undefined && h("span", { class: "when" }, when(quote))),
+            h("div", { class: "quote-body", id: `${DESCRIBED}-${at}` }, h("span", { class: "excerpt" }, quote.words),
+              // Under a quote from the board, where on it the words were, in the time's place.
+              quote.from !== undefined ? h("span", { class: "when from", dir: "auto" }, quote.from.label) : quote.time !== undefined && h("span", { class: "when" }, when(quote))),
             tip(h("button", { type: "button", class: "remove", "aria-label": remove, onclick: () => { this.#quotes = this.#quotes.filter((held) => held !== quote); this.draw(); draft.focus({ preventScroll: true }); this.ports.changed(); } }, "×"), remove));
         }),
         ...files.map((card) => this.#fileCard(card)));

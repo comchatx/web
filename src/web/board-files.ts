@@ -77,6 +77,9 @@ export class OpenFiles {
     try { if (this.#held.length === 0) this.storage?.remove(name); else this.storage?.write(name, JSON.stringify(this.#held)); } catch { /* the copy is not kept */ }
   }
 
+  /** Another window of the browser changed the list: the next look reads it again. */
+  forget(): void { this.#account = undefined; this.#held = []; }
+
   get all(): readonly string[] { return [...this.#paths()]; }
   has(path: string): boolean { return this.#paths().includes(path); }
 

@@ -39,6 +39,8 @@ export const boardIcon = (): SVGElement => icon(...PAGES[0].glyph);
 
 /** Full screen's mark: four corners out, and in full screen four corners in. */
 const FULL = ["M4 9V4h5", "M15 4h5v5", "M20 15v5h-5", "M9 20H4v-5"];
+/** 在新窗口中打开: a box with an arrow leaving it, as the prototype draws it. */
+const WINDOW = ["M13.5 4.5h6v6", "M19.5 4.5l-7.5 7.5", "M17 13.5v5a1 1 0 0 1-1 1H5.5a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h5"] as const;
 const FULL_EXIT = ["M9 4v5H4", "M20 9h-5V4", "M15 20v-5h5", "M4 15h5v5"];
 
 /**
@@ -69,6 +71,10 @@ export type ColumnPorts = {
   /** Where the focus lands as the sheet opens over the chat, which goes inert behind it: the board's tab in view. */
   readonly landing?: () => HTMLElement;
   readonly store: { readonly read: (key: string) => string | null; readonly write: (key: string, value: string) => void };
+  /** 在新窗口中打开: the whole board in a window of its own. Without it, no such control. */
+  readonly openWindow?: () => void;
+  /** The column is the whole of a window of its own: always open, never over anything, with no icon, full screen or 在新窗口中打开. */
+  readonly windowed?: boolean;
 };
 
 /**
@@ -82,7 +88,9 @@ export class BoardColumn {
   readonly #dot = h("span", { class: "page-dot", "aria-hidden": "true", hidden: true });
   readonly #icon: HTMLButtonElement;
   /** Full screen, in the column's head, just before the board's icon while the column is open. */
-  readonly #fullButton = h("button", { type: "button", class: "page-icon board-full", hidden: true }) as HTMLButtonElement;
+  readonly #fullButton = h("button", { type: "button", class: "page-icon f-icon board-full", hidden: true }) as HTMLButtonElement;
+  /** 在新窗口中打开, just before full screen while the column is open. */
+  readonly #windowButton = h("button", { type: "button", class: "page-icon f-icon board-window-open", hidden: true }) as HTMLButtonElement;
   /** The board has all the room it shares with the chat; never kept across a close. */
   #full = false;
   readonly divider = h("div", { class: "board-divider", role: "separator", tabindex: "0", "aria-orientation": "vertical", "aria-controls": "board" });
@@ -112,9 +120,11 @@ export class BoardColumn {
     this.#beside = matchMedia(`(min-width: calc(${SIDEBAR + CHAT_LEAST + COLUMN_LEAST_ROW}rem + 1px))`);
     this.#calm = matchMedia("(prefers-reduced-motion: reduce)");
     this.element = h("aside", { class: "board", id: "board", hidden: true }, head, page);
-    this.#icon = h("button", { type: "button", class: "page-icon", "aria-controls": "board", onclick: () => this.set(!this.#open) }, boardIcon(), this.#count, this.#dot);
+    this.#icon = h("button", { type: "button", class: "page-icon board-key", "aria-controls": "board", onclick: () => this.set(!this.#open) }, boardIcon(), this.#count, this.#dot);
     this.row.append(this.#icon);
-    head.append(this.#fullButton);
+    head.append(this.#windowButton, this.#fullButton);
+    this.#windowButton.addEventListener("click", () => ports.openWindow?.());
+    tip(this.#windowButton, () => [ports.say("board.openWindow")]);
     this.#fullButton.addEventListener("click", () => { if (this.#full) this.#leaveFull(); else this.setFull(true); });
     tip(this.#fullButton, () => [ports.say(this.#full ? "base.fullExit" : "base.full")]);
     // The press on the backdrop leaves the focus where it is, so the sheet's close can give it back to what opened the sheet.
@@ -128,7 +138,7 @@ export class BoardColumn {
     this.#beside.addEventListener("change", () => {
       this.#endDrag(true);
       const held = this.element.contains(document.activeElement);
-      this.#open = this.#installed && (this.#beside.matches ? this.#open || this.#wanted : false);
+      this.#open = this.#installed && (ports.windowed === true || (this.#beside.matches ? this.#open || this.#wanted : false));
       this.ports.changed();
       if (held && !this.#open) this.#icon.focus({ preventScroll: true });
     });
@@ -159,11 +169,11 @@ export class BoardColumn {
   /** The column stands beside the chat, rather than over it. */
   get beside(): boolean { return this.#beside.matches; }
   /** Over the chat, the column is the one thing to reach until it is closed. */
-  get over(): boolean { return this.#open && !this.#beside.matches; }
+  get over(): boolean { return this.#open && !this.#beside.matches && this.ports.windowed !== true; }
   /** Beside the sidebar, the seller dragged the column past the chat's least and it lies over part of the chat, the rest still in reach. */
   get overChat(): boolean { return this.#overChat > 0; }
   /** Whether the column, opened now, would lie over the chat: on a window with no room beside it, or at a width the seller dragged over it. */
-  get covers(): boolean { return !this.#beside.matches || (this.#width !== undefined && this.#wantedOver); }
+  get covers(): boolean { return this.ports.windowed !== true && !this.#beside.matches || (this.#width !== undefined && this.#wantedOver); }
   get dragging(): boolean { return this.#drag !== undefined; }
   /** The column is travelling to full screen or back: the app keeps the root's `gliding` through a draw of its own. */
   get gliding(): boolean { return this.#gliding !== undefined; }
@@ -174,6 +184,7 @@ export class BoardColumn {
     if (this.#installed === installed) return;
     this.#installed = installed;
     if (!installed) { this.#open = false; this.#wanted = false; }
+    if (installed && this.ports.windowed === true) this.#open = true;
     this.ports.changed();
   }
 
@@ -185,7 +196,7 @@ export class BoardColumn {
    * it, while that control still shows — else to the board's icon.
    */
   set(open: boolean, from?: HTMLElement): void {
-    if (!this.#installed) return;
+    if (!this.#installed || this.ports.windowed === true) return;
     const held = !open && this.element.contains(document.activeElement);
     if (open && !this.#open) this.#opener = from;
     const moved = open !== this.#open;
@@ -228,10 +239,14 @@ export class BoardColumn {
       home.append(this.row);
       held?.focus({ preventScroll: true });
     }
-    this.row.hidden = !this.#installed;
+    const windowed = this.ports.windowed === true;
+    this.row.hidden = !this.#installed || windowed;
     this.element.hidden = !this.#installed;
-    this.divider.hidden = !this.#installed || !this.#open || !this.#beside.matches;
-    this.#fullButton.hidden = !this.#open;
+    this.divider.hidden = !this.#installed || !this.#open || !this.#beside.matches || windowed;
+    this.#fullButton.hidden = !this.#open || windowed;
+    this.#windowButton.hidden = !this.#open || windowed || this.ports.openWindow === undefined;
+    this.#windowButton.setAttribute("aria-label", say("board.openWindow"));
+    if (this.#windowButton.firstChild === null) fill(this.#windowButton, icon(...WINDOW));
     this.#fullButton.setAttribute("aria-label", say(this.#full ? "base.fullExit" : "base.full"));
     this.#fullButton.setAttribute("aria-pressed", String(this.full));
     fill(this.#fullButton, icon(...(this.#full ? FULL_EXIT : FULL)));
@@ -260,7 +275,7 @@ export class BoardColumn {
 
   drawWidth(): void {
     // A board whose package is gone holds the chat to no width.
-    if (!this.#installed) { this.ports.chat.style.minWidth = ""; return; }
+    if (!this.#installed || this.ports.windowed === true) { this.ports.chat.style.minWidth = ""; this.element.style.width = ""; return; }
     const rem = remOf();
     const { least, most, meet, room } = this.#bounds();
     // The column first opens beside the chat; only the seller's own drag or key takes it over the chat, and the browser keeps that.

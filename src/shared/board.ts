@@ -39,13 +39,12 @@ export type DoneWay = (typeof DONE_WAYS)[number];
 export const PERSON = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/;
 /** An entry's file name, as cx writes it and as the board moves it: one name, no directory, ending in `.md`. */
 export const ENTRY_FILE = /^(?:\.\.\/)?(?!\.)[^/\\\0]{1,200}\.md$/;
-/**
- * A base card's file, as a tab's directory holds it at any depth: its path from the tab, each part a name that starts with no dot, at most
- * sixteen deep. A click never names one: only the module's entries are clicked, by `ENTRY_FILE`.
- */
+/** A Markdown file of a base tab, as its directory holds it at any depth: its path from the tab, each part a name that starts with no dot, at most sixteen deep. */
 export const BASE_FILE = /^(?:(?!\.)[^/\\\0]{1,200}\/){0,15}(?!\.)[^/\\\0]{1,200}\.md$/;
-/** A file a part may name: a module's entry or a base card's path. */
-const partFile = (file: string): boolean => ENTRY_FILE.test(file) || BASE_FILE.test(file);
+/** A file the board draws as a card: Markdown. */
+export const CARD_FILE = /\.md$/;
+/** A file a part may name: a module's entry, or a base tab's file, a card by `BASE_FILE` or any file by a page's own path rule. */
+const partFile = (file: string): boolean => ENTRY_FILE.test(file) || baseFile(file);
 /**
  * A file waits in `todo/` or directly in the person's board, and an entry names it as `todo/` sees it: `x.md` in `todo/`, `../x.md` beside
  * it, so two files of one name are two entries, whatever reads or clicks them.
@@ -85,6 +84,8 @@ export type BoardEntry = {
       readonly doneAt?: number;
       /** Why no words are drawn: the file is over `ENTRY_MAX_BYTES`, or the board could not read it. */
       readonly unshown?: Unshown;
+      /** A file that is no card, drawn as the file box with its time: its path in the tenant tree, which the box opens. */
+      readonly box?: string;
     }
   | {
       readonly readable: true;
@@ -153,22 +154,28 @@ export const BOARD_READ_MAX_BYTES = 5 * 1024 * 1024;
 export const BOARD_WRITE_MAX_BYTES = 512 * 1024;
 /** The deepest a file a page reads or writes lies under its own tab. */
 export const BOARD_FILE_DEPTH = 16;
-const FILE_PART = /^(?!\.)[^/\\\u0000-\u001f\u007f]{1,255}$/u;
+/** One part of a page's path in its tab. */
+export const FILE_PART = /^(?!\.)[^/\\\u0000-\u001f\u007f]{1,255}$/u;
 /**
  * A file's path in a page's own tab, as `cxBoard` names it: parts joined by `/`, none empty and none led by a dot (so no `..`), no
  * backslash or control character, at most `BOARD_FILE_DEPTH` deep and 1,024 characters long. It fixes no name or format.
  */
 export const boardFilePath = (file: unknown): file is string =>
   typeof file === "string" && file.length <= 1024 && file.split("/").length <= BOARD_FILE_DEPTH && file.split("/").every((part) => FILE_PART.test(part));
-/** One of a page's own tab's files, as `cxBoard.list` answers it: its path, when it was last written, and its size in bytes. */
-export type BoardFileRow = { readonly file: string; readonly modified: number; readonly size: number };
+/** A file of a base tab, by its path from the tab: a Markdown card by `BASE_FILE`, or any file a page of the tab may name. A click never names one: only the module's entries are clicked, by `ENTRY_FILE`. */
+export const baseFile = (file: string): boolean => BASE_FILE.test(file) || boardFilePath(file);
+/**
+ * One of a page's own tab's files, as `cxBoard.list` answers it: its path, when it was last written, and its size in bytes; and, for the
+ * app alone, its path in the tenant tree, which a box of it opens.
+ */
+export type BoardFileRow = { readonly file: string; readonly modified: number; readonly size: number; readonly tree?: string };
 /** A tab's files as the box answered them; nothing where their shape is not there. */
 export function readBoardFiles(value: unknown): readonly BoardFileRow[] | undefined {
   if (!record(value) || !Array.isArray(value["files"])) return undefined;
   const rows: BoardFileRow[] = [];
   for (const one of value["files"] as unknown[]) {
-    if (!record(one) || !boardFilePath(one["file"]) || typeof one["modified"] !== "number" || !Number.isFinite(one["modified"]) || typeof one["size"] !== "number" || !Number.isSafeInteger(one["size"]) || one["size"] < 0) return undefined;
-    rows.push(Object.freeze({ file: one["file"], modified: one["modified"], size: one["size"] }));
+    if (!record(one) || !boardFilePath(one["file"]) || typeof one["modified"] !== "number" || !Number.isFinite(one["modified"]) || typeof one["size"] !== "number" || !Number.isSafeInteger(one["size"]) || one["size"] < 0 || (one["tree"] !== undefined && !treeFilePath(one["tree"]))) return undefined;
+    rows.push(Object.freeze({ file: one["file"], modified: one["modified"], size: one["size"], ...(one["tree"] === undefined ? {} : { tree: one["tree"] as string }) }));
   }
   return Object.freeze(rows);
 }
@@ -327,7 +334,8 @@ export const UNSHOWN: readonly Unshown[] = ["large", "unreadable"];
  * One file read as the board draws it: every one a card of the base, and its kind and the rest from its front matter where all of that is
  * there. `text` is undefined for a file the board could not read, or one over `ENTRY_MAX_BYTES`: its name is its title, with no words.
  */
-export function readEntry(file: string, place: BoardPlace, text: string | undefined, modified: number, unshown?: Unshown): BoardEntry {
+export function readEntry(file: string, place: BoardPlace, text: string | undefined, modified: number, unshown?: Unshown, tree?: string): BoardEntry {
+  if (!CARD_FILE.test(file)) return { file, place, modified, readable: false, title: file.slice(file.lastIndexOf("/") + 1), body: "", ...(tree === undefined ? {} : { box: tree }) };
   if (text === undefined) return { file, place, modified, readable: false, title: nameTitle(file), body: "", ...(unshown === undefined ? {} : { unshown }) };
   const read = front(text);
   const done = read?.fields.get("done");
@@ -532,7 +540,7 @@ const readOne = (value: unknown, place: BoardPlace): BoardEntry | undefined => {
   // A row a box kept before the base drew titles and words has neither: its name stands for its title.
   const base = { title: typeof title === "string" && title !== "" ? title : nameTitle(file), body: typeof body === "string" ? body : "" };
   const unshown = UNSHOWN.includes(value["unshown"] as Unshown) ? { unshown: value["unshown"] as Unshown } : {};
-  if (readable === false) return { file, place, modified, readable, ...base, ...marks, ...unshown, ...pending };
+  if (readable === false) return { file, place, modified, readable, ...base, ...marks, ...unshown, ...(treeFilePath(value["box"]) ? { box: value["box"] } : {}), ...pending };
   if (readable !== true || !BOARD_KINDS.includes(kind as BoardKind) || typeof title !== "string" || typeof at !== "number" || typeof body !== "string") return undefined;
   if (options !== undefined && (!Array.isArray(options) || !options.every((one): one is string => typeof one === "string"))) return undefined;
   if ((hint !== undefined && typeof hint !== "string") || (answer !== undefined && typeof answer !== "string")) return undefined;

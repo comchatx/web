@@ -24,7 +24,7 @@ export type BoxReads = {
 const BILLING = "#/settings/billing", TOP_UP = "#/settings/billing/top-up";
 /** 订阅, where a line's way to a membership leads. */
 export const OFFER = "#/settings/billing/subscribe";
-const ORGANIZATION_BILLING = "#/organization/billing", ORGANIZATION_TOP_UP = "#/organization/billing/top-up";
+const ORGANIZATION_BILLING = "#/organization/billing", ORGANIZATION_TOP_UP = "#/organization/billing/top-up", ORGANIZATION_SEATS = "#/organization/org/seats";
 
 /** A line as drawn: its braced words, where it has a way on, are the link there, inside the one sentence. */
 export const linked = (said: string, href: string | undefined): readonly (string | HTMLElement)[] => {
@@ -66,8 +66,8 @@ export function closedLine(reads: BoxReads, w: Writer): BoxLine | undefined {
 
 /**
  * Why an organization's message box takes no message, by what its seats are doing: a failed charge tried again, or the balance used up
- * while seats are held. Its admin is given the way on in 组织设置; a member is told to ask the admin. No seats at all is said to a member;
- * the admin's one way on is the seats' purchase, a press this page does not hold yet, so the admin's line is not drawn.
+ * while seats are held, or no seats at all. Its admin is given the way on in 组织设置, 购买席位's step for no seats; a member is told to ask
+ * the admin.
  */
 function organizationLine(reads: BoxReads, organization: Organization, w: Writer): BoxLine | undefined {
   const admin = organization.role === "admin";
@@ -79,16 +79,18 @@ function organizationLine(reads: BoxReads, organization: Organization, w: Writer
     const on = (reads.subscription?.status === "retrying" ? reads.subscription.retry?.on : undefined) ?? organization.seats?.on;
     return on === undefined ? { key: "box.closedRetryPlain", href: ORGANIZATION_BILLING } : { key: "box.closedRetry", values: { day: w.dayName(on) }, href: ORGANIZATION_BILLING };
   }
-  if (state === "none") return admin ? undefined : { key: "box.closedSeatsMember" };
+  if (state === "none") return admin ? { key: "box.closedSeats", href: ORGANIZATION_SEATS } : { key: "box.closedSeatsMember" };
   return admin ? { key: "box.closedPay", href: ORGANIZATION_TOP_UP } : { key: "box.closedPayMember" };
 }
 
 /**
  * The line over an open message box: the warning, with the way to the balance, for any account; a trial's end is read on 用量 with its
- * lots. A warning stands down while a payment is on its way.
+ * lots. A warning stands down while a payment is on its way. In an organization the admin's way is 组织设置 › 账单, where its other money
+ * lines lead; a member is not warned, as Claude tells a member only once the organization is out.
  */
 export function balanceLine(reads: BoxReads, w: Writer): BoxLine | undefined {
   const { money } = reads;
-  if (money === undefined || reads.box === "pending" || reads.balance?.can_open === false) return undefined;
-  return !reads.waiting && (reads.own ? money.warning.model_low : money.warning.low) ? { key: "box.low", values: { amount: w.money(money.warning.below) }, href: BILLING } : undefined;
+  if (money === undefined || reads.box === "pending" || reads.balance?.can_open === false || reads.organization?.role === "member") return undefined;
+  const href = reads.organization === undefined ? BILLING : ORGANIZATION_BILLING;
+  return !reads.waiting && (reads.own ? money.warning.model_low : money.warning.low) ? { key: "box.low", values: { amount: w.money(money.warning.below) }, href } : undefined;
 }

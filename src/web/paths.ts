@@ -1,39 +1,51 @@
-/** The box's tenant root: a path the session prints under it names the same file as the path without it. */
-const TENANT_ROOT = "/tenant/";
+/** A file the board lists: its path from the board (its tab, then the file's path in it), its path in the tenant tree, and when it was written. */
+export type BoardName = { readonly path: string; readonly tree: string; readonly modified: number };
 
-export type TextPiece = { readonly text: string; readonly path?: string };
+// What cx may print before a file's path in the tenant tree.
+const LEADING = /^(?:\/tenant\/|\.\/)/;
+// A path in the tenant tree that lies in the board: it names a file only as itself, never as a path from the board that reads the same.
+const IN_BOARD = /^board\//;
 
-// A path in prose: at least one directory, a name with an extension, ASCII path characters only. A name in other scripts is not
-// recognised here, since nothing separates it from the sentence around it; alone inside inline code it is (`codePath`).
-const IN_PROSE = /(?<![\w/.:@+-])((?:\/tenant\/|~\/|\.{1,2}\/)?(?:[A-Za-z0-9_@+-][A-Za-z0-9_.@+-]*\/)+[A-Za-z0-9_@+-][A-Za-z0-9_.@+-]*\.[A-Za-z0-9]{1,8})(?![\w/-])/g;
-const ALONE = /^(?:\/tenant\/|\.\/)?(?:[^\s/\\:*?"<>|]+\/)*[^\s/\\:*?"<>|]+\.[A-Za-z0-9]{1,8}$/u;
+/**
+ * The files the board lists, by every way cx writes one in inline code: its path in the tenant tree, the same under `/tenant/`, its path
+ * from the board, its name, and its name without the extension as a title. A path in the tree is looked up first and matches only itself;
+ * two files of one name are the newer; a path goes before a name, and a name before a title. Each is named by its path in the tree, the one
+ * address every opener of a file uses.
+ */
+export class FileNames {
+  readonly #paths = new Map<string, string>();
+  readonly #trees = new Set<string>();
+  readonly #names = new Map<string, string>();
+  readonly #titles = new Map<string, string>();
+  readonly #places = new Map<string, string>();
 
-/** The path as the tenant tree knows it — relative, no `.` or `..` — or nothing when it can name no file of the tree. */
-export function treePath(printed: string): string | undefined {
-  let path = printed.startsWith(TENANT_ROOT) ? printed.slice(TENANT_ROOT.length) : printed;
-  while (path.startsWith("./")) path = path.slice(2);
-  if (path === "" || path.startsWith("/") || path.startsWith("~")) return undefined;
-  const segments = path.split("/");
-  return segments.some((segment) => segment === "" || segment === "." || segment === "..") ? undefined : segments.join("/");
-}
-
-/** A run of prose cut into plain pieces and the file paths found in it. */
-export function findPaths(prose: string): readonly TextPiece[] {
-  const pieces: TextPiece[] = [];
-  let from = 0;
-  for (const match of prose.matchAll(IN_PROSE)) {
-    const path = treePath(match[1]!);
-    if (path === undefined) continue;
-    if (match.index > from) pieces.push({ text: prose.slice(from, match.index) });
-    pieces.push({ text: match[1]!, path });
-    from = match.index + match[1]!.length;
+  constructor(files: readonly BoardName[]) {
+    for (const file of [...files].sort((one, other) => one.modified - other.modified)) {
+      const name = file.path.slice(file.path.lastIndexOf("/") + 1);
+      const dot = name.lastIndexOf(".");
+      this.#trees.add(file.tree);
+      this.#places.set(file.tree, file.path);
+      this.#paths.set(file.path, file.tree);
+      this.#names.set(name, file.tree);
+      if (dot > 0) this.#titles.set(name.slice(0, dot), file.tree);
+    }
   }
-  if (from < prose.length) pieces.push({ text: prose.slice(from) });
-  return pieces;
-}
 
-/** The whole of an inline code span read as one file path: there a bare file name counts, in any script. */
-export function codePath(code: string): string | undefined {
-  const printed = code.trim();
-  return ALONE.test(printed) && !printed.includes("://") ? treePath(printed) : undefined;
+  /** The file a span of inline code names as a whole, by its path, its name or its title. */
+  whole(printed: string): string | undefined {
+    const words = printed.trim();
+    const lead = LEADING.exec(words);
+    if (lead !== null) return this.#tree(words.slice(lead[0].length));
+    return this.#path(words) ?? this.#names.get(words) ?? this.#titles.get(words);
+  }
+
+  /** The place in the tree of the file the board lists at exactly this path from the board. */
+  tree(path: string): string | undefined { return this.#paths.get(path); }
+
+  /** A listed file's path from the board, by its path in the tree. */
+  place(tree: string): string | undefined { return this.#places.get(tree); }
+
+  #tree(words: string): string | undefined { return this.#trees.has(words) ? words : undefined; }
+
+  #path(words: string): string | undefined { return IN_BOARD.test(words) ? this.#tree(words) : this.#paths.get(words); }
 }

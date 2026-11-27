@@ -1,5 +1,6 @@
 import type { Backend } from "./backend.js";
 import { h, type Child } from "./dom.js";
+import { dialog as modal } from "./forms.js";
 import { cardShown, cardShut, markCut } from "./plugins-cards.js";
 import { cardName, cardOf } from "./plugins-model.js";
 import type { StringKey } from "./strings.js";
@@ -28,7 +29,7 @@ export type CreateContext = {
  * closed, it takes its address with it.
  */
 function frame(context: CreateContext, name: string, title: StringKey, body: readonly Child[], act: HTMLButtonElement, failed: StringKey, work: () => Promise<(() => Promise<void>) | undefined>): HTMLDialogElement {
-  const dialog = h("dialog", { class: "confirm pl-card-dialog pl-tool-dialog", "aria-labelledby": "pl-card-title", tabindex: "-1", "data-card": name });
+  const dialog = h("dialog", { class: "f-dialog pl-card-dialog pl-tool-dialog", "aria-labelledby": "pl-card-title", tabindex: "-1", "data-card": name });
   const line = h("p", { class: "pl-failed pl-tool-failed", role: "alert" });
   let out = false;
   let settled = false;
@@ -42,10 +43,10 @@ function frame(context: CreateContext, name: string, title: StringKey, body: rea
     dialog.remove();
     return cardShut(name);
   };
-  const cancel = h("button", { type: "button", onclick: () => { void close(); context.returnTo()?.focus?.(); } }, context.say("pl.c.cancel"));
+  const cancel = h("button", { type: "button", class: "f-btn", onclick: () => { void close(); context.returnTo()?.focus?.(); } }, context.say("pl.c.cancel"));
   globalThis.addEventListener?.("hashchange", left);
-  dialog.addEventListener("cancel", (event) => { event.preventDefault(); cancel.click(); });
-  dialog.addEventListener("click", (event) => { if (event.target === dialog) cancel.click(); });
+  // Escape and a press on the dimmed page close the box, as Cancel does; neither while the press is out.
+  dialog.addEventListener("close", () => { if (!settled) cancel.click(); });
   act.addEventListener("click", async () => {
     if (out || act.disabled) return;
     line.textContent = "";
@@ -62,9 +63,9 @@ function frame(context: CreateContext, name: string, title: StringKey, body: rea
     await after();
   });
   const middle = h("div", { class: "pl-card-body", tabindex: "-1" }, ...body);
-  dialog.append(h("h2", { id: "pl-card-title", class: "pl-tool-title" }, context.say(title)), middle, line, h("p", { class: "row pl-card-acts" }, cancel, act));
+  dialog.append(h("h2", { id: "pl-card-title", class: "pl-tool-title" }, context.say(title)), middle, line, h("div", { class: "f-acts pl-card-acts" }, cancel, act));
   context.host().append(dialog);
-  if (typeof dialog.showModal === "function") dialog.showModal();
+  modal(dialog, middle, () => out)(context.returnTo() ?? middle);
   cardShown(name);
   middle.focus?.({ preventScroll: true });
   markCut(middle);
@@ -83,7 +84,7 @@ export function uploadCard(context: CreateContext): HTMLDialogElement {
   const clear = (): void => { note.textContent = ""; };
   file.addEventListener("change", clear);
   link.addEventListener("input", clear);
-  const act = h("button", { type: "button", class: "primary" }, say("pl.up.go"));
+  const act = h("button", { type: "button", class: "f-btn primary" }, say("pl.up.go"));
   return frame(context, UPLOAD_CARD, "pl.up.title", [
     h("label", { class: "pl-field" }, h("span", {}, say("pl.up.file")), file),
     h("p", { class: "quiet pl-or" }, say("pl.up.or")),

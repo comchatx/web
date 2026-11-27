@@ -88,6 +88,17 @@ describe("the board's place while cx's computer is off", () => {
     place.draw("off");
     expect([look(), place.element.classList.contains("over-last")]).toEqual([{ glass: false, wash: false, shape: false, cards: 12 }, false]);
   });
+  it("says the computer is on once it is, rather than keeping the last state it said, and says nothing where it said nothing before", () => {
+    const { place } = made("zh");
+    place.draw(undefined);
+    const said = (): string | null => place.element.querySelector("[role=status]")!.textContent;
+    expect(said()).toBe("");
+    place.draw("starting");
+    expect(said()).toBe("cx 的电脑正在开机");
+    place.draw(undefined);
+    expect([said(), place.element.hidden]).toEqual(["cx 的电脑已开机", true]);
+  });
+
   it("hands the keyboard to the place as the press leaves at the computer's start", () => {
     const { place } = made();
     place.draw("off");

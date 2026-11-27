@@ -3,7 +3,6 @@ import { afterEach, expect, it, vi } from "vitest";
 import { FIRST_RELEASE, type Backend, type Me, type NpmPackage, type Package } from "./backend.js";
 import { CATALOGUE } from "./canned-catalogue.js";
 import { catalogueWith, type Catalogue } from "./catalogue.js";
-import { LINES } from "./plugin-marks.js";
 import { REREAD_MS } from "./plugins-clicks.js";
 import { PluginsPage, tile } from "./plugins-page.js";
 import { clickStub } from "./plugins-test-kit.js";
@@ -61,14 +60,18 @@ const NONE = { en: "", zh: "" } as const;
 const LINE = "Pi extension for cron-based scheduled task management with LLM-callable tools";
 const npm = (name: string, more: Partial<NpmPackage> = {}): NpmPackage => ({ name, description: "", kinds: [], author: "ComChatX", updated: "2026-10-01T00:00:00.000Z", version: "1.0.0", repository: "", readme: "", readme_cut: false, ours: true, shipped: { skills: [], prompts: [], unread: [] }, uses: [], ...more });
 
+/** The name and drawing cx-schedule's published field gives it (0.3.8). */
+const SCHEDULE_NAME = { en: "Scheduled Tasks", zh: "定时任务" } as const;
+const SCHEDULE_DRAW: readonly { readonly d: string }[] = ["M4.4 13.4a7.6 7.6 0 1 1 15.2 0a7.6 7.6 0 1 1 -15.2 0zM11.1 9.4h1.8v3.7l2.4 1.5-.95 1.55-3.25-2.05z","M3.3 7.9a4.1 4.1 0 0 1 4.6-4.6c.45.05.62.6.3.92L4.2 8.2c-.32.32-.86.15-.9-.3zM20.7 7.9a4.1 4.1 0 0 0-4.6-4.6c-.45.05-.62.6-.3.92l4 3.98c.32.32.86.15.9-.3z"].map((d: string) => ({ d }));
 /** `@comchatx/cx-schedule@0.3.0` as npm holds it: the scheduler named in its field, and no dependency. */
 const PUBLISHED = catalogueWith([npm("@comchatx/cx-schedule", { version: "0.3.0", uses: [], comchatx: { name: "cx-schedule", section: "extensions", builds: [SCHEDULER_NAME] } })]);
 
-it("draws cx-schedule's signed clock through the page's own tile", () => {
+it("draws cx-schedule's own drawing through the page's own tile", () => {
   const schedule = CATALOGUE.plugins.find((one) => one.id === "cx-schedule")!;
-  expect(schedule.mark).toEqual({ line: "clock" });
+  const draw = SCHEDULE_DRAW.map((one) => one.d);
+  expect(schedule.mark && "draw" in schedule.mark ? schedule.mark.draw.map((one) => one.d) : undefined).toEqual(draw);
   const drawn = tile(schedule);
-  expect([drawn.textContent, drawn.querySelector("path")?.getAttribute("d")]).toEqual(["", LINES["clock"]]);
+  expect([drawn.textContent, [...drawn.querySelectorAll("path")].map((one) => one.getAttribute("d"))]).toEqual(["", draw]);
 });
 
 for (const language of ["en", "zh"] as const) {
@@ -128,7 +131,7 @@ for (const language of ["en", "zh"] as const) {
     expect(rows[0]!.textContent).toContain("2betop");
     expect(rows[0]!.querySelector(".pl-row-end button.f-icon")?.getAttribute("aria-label")).toBe(say("pl.installName", { name: "@amaster.ai/pi-task-scheduler" }));
     const card = await install(page);
-    expect([...(card?.querySelectorAll(".pl-card-rows .pl-row-name strong") ?? [])].map((one) => one.textContent)).toEqual(["cx-schedule", "@amaster.ai/pi-task-scheduler"]);
+    expect([...(card?.querySelectorAll(".pl-card-rows .pl-row-name strong") ?? [])].map((one) => one.textContent)).toEqual([SCHEDULE_NAME[language], "@amaster.ai/pi-task-scheduler"]);
     expect(card?.textContent).toContain(say("pl.c.thirdIn1"));
     expect(box.world.sent.map((click) => [click.op, click.source])).toEqual([["install", "npm:@amaster.ai/pi-task-scheduler"], ["install", "npm:@comchatx/cx-schedule"]]);
     await show(page, "cx-schedule", "deps");
@@ -209,7 +212,7 @@ for (const language of ["en", "zh"] as const) {
     const { box, page, say } = world(language, CATALOGUE, [schedule]);
     await page.load();
     await show(page, "cx-schedule");
-    expect(page.element.querySelector(".pl-needs")?.textContent).toContain(say("pl.need.gone", { plugin: "cx-schedule", name: "@amaster.ai/pi-task-scheduler" }));
+    expect(page.element.querySelector(".pl-needs")?.textContent).toContain(say("pl.need.gone", { plugin: SCHEDULE_NAME[language], name: "@amaster.ai/pi-task-scheduler" }));
     location.hash = `#/plugins/n/${encodeURIComponent("@amaster.ai/pi-task-scheduler")}`;
     page.show({ kind: "plugin", id: SCHEDULER, npm: "@amaster.ai/pi-task-scheduler" });
     await settle();
@@ -233,13 +236,13 @@ for (const language of ["en", "zh"] as const) {
     page.element.querySelector<HTMLButtonElement>(".pl-more")!.click();
     page.element.querySelector<HTMLButtonElement>(".pl-head-tools .f-menu [role=menuitem]")!.click();
     const dialog = document.querySelector<HTMLDialogElement>("dialog.pl-card-dialog")!;
-    expect(affected(dialog)).toEqual(["cx-schedule", say("pl.c.needsOne", { names: "cx-schedule", name: "@amaster.ai/pi-task-scheduler" })]);
+    expect(affected(dialog)).toEqual([SCHEDULE_NAME[language], say("pl.c.needsOne", { names: SCHEDULE_NAME[language], name: "@amaster.ai/pi-task-scheduler" })]);
     history.replaceState({}, "", location.href);
     dialog.querySelector<HTMLButtonElement>("button.primary")!.click();
     await settle(); await vi.advanceTimersByTimeAsync(REREAD_MS); await settle();
     // cx-schedule, which can't work without it, is turned off first, so it stands off rather than lacking; its page says nothing missing.
     expect(box.world.sent.map((click) => [click.op, click.source])).toEqual([["off", "npm:@comchatx/cx-schedule"], ["remove", "npm:@amaster.ai/pi-task-scheduler"]]);
-    const gone = say("pl.need.gone", { plugin: "cx-schedule", name: "@amaster.ai/pi-task-scheduler" });
+    const gone = say("pl.need.gone", { plugin: SCHEDULE_NAME[language], name: "@amaster.ai/pi-task-scheduler" });
     await show(page, "cx-schedule");
     expect(page.element.querySelector(".pl-needs")).toBeNull();
     location.hash = "#/plugins/yours";

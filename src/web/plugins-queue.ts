@@ -92,6 +92,8 @@ export type QueueContext = {
   readonly head: (plugin: Plugin, focus: string) => RowHead;
   readonly cancel: (row: QueueRow) => void;
   readonly retry: (row: QueueRow) => void;
+  /** A member of an organization: what fails is theirs to take back, never to try again, and what waits is the admin's to cancel. */
+  readonly member?: boolean;
 };
 
 /** Where the keyboard is put on a row's end: 取消 by the row's source, 重试 beside it. */
@@ -129,8 +131,8 @@ export function queueRow(context: QueueContext, row: QueueRow): HTMLElement {
   const word = (words: string): HTMLElement => h("span", { class: "pl-q-state-word" }, words);
   const end: readonly Child[] = row.stands === "failed"
     ? [h("span", { class: "pl-q-state pl-q-state-bad", role: "alert" }, rowIcon("alert"), word(say(update ? "pl.fail.updateHere" : "pl.fail.installHere"))),
-      iconAct("again", say(update ? "pl.q.retryUpdate" : "pl.q.retryInstall", { name }), () => context.retry(row), { focus: retryPlace(row) }), cancel]
-    : [h("span", { class: "pl-q-state", role: row.stands === "running" ? "status" : undefined }, h("span", { class: row.stands === "running" ? "pl-spin" : "pl-spin pl-still", "aria-hidden": "true" }), word(standsWords(say, row))), cancel];
+      context.member !== true && iconAct("again", say(update ? "pl.q.retryUpdate" : "pl.q.retryInstall", { name }), () => context.retry(row), { focus: retryPlace(row) }), cancel]
+    : [h("span", { class: "pl-q-state", role: row.stands === "running" ? "status" : undefined }, h("span", { class: row.stands === "running" ? "pl-spin" : "pl-spin pl-still", "aria-hidden": "true" }), word(standsWords(say, row))), (context.member !== true || row.stands === "running") && cancel];
   const head = context.head(row.plugin, `queue ${row.act} ${row.source}`);
   return h("li", { class: "pl-row-item pl-q-row", "data-source": row.source },
     h("div", { class: "pl-row" }, head.tile,
@@ -175,10 +177,11 @@ export function failedUnder(rows: readonly QueueRow[], waited: ReadonlySet<strin
  * What the chat says under a message: the failure line the queue's row draws, in the page's failure block, with 重试, whose place
  * turns the ring while it runs again.
  */
-export function failureUnder(say: Say, language: Language, row: QueueRow, retry: () => void): HTMLElement {
+export function failureUnder(say: Say, language: Language, row: QueueRow, retry: (() => void) | undefined): HTMLElement {
   const update = row.act === "update";
+  // A member tries nothing again: the line says what failed, and the admin installs.
   return h("div", { class: "pl-failed pl-failed-chat", "data-for": rowKey(row) }, failedLine(say, language, row),
-    h("span", { class: "pl-failed-acts" }, row.stands === "failed" ? retryButton(say, language, row, retry)
+    retry !== undefined && h("span", { class: "pl-failed-acts" }, row.stands === "failed" ? retryButton(say, language, row, retry)
       : h("button", { type: "button", class: "pl-again pl-busy pl-hold", "aria-disabled": "true", "aria-busy": "true", "aria-label": say(update ? "pl.doing.updateName" : "pl.doing.installName", { name: nameIn(row.plugin, language) }) },
         h("span", { class: "pl-hold-word", "aria-hidden": "true" }, say("pl.tryAgain")), spinner())));
 }

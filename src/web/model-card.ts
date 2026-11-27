@@ -305,6 +305,10 @@ export type CardPorts = {
   readonly choose: (provider: string, modelId: string, platform?: boolean, series?: SeriesPick) => void;
   /** Others: the plugins page, where the vendors on the card are ticked and a vendor's models are listed. */
   readonly others: (vendor: string | undefined) => void;
+  /** The asker is the organization's member: which models the card offers is its admin's, so 更多模型 is not drawn and the row says whom to ask. */
+  readonly member?: () => boolean;
+  /** It opens: the one menu open beside it closes, its owner says which. */
+  readonly opens?: () => void;
 };
 
 /**
@@ -329,8 +333,15 @@ export class ModelCard {
   /** The row's name, where the control is a row whole: it stands at the press's left, the model at its right. */
   #lead: HTMLElement | undefined;
   readonly #outside = (event: Event): void => { if (!(event.target instanceof Node && this.element.contains(event.target))) this.close(); };
+  /** Escape closes the open menu wherever the keyboard is, before anything under it hears it, and hands the keyboard back to its trigger. */
+  readonly #escape = (event: KeyboardEvent): void => {
+    if (event.key !== "Escape" || !this.#opened) return;
+    event.preventDefault();
+    event.stopPropagation();
+    this.close();
+    giveBack(this.#trigger);
+  };
   readonly #keys = (event: KeyboardEvent): void => {
-    if (event.key === "Escape") { event.preventDefault(); this.close(); return; }
     if (event.key === "ArrowDown" || event.key === "ArrowUp" || event.key === "Home" || event.key === "End") {
       event.preventDefault();
       const items = [...this.#rows.querySelectorAll<HTMLElement>("button.mp-row")];
@@ -358,7 +369,7 @@ export class ModelCard {
 
   /** Draws the card for a view in a language; nothing is drawn again while both are what they were. */
   update(view: CardView, language: string): void {
-    const drawn = `${language}\u0000${JSON.stringify(view)}`;
+    const drawn = `${language}\u0000${this.ports.member?.() === true}\u0000${JSON.stringify(view)}`;
     if (drawn === this.#drawn) return;
     this.#view = view;
     this.#drawn = drawn;
@@ -435,13 +446,14 @@ export class ModelCard {
           // The platform's pick is billed by the platform, which its tag says; a hidden chevron keeps that tag in the vendors' column.
           h("span", { class: "mp-more mp-spacer", "aria-hidden": "true" }, "›"));
       }
-      case "vendor": return h("button", { type: "button", class: `mp-row${row.inUse ? " mp-in-use" : ""}`, role: "menuitem", "aria-haspopup": "menu", onclick: () => this.show({ vendor: row.slot.id }) },
-        slot(glyph(row.slot)), name(row.slot.name), tag(say(`card.${row.slot.source}`)), h("span", { class: "mp-more", "aria-hidden": "true" }, "›"));
+      // The vendor of the model in use, chosen or taken, is ticked as the row in use on every level is, the tick in its mark's place.
+      case "vendor": return h("button", { type: "button", class: `mp-row${row.inUse ? " mp-in-use" : ""}`, role: "menuitem", "aria-haspopup": "menu", "aria-current": row.inUse ? "true" : undefined, onclick: () => this.show({ vendor: row.slot.id }) },
+        slot(row.inUse ? tick() : glyph(row.slot)), name(row.slot.name), tag(say(`card.${row.slot.source}`)), h("span", { class: "mp-more", "aria-hidden": "true" }, "›"));
       case "back": return h("button", { type: "button", class: "mp-row mp-title", role: "menuitem", "aria-label": say("card.backTo", { vendor: row.slot.name }), onclick: () => this.show("vendors") },
         slot("‹"), name(row.slot.name, tag(say(`card.${row.slot.source}`))));
       case "model": return h("button", { type: "button", class: `mp-row${row.inUse ? " mp-in-use" : ""}`, role: "menuitemradio", "aria-checked": String(row.inUse), onclick: () => { this.ports.choose(row.model.provider, row.model.id, false, row.model.seriesId === undefined ? undefined : { id: row.model.seriesId, pinned: row.model.pinned === true }); this.close(); } },
         slot(row.inUse ? tick() : ""), name(row.model.series ?? modelNamed(row.model), ...member(row.model), ...chosen(row.inUse)), ...(row.tagged ? [tag(paidBy(row.model, say))] : []));
-      case "others": return h("button", { type: "button", class: "mp-row", role: "menuitem", onclick: () => { this.close(); this.ports.others(row.vendor); } },
+      case "others": return this.ports.member?.() === true ? h("p", { class: "quiet mp-ask", "data-key": "org.askForModels" }, say("org.askForModels")) : h("button", { type: "button", class: "mp-row", role: "menuitem", onclick: () => { this.close(); this.ports.others(row.vendor); } },
         slot(h("span", { "aria-hidden": "true" }, "…")), name(say("card.others")), h("span", { class: "mp-more", "aria-hidden": "true" }, "↗"));
     }
   }
@@ -449,6 +461,7 @@ export class ModelCard {
   open(): void {
     hideTip(this.#trigger);
     if (this.#opened || this.#plain) return;
+    this.ports.opens?.();
     this.#opened = true;
     this.#level = openingLevel(this.#view);
     this.redraw();
@@ -457,6 +470,7 @@ export class ModelCard {
     this.#card.inert = false;
     this.#trigger.setAttribute("aria-expanded", "true");
     document.addEventListener("pointerdown", this.#outside);
+    document.addEventListener("keydown", this.#escape, true);
     this.#card.addEventListener("keydown", this.#keys);
     (this.#rows.querySelector<HTMLElement>("button.mp-row.mp-in-use") ?? this.#rows.querySelector<HTMLElement>("button.mp-row"))?.focus({ preventScroll: true });
   }
@@ -469,6 +483,7 @@ export class ModelCard {
     this.#card.inert = true;
     this.#trigger.setAttribute("aria-expanded", "false");
     document.removeEventListener("pointerdown", this.#outside);
+    document.removeEventListener("keydown", this.#escape, true);
     this.#card.removeEventListener("keydown", this.#keys);
     this.#level = "vendors";
     // Focus never stays in the closed card, whichever way it closed.

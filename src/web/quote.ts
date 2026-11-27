@@ -2,7 +2,20 @@
  * A quote the person put in a message: pi's id for the quoted entry, its place in the life as `<epoch>:<seq>`, and the words they saw —
  * a message of theirs whole, or what they selected in an answer.
  */
-export type Quote = { readonly entry: string; readonly at: string; readonly words: string };
+export type Quote = { readonly entry: string; readonly at: string; readonly words: string; readonly from?: QuoteFrom };
+
+/**
+ * Where on the board a quote's words were, for one quoted there: its tab, the card's file on that tab or the tree's file a tab shows, and
+ * the source its card draws — 「收件箱 · {title}」, a board's name, a file's name. A quote from the board has no entry and no place.
+ */
+export type QuoteFrom = { readonly board: string; readonly card?: string; readonly file?: string; readonly label: string };
+
+/**
+ * The source line a quote from a board draws, one rule wherever it was quoted: an excerpt of a card with a title, the board's name and
+ * the title; a whole card, words in no card, or an excerpt of a card with none, the board's name. A file's is its own name, apart.
+ */
+export const boardSource = (name: string, part: { readonly card?: string; readonly title?: string; readonly whole?: boolean }): string =>
+  part.card !== undefined && part.whole !== true && part.title !== undefined && part.title !== "" ? `${name} · ${part.title}` : name;
 
 /**
  * A quote waiting in the message box: whose words it holds, which marks the quoted entry as read, and when they were said, which a card
@@ -12,7 +25,10 @@ export type Quote = { readonly entry: string; readonly at: string; readonly word
 export type Held = Quote & { readonly who: "you" | "cx" | undefined; readonly time: number | undefined };
 
 const MARKER = /<quote\b([^>]*)>([\s\S]*?)<\/quote>\s*/g;
-const attribute = (attributes: string, name: string): string => new RegExp(`\\b${name}="([^"]*)"`).exec(attributes)?.[1] ?? "";
+const attribute = (attributes: string, name: string): string => unescaped(new RegExp(`\\b${name}="([^"]*)"`).exec(attributes)?.[1] ?? "");
+/** A board's or a file's name may hold any character, so a source's values are written as an attribute's are. */
+const escaped = (value: string): string => value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const unescaped = (value: string): string => value.replace(/&(quot|lt|gt|amp);/g, (_, name: string) => ({ quot: "\"", lt: "<", gt: ">", amp: "&" })[name]!);
 
 /** Quoted words never end a marker early: a literal closing tag in them is written with a space, which closes nothing. */
 const closed = (words: string): string => words.replace(/<\/quote>/gi, "</ quote>");
@@ -22,8 +38,14 @@ const named = (value: string): string => value.replace(/[">\s]/g, "");
 export const pageZone = (): string => Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 /** The marker a quote is sent as, before the person's own words, with the zone its card's time was shown in. */
-export const marker = (quote: Quote, zone: string = pageZone()): string =>
-  `<quote entry="${named(quote.entry)}" at="${named(quote.at)}"${zone === "" ? "" : ` zone="${named(zone)}"`}>${closed(quote.words)}</quote>`;
+export const marker = (quote: Quote, zone: string = pageZone()): string => {
+  const from = quote.from;
+  if (from !== undefined) {
+    const more = [["card", from.card], ["file", from.file]].flatMap(([name, value]) => (value === undefined ? [] : [` ${name}="${escaped(value)}"`])).join("");
+    return `<quote board="${escaped(from.board)}"${more} from="${escaped(from.label)}">${closed(quote.words)}</quote>`;
+  }
+  return `<quote entry="${named(quote.entry)}" at="${named(quote.at)}"${zone === "" ? "" : ` zone="${named(zone)}"`}>${closed(quote.words)}</quote>`;
+};
 
 /** pi's own editor writes a path this way, quoted where a space or Chinese punctuation would end it (`@"成本 核算.xlsx"`). */
 const CJK = "[\\p{Script_Extensions=Han}\\p{Script_Extensions=Hiragana}\\p{Script_Extensions=Katakana}\\p{Script_Extensions=Hangul}\\p{Script_Extensions=Bopomofo}]";
@@ -51,7 +73,10 @@ export function sentWith(quotes: readonly Quote[], words: string, files: readonl
 export function unquoted(message: string): { readonly quotes: readonly Quote[]; readonly files: readonly string[]; readonly text: string } {
   const quotes: Quote[] = [];
   const rest = message.replace(MARKER, (_, attributes: string, words: string) => {
-    quotes.push({ entry: attribute(attributes, "entry"), at: attribute(attributes, "at"), words });
+    const board = attribute(attributes, "board");
+    const card = attribute(attributes, "card"), file = attribute(attributes, "file");
+    const from: QuoteFrom | undefined = board === "" && file === "" ? undefined : { board, ...(card === "" ? {} : { card }), ...(file === "" ? {} : { file }), label: attribute(attributes, "from") || board || file };
+    quotes.push({ entry: attribute(attributes, "entry"), at: attribute(attributes, "at"), words, ...(from === undefined ? {} : { from }) });
     return "";
   });
   const blocks = rest.trimEnd().split(/\n\s*\n/);
@@ -61,7 +86,8 @@ export function unquoted(message: string): { readonly quotes: readonly Quote[]; 
   return { quotes, files, text: (files.length === 0 ? rest : blocks.slice(0, -1).join("\n\n")).trim() };
 }
 
-export const sameQuote = (a: Quote, b: Quote): boolean => a.entry === b.entry && a.words === b.words;
+export const sameQuote = (a: Quote, b: Quote): boolean =>
+  a.entry === b.entry && a.words === b.words && a.from?.board === b.from?.board && a.from?.card === b.from?.card && a.from?.file === b.from?.file;
 
 /** The first words of a quote, as a name says which one: six words, or fourteen characters where the words are not spaced. */
 export function opening(words: string): string {

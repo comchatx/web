@@ -416,14 +416,6 @@
     "logo": "cohere"
    }
   },
-  "@comchatx/card-dots-studio": {
-   "name": "Dots Studio",
-   "section": "models",
-   "cardId": "dots-studio",
-   "mark": {
-    "logo": "dotsstudio"
-   }
-  },
   "@comchatx/card-elorian": {
    "name": "Elorian",
    "section": "models",
@@ -452,17 +444,6 @@
    "mark": {
     "logo": "liquid"
    }
-  },
-  "@comchatx/card-meituan": {
-   "name": "Meituan",
-   "section": "models",
-   "cardId": "meituan",
-   "mark": {
-    "logo": "longcat"
-   },
-   "aliases": [
-    "美团"
-   ]
   },
   "@comchatx/card-nex-agi": {
    "name": "Nex AGI",

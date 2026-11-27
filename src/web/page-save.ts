@@ -9,7 +9,12 @@ import { h } from "./dom.js";
 export function saveFile(name: string, text: string): void {
   const bytes = new TextEncoder().encode(text);
   if (bytes.length > BOARD_READ_MAX_BYTES) throw new BoardRefused("too_large");
-  const address = URL.createObjectURL(new Blob([bytes], { type: "application/octet-stream" }));
+  saveBlob(name, new Blob([bytes], { type: "application/octet-stream" }));
+}
+
+/** A file the board holds, saved under its name as the browser saves any download. */
+export function saveBlob(name: string, blob: Blob): void {
+  const address = URL.createObjectURL(blob);
   const link = h("a", { href: address, download: name, hidden: true });
   document.body.append(link);
   link.click();

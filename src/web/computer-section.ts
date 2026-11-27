@@ -114,12 +114,15 @@ export class ComputerSection {
     const title = say(titleKey);
     const n = usage.bars.length;
     const now = this.ports.power() === "on" ? (metric === "cpu" ? me.parts?.cpu : metric === "memory" ? me.parts?.memory : me.parts?.storage) : undefined;
+    // Storage is kept, and billed, while the computer is off: a step with no reading of it draws no bar and says no power.
+    const values = usage.bars.map((bar) => bar[metric]);
+    const off = metric === "storage" ? "" : say("cw.off");
     const bars = usage.bars.map((bar, at) => {
-      const value = bar[metric];
+      const value = values[at];
       const name = this.#binName(bar, usage.stepS, w);
-      const words = (): readonly Child[] => [h("p", {}, h("span", { class: "name" }, name), h("span", { class: "cz-read" }, value === undefined ? say("cw.off") : `${value}%`))];
+      const words = (): readonly Child[] => [h("p", {}, h("span", { class: "name" }, name), h("span", { class: "cz-read" }, value === undefined ? off : `${value}%`))];
       return tip(h("div", { class: ["sw-day", levelOf(value)].filter(Boolean).join(" "), role: "img", tabindex: at === n - 1 ? "0" : "-1", "data-at": String(at), "data-key": `${metric}:${at}`,
-        "aria-label": `${name}${w.comma}${value === undefined ? say("cw.off") : say("cw.used", { name: title, n: String(value) })}` },
+        "aria-label": value === undefined ? `${name}${off === "" ? "" : `${w.comma}${off}`}` : `${name}${w.comma}${say("cw.used", { name: title, n: String(value) })}` },
         value !== undefined && styled(h("span", { class: "sw-bar" }, h("i")), { height: `${value}%` })), words, { card: true, says: true, end: at + 1 > n / 2 });
     });
     const show = (bar: number | undefined): void => { for (const one of bars) one.classList.toggle("at", Number(one.dataset["at"]) === bar); };
@@ -167,19 +170,21 @@ export class ComputerSection {
     const hourly = (units: number): string => new Intl.NumberFormat("en", { style: "currency", currency: me.money.currency, minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(units / me.money.unitsPerMinor / 100);
     const price = (units: number): HTMLElement => h("span", { class: "cz-price" }, say("cw.rate", { price: hourly(units) }));
     const why = never ? say("cw.sizeNew") : on ? say("cw.sizeOn") : undefined;
+    // The sizes are one radio set, as the sheet draws them: the one in force checked, none to be taken while a change is not.
     const card = (size: Offered): HTMLElement => {
       const name = sizeName(size, say);
-      if (held !== undefined && same(size, held)) return h("li", { class: "cz-size cz-in-use" }, h("div", { class: "cz-pick", "aria-current": "true" }, h("span", { class: "cz-name" }, name), price(size.hourUnits)));
-      return h("li", { class: "cz-size" }, h("button", { type: "button", class: "cz-pick", "data-key": `size-${size.cpus}-${size.memoryMb}`, "aria-disabled": shut ? "true" : undefined, "aria-busy": this.#saving ? "true" : undefined,
-        "aria-describedby": why === undefined ? undefined : "cz-why", "aria-label": `${say("cz.changeTo", { size: name })}${w.comma}${say("cw.rate", { price: hourly(size.hourUnits) })}`,
-        onclick: (event: Event) => { if (!shut && held !== undefined) this.#ask(event.currentTarget as HTMLElement, held, size, sizes, hourly); } }, h("span", { class: "cz-name" }, name), price(size.hourUnits)));
+      const inUse = held !== undefined && same(size, held);
+      const radio = h("input", { type: "radio", name: "cz-size", "data-key": `size-${size.cpus}-${size.memoryMb}`, checked: inUse ? true : undefined, disabled: shut ? true : undefined,
+        "aria-label": `${inUse ? name : say("cz.changeTo", { size: name })}${w.comma}${say("cw.rate", { price: hourly(size.hourUnits) })}`,
+        onchange: (event: Event) => { if (!shut && held !== undefined && !inUse) this.#ask(event.currentTarget as HTMLElement, held, size, sizes, hourly); } }) as HTMLInputElement;
+      return h("li", { class: inUse ? "cz-size cz-in-use" : "cz-size" }, h("label", { class: "cz-pick" }, radio, h("span", { class: "cz-name" }, name), price(size.hourUnits)));
     };
     const status = h("p", { class: "unseen", role: "status" });
     if (this.#done !== undefined) { const done = this.#done; this.#done = undefined; setTimeout(() => { status.textContent = done; }, 50); }
     return h("li", { class: "sw-row cz-row", id: "cz-row-size", tabindex: "-1", "data-key": "size-row" },
       h("div", { class: "sw-text" }, h("p", { class: "sw-label", id: "cz-size" }, say("cw.size")),
         this.#refused ? h("p", { class: "sw-said asks cz-refused", role: "status" }, say("sw.moveFailed")) : why !== undefined && h("p", { class: "sw-help quiet", id: "cz-why" }, why)),
-      h("ul", { class: "cz-sizes cz-cards cz-picks", "aria-labelledby": "cz-size" }, ...sizes.map(card)), status);
+      h("ul", { class: "cz-sizes cz-cards cz-picks", role: "radiogroup", "aria-labelledby": "cz-size", "aria-describedby": why === undefined ? undefined : "cz-why", "aria-busy": this.#saving ? "true" : undefined }, ...sizes.map(card)), status);
   }
 
   /** The step that asks before a change: what the computer is now and what it will be, focus on the way out. */
@@ -195,7 +200,12 @@ export class ComputerSection {
       h("dl", { class: "cz-change" }, pair("cz.current", held, now?.hourUnits), pair("cz.new", to, to.hourUnits)),
       h("p", { id: "cz-step-what" }, say("cz.what")), h("div", { class: "f-acts" }, no, yes)) as HTMLDialogElement;
     (from.closest(".sw") ?? document.body).append(box);
-    box.addEventListener("close", () => box.remove());
+    // Left with no change, the set says the size in force again.
+    box.addEventListener("close", () => {
+      box.remove();
+      const kept = from.closest(".cz-sizes")?.querySelector<HTMLInputElement>(`[data-key="size-${held.cpus}-${held.memoryMb}"]`);
+      if (!this.#saving && kept !== null && kept !== undefined) kept.checked = true;
+    });
     no.onclick = () => box.close();
     yes.onclick = () => {
       this.#saving = true;

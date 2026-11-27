@@ -44,6 +44,8 @@
   --radius-round: 999px;
   /* Motion: one quick settle, never a bounce. */
   --motion-quick: 120ms;
+  /* One travel across a surface: a mark sliding to its place, a card stretching to its new height (Material 3's medium2). */
+  --motion-travel: 300ms;
   --ease: cubic-bezier(0.2, 0, 0, 1);
   /* The glass over the board while cx's computer is off (ruled 2026-11-12): how far it blurs what lies under it, how much of the
      ground it lays over it (half that while the computer starts), and how long it takes to clear as the board comes. */
@@ -94,10 +96,12 @@
   --money-bar-1: #4B3D20;      /* ink 55% into money: a spending bar's foot */
   --money-bar-2: #865C1F;      /* money: a spending bar's second part */
   --money-bar-3: #A48456;      /* money 75% into raised: a spending bar's third part */
-  /* Failure: what failed and may need the person to act; a warning is not one */
+  /* Failure: what failed and may need the person to act, or the most urgent level; a warning is not one */
   --bad: #A43C33;              /* brick, oklch(0.50 0.14 28): the one new hue, for a job no brand colour carries */
   --bad-wash: #F5E8E0;         /* brick 8% into paper */
   --bad-line: #D8A398;         /* brick 45% into paper */
+  /* Warning: what needs the person soon and has not failed; a mark only */
+  --warn: #9E7B0B;             /* mustard, oklch(0.60 0.12 88), darkened until a mark reads 3:1 on every ground it sits on */
   /* Over the page: a menu, cx's bubble, a dialog */
   --float-edge: #BEBFB9;       /* ink 24% into paper: the outline of what lies over the page, in a shadow's place */
   --float-hover: #E4E2DB;      /* ink 4.5% into hover: a row under the pointer in a menu or a list of ticks, and the ground under the pointer app-wide on anything a person can press */
@@ -172,10 +176,12 @@
   --money-bar-1: #E4CFB4;      /* ink 55% into money: a spending bar's foot */
   --money-bar-2: #B0946F;      /* money 78% into raised: a spending bar's second part */
   --money-bar-3: #87755A;      /* money 55% into raised: a spending bar's third part */
-  /* Failure: what failed and may need the person to act; a warning is not one */
+  /* Failure: what failed and may need the person to act, or the most urgent level; a warning is not one */
   --bad: #E6867A;              /* brick, oklch(0.72 0.12 28): the one new hue, for a job no brand colour carries */
   --bad-wash: #312F2A;         /* brick 12% into ink */
   --bad-line: #714F46;         /* brick 45% into ink */
+  /* Warning: what needs the person soon and has not failed; a mark only */
+  --warn: #F7CB58;             /* mustard, oklch(0.86 0.14 88) */
   /* Over the page: a menu, cx's bubble, a dialog */
   --float-edge: #4B514B;       /* light ink 26% into ink: the outline of what lies over the page, in a shadow's place */
   --float-hover: #2F3832;      /* light ink 6% into hover: a row under the pointer in a menu or a list of ticks, and the ground under the pointer app-wide on anything a person can press */

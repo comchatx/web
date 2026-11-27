@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { type AccountMoney, type Features, type Me, type MoneyLot, type PayAnswer, type PayForm, type Returned, type Spaces } from "./backend.js";
+import { type AccountMoney, type Features, type InviteAnswer, type Me, type MoneyLot, type PayAnswer, type PayForm, type Returned, type Spaces, type Terms } from "./backend.js";
 import { dollars } from "../shared/money.js";
 import { cannedSpaces } from "./canned-spaces.js";
 import { PlatformBackend } from "./platform-backend.js";
@@ -29,9 +29,11 @@ const tab = (): Pick<Storage, "getItem" | "setItem" | "removeItem"> => {
 
 type Read = {
   me?: Me; money?: AccountMoney | Error; language?: "zh" | "en"; spaces?: Spaces; spacesRead?: () => Promise<Spaces | undefined>;
-  storage?: ReturnType<typeof tab>; checkout?: string; pay?: () => Promise<PayAnswer>; form?: () => Promise<PayForm>; returned?: Returned;
+  storage?: ReturnType<typeof tab>; checkout?: string; billing?: string; pay?: () => Promise<PayAnswer>; form?: () => Promise<PayForm>; returned?: Returned;
   /** Answers to the account's read, one each in turn, the last standing: a failure is thrown. */
   reads?: readonly (Me | Error | (() => Promise<Me>))[];
+  /** `/terms`, unread where absent; whether the page takes payments; a session the platform would not make; the door's work sign-in, or an organisation just made. */
+  terms?: Terms; checkoutOff?: true; payInFails?: true; create?: true; created?: { readonly seats: number; readonly work: boolean };
   /** Answers to the payment's read, as `reads`. */
   returns?: readonly (Returned | Error | (() => Promise<Returned>))[];
 };
@@ -48,21 +50,25 @@ function road(read: Read = {}) {
   const backend = {
     me: vi.fn(inTurn(read.reads, () => read.me ?? me())),
     accountMoney: vi.fn(async () => { const answer = read.money ?? money("trial", [lot()]); if (answer instanceof Error) throw answer; return answer; }),
+    terms: vi.fn(async (): Promise<Terms> => { if (read.terms === undefined) throw new Error("/terms unread"); return read.terms; }),
+    invite: vi.fn(async (emails: readonly string[]): Promise<InviteAnswer> => ({ sent: emails, refused: [], full: [], known: [] })),
+    seatsPrice: vi.fn(async (seats: number) => ({ due: seats * 20 * UNITS, at: 1 })),
     acceptTerms: vi.fn(async (_news: boolean) => {}),
     setName: vi.fn(async (_name: string) => {}),
     startBox: vi.fn(async (_answers?: SurveyAnswers) => true),
     leave: vi.fn(async () => "ended" as const),
-    payIn: vi.fn(async () => "cs_1_secret_x"),
+    payIn: vi.fn(async (_ask: unknown, _way: string) => { if (read.payInFails === true) throw new Error("/billing/checkout answered 502"); return "cs_1_secret_x"; }),
     payForm: vi.fn(read.form ?? (async () => ({ total: { text: "$10.00", minor: 1_000 }, mount: async () => undefined, pay: read.pay ?? (async () => ({ state: "paid" as const })) }))),
     returned: vi.fn(inTurn(read.returns, () => read.returned ?? { state: "unpaid" })),
-    features: { checkout: true, bringYourOwn: true } as Features,
+    features: { checkout: read.checkoutOff !== true, bringYourOwn: true } as Features,
     spaces: vi.fn(read.spacesRead ?? (async () => read.spaces)),
-    use: vi.fn(async (_organization: string | null) => {}),
+    use: vi.fn(async (_organization: string | null, _landing?: string) => {}),
   };
   const root = document.createElement("div");
   document.body.append(root);
   const ports: RoadPorts = { backend: backend as unknown as RoadBackend, language: read.language ?? "zh", year: 2026, go: vi.fn(), skip: vi.fn(), cx: () => document.createElementNS("http://www.w3.org/2000/svg", "svg"),
-    storage: read.storage ?? tab(), ...(read.checkout === undefined ? {} : { checkout: read.checkout }) };
+    storage: read.storage ?? tab(), ...(read.checkout === undefined ? {} : { checkout: read.checkout }), ...(read.billing === undefined ? {} : { billing: read.billing }),
+    ...(read.create === undefined ? {} : { create: read.create }), ...(read.created === undefined ? {} : { created: read.created }) };
   const opened = openRoad(root, ports);
   const button = (words: string): HTMLButtonElement => [...root.querySelectorAll("button")].find((one) => plain(one) === words || one.getAttribute("aria-label") === words)!;
   const settled = async (): Promise<void> => { await opened; for (let i = 0; i < 10; i += 1) await Promise.resolve(); };
@@ -207,7 +213,7 @@ describe("the plans", () => {
     const { root, button, settled } = road({ me: me({ terms: true }), money: money("trial", [lot({ units: 5 * UNITS, remainder: 5 * UNITS, invited: { by: "wan***@example.com" } })]) });
     await settled();
     expect(plain(root.querySelector(".trial-words"))).toBe("你有 $5.00 试用余额，11 月 20 日到期wan***@example.com 邀请你使用 ComChatX");
-    expect([root.querySelectorAll(".plan").length, plain(root.querySelector(".plan-note")), root.querySelector(".road-sub"), root.querySelector(".road-skip")]).toEqual([1, "每月，$10.00 全部计入余额，当期有效", null, null]);
+    expect([root.querySelectorAll(".plan").length, plain(root.querySelector(".plan-note")), root.querySelector(".road-sub"), root.querySelector(".road-skip")]).toEqual([2, "每月，$10.00 全部计入余额，当期有效", null, null]);
     button("试用 ComChatX").click();
     expect(plain(root.querySelector("h1"))).toBe("开始之前，怎么称呼你？");
   });
@@ -221,7 +227,7 @@ describe("the plans", () => {
   it("after a trial, says it ended, offers no trial, and 跳过 opens the chat page for that load alone", async () => {
     const { root, ports, button, settled } = road({ me: me({ terms: true }), money: money("free", [], { free: { why: "trial_ended", ended_on: "2026-11-20" } }) });
     await settled();
-    expect([plain(root.querySelector(".road-sub")), root.querySelector(".trial"), root.querySelectorAll(".plan").length]).toEqual(["试用已结束", null, 1]);
+    expect([plain(root.querySelector(".road-sub")), root.querySelector(".trial"), root.querySelectorAll(".plan").length]).toEqual(["试用已结束", null, 2]);
     button("跳过").click();
     expect([vi.mocked(ports.skip).mock.calls.length, vi.mocked(ports.go).mock.calls]).toEqual([1, [["/"]]]);
   });
@@ -273,6 +279,36 @@ it("names the terms box by its whole sentence, and each option by its words, in 
   }
 });
 
+describe("the plans as 调整方案 in 账单 opens them", () => {
+  const BILLING = "/#/settings/billing";
+  const opened = async (account: AccountMoney, language: "zh" | "en" = "zh") => {
+    const at = road({ me: me({ box: "provisioned", terms: true }), money: account, billing: BILLING, language });
+    await at.settled();
+    return at;
+  };
+  it("draws the plans for a person with a computer, past the road: no trial strip, no 跳过, and the way back to 账单 at the head", async () => {
+    const { root, ports } = await opened(money("trial", [lot()]));
+    expect([plain(root.querySelector("h1")), root.querySelector(".trial"), root.querySelector(".road-skip"), root.querySelector(".road-sub")]).toEqual(["选择方案", null, null, null]);
+    const back = root.querySelector<HTMLAnchorElement>(".road-head .plan-back")!;
+    expect([plain(back), back.getAttribute("href"), plain(root.querySelector(".road-head .wordmark"))]).toEqual(["← 账单", BILLING, "ComChatX"]);
+    expect(vi.mocked(ports.go).mock.calls).toEqual([]);
+  });
+  it("says 当前方案 where Pro's press stands for one who holds Pro, off and asking nothing", async () => {
+    const { root, ports, backend } = await opened(money("member"));
+    const press = root.querySelector<HTMLButtonElement>(".plan .btn")!;
+    expect([plain(press), press.getAttribute("aria-disabled"), press.classList.contains("btn-primary")]).toEqual(["当前方案", "true", false]);
+    press.click();
+    expect([vi.mocked(ports.go).mock.calls, backend.payIn.mock.calls.length]).toEqual([[], 0]);
+  });
+  it("offers 订阅 on a trial and 恢复订阅 once Pro ended, each opening 账单's 订阅", async () => {
+    const trial = await opened(money("trial", [lot()]));
+    const lapsed = await opened(money("free", [], { free: { why: "membership_ended", ended_on: "2026-11-20" } }), "en");
+    for (const at of [trial, lapsed]) at.root.querySelector<HTMLButtonElement>(".plan .btn")!.click();
+    expect([trial, lapsed].map(({ root }) => plain(root.querySelector(".plan .btn")))).toEqual(["订阅", "Resume"]);
+    expect([trial, lapsed].map(({ ports }) => vi.mocked(ports.go).mock.calls)).toEqual([[[`${BILLING}/subscribe`]], [[`${BILLING}/subscribe`]]]);
+  });
+});
+
 describe("a press made by keyboard", () => {
   // Chrome takes the focus off a control that is switched off, so a press that waits keeps the keyboard only on a button that is not.
   const held = (button: HTMLButtonElement): readonly unknown[] => [document.activeElement === button, button.disabled, button.getAttribute("aria-disabled")];
@@ -306,6 +342,25 @@ describe("a press made by keyboard", () => {
       expect(await pressed(button(which), settled, (error) => refuse(error))).toEqual(after);
     });
   }
+
+  it("draws 开始使用 busy from its press, a ring over its word's room, until its request ends, and as it was once that failed", async () => {
+    const { root, backend, button, settled } = road({ me: me({ terms: true }) });
+    let refuse: (error: Error) => void = () => undefined;
+    backend.startBox.mockImplementation(() => new Promise((_done, no) => { refuse = no; }));
+    await named({ root, settled });
+    button("继续").click();
+    await settled();
+    const go = button("开始使用");
+    // Its name as a screen reader reads it: the label, else the words not hidden under the ring.
+    const heardAs = (one: HTMLButtonElement): string => one.getAttribute("aria-label") ?? [...one.childNodes].filter((node) => !(node instanceof HTMLElement && (node.classList.contains("f-word") && one.classList.contains("busy") || node.getAttribute("aria-hidden") === "true"))).map((node) => node.textContent).join("");
+    const ring = (one: HTMLButtonElement): readonly unknown[] => [one.classList.contains("busy"), one.getAttribute("aria-busy"), one.querySelectorAll(".f-spin").length, heardAs(one)];
+    go.click();
+    await settled();
+    const waiting = ring(go);
+    refuse(new Error("refused"));
+    await settled();
+    expect([waiting, ring(go)]).toEqual([[true, "true", 1, "开始使用"], [false, null, 0, "开始使用"]]);
+  });
 });
 
 describe("the 订阅 card", () => {
@@ -696,5 +751,163 @@ describe("the plans page's way back to an organisation", () => {
     const member = road({ me: me({ terms: true }), money: money("member"), spaces: cannedSpaces(1, null) });
     await member.settled();
     expect([head(terms.root), head(member.root)]).toEqual([["ComChatX", undefined], ["ComChatX", undefined]]);
+  });
+});
+
+describe("the organisation's pages", () => {
+  const TERMS: Terms = { units_per_dollar: UNITS, price: 10 * UNITS, top_up_from: 10, paid_months: 1, trial: { direct: UNITS, invited: 5 * UNITS, days: 7 }, friends: 3,
+    reward: 5 * UNITS, reward_window_days: 30, seat_price: 20 * UNITS };
+  const opened = async (read: Read = {}) => {
+    const at = road({ me: me({ terms: true, box: "provisioned" }), billing: "/#/settings/billing", terms: TERMS, money: money("member"), ...read });
+    await at.settled();
+    return at;
+  };
+  const named = async (at: Awaited<ReturnType<typeof opened>>, name = "示例贸易"): Promise<void> => {
+    at.root.querySelector<HTMLButtonElement>("[data-key='create-org']")!.click();
+    const field = at.root.querySelector<HTMLInputElement>("#org-name")!;
+    field.value = name;
+    field.dispatchEvent(new Event("input"));
+    at.root.querySelector<HTMLButtonElement>("[data-key='name-go']")!.click();
+    await flush();
+  };
+  const count = (root: HTMLElement): HTMLInputElement => root.querySelector<HTMLInputElement>("[data-key='seats-count']")!;
+
+  it("draws 组织 beside Pro, a seat's price from /terms, where the page takes payments, and nothing of it where it does not", async () => {
+    const { root } = await opened();
+    const org = root.querySelector("[aria-labelledby='plan-org']")!;
+    expect([plain(org.querySelector(".plan-name")), plain(org.querySelector(".plan-price")), plain(org.querySelector(".plan-note")), [...org.querySelectorAll("li")].map(plain)])
+      .toEqual(["组织", "$20.00", "每个席位每月，$20.00 全部计入组织余额，当期有效", ["成员共用 cx 的电脑", "通过邮件邀请成员", "余额和账单归组织所有", "适合 2 至 20 人的团队"]]);
+    expect(root.querySelector(".plans")!.classList.contains("is-one")).toBe(false);
+    const off = await opened({ checkoutOff: true });
+    expect([off.root.querySelector("[aria-labelledby='plan-org']"), off.root.querySelector(".plans")!.classList.contains("is-one")]).toEqual([null, true]);
+  });
+
+  it("asks the name on a page of its own: refused empty, held to 50 characters, echoed in the head, and ← back to the plans", async () => {
+    const { root, button } = await opened();
+    root.querySelector<HTMLButtonElement>("[data-key='create-org']")!.click();
+    expect([plain(root.querySelector("h1")), root.querySelector("#org-name")!.getAttribute("maxlength"), root.querySelector(".road-head")!.classList.contains("has-back")]).toEqual(["创建组织", "50", true]);
+    button("继续").click();
+    const field = root.querySelector<HTMLInputElement>("#org-name")!;
+    expect([plain(root.querySelector("#org-bad")), field.getAttribute("aria-invalid"), document.activeElement]).toEqual(["请输入组织名称。", "true", field]);
+    field.value = " 示例贸易 ";
+    field.dispatchEvent(new Event("input"));
+    expect([root.querySelector<HTMLElement>("#org-bad")!.hidden, plain(root.querySelector(".road-brand-org"))]).toEqual([true, "示例贸易"]);
+    button("返回").click();
+    expect(plain(root.querySelector("h1"))).toBe("选择方案");
+  });
+
+  it("opens the seats on two in the order's line, and 调整席位数 on the count: held to 2 and 20 as it is pressed or typed", async () => {
+    const at = await opened();
+    await named(at);
+    const { root, backend } = at;
+    expect([plain(root.querySelector("h1")), plain(root.querySelector(".road-tally .road-sumline")), plain(root.querySelector(".road-total")), root.querySelector<HTMLElement>(".road-seats")!.hidden])
+      .toEqual(["选择席位数", "2 个席位$40.00", "今日应付总额$40.00", true]);
+    expect(backend.payIn.mock.calls).toEqual([[{ kind: "seats", seats: 2, name: "示例贸易" }, "card"]]);
+    root.querySelector<HTMLButtonElement>("[data-key='adjust']")!.click();
+    const fewer = root.querySelector<HTMLButtonElement>("[data-step='fewer']")!, more = root.querySelector<HTMLButtonElement>("[data-step='more']")!;
+    expect([root.querySelector<HTMLElement>(".road-tally")!.hidden, fewer.getAttribute("aria-disabled"), document.activeElement]).toEqual([true, "true", count(root)]);
+    more.click();
+    expect([count(root).value, plain(root.querySelector(".road-total")), backend.payIn.mock.calls.at(-1)]).toEqual(["3", "今日应付总额$60.00", [{ kind: "seats", seats: 3, name: "示例贸易" }, "card"]]);
+    count(root).value = "200";
+    count(root).dispatchEvent(new Event("input"));
+    expect(count(root).value).toBe("200");
+    count(root).dispatchEvent(new Event("blur"));
+    expect([count(root).value, plain(root.querySelector("#seats-notes")), more.getAttribute("aria-disabled")]).toEqual(["20", "组织最多可有 20 个席位。", "true"]);
+    root.querySelector<HTMLButtonElement>("[data-key='back']")!.click();
+    expect(root.querySelector<HTMLInputElement>("#org-name")!.value).toBe("示例贸易");
+    root.querySelector<HTMLButtonElement>("[data-key='name-go']")!.click();
+    expect([plain(root.querySelector(".road-tally .road-sumline")), root.querySelector<HTMLElement>(".road-seats")!.hidden]).toEqual(["20 个席位$400.00", true]);
+  });
+
+  it("makes nothing until the payment lands: paid, it waits for the platform to name the organisation, then switches into it at the step that invites", async () => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    const at = await opened({ returns: [{ state: "paid", organization: "pending" }, { state: "paid", organization: "org_9" }] });
+    await named(at);
+    const yes = at.root.querySelector<HTMLButtonElement>("[data-key='card-yes']")!;
+    expect(plain(yes)).toBe("购买 2 个席位 $40.00");
+    yes.click();
+    await flush();
+    expect([plain(yes), yes.disabled, at.backend.use.mock.calls]).toEqual(["正在处理…", true, []]);
+    // Paid, ← asks nothing more: the page is the payment's until the organisation is named.
+    at.root.querySelector<HTMLButtonElement>("[data-key='back']")!.click();
+    expect([at.root.querySelector<HTMLButtonElement>("[data-key='back']")!.disabled, plain(at.root.querySelector("h1")), at.backend.payIn.mock.calls.length]).toEqual([true, "选择席位数", 1]);
+    await vi.advanceTimersByTimeAsync(WAIT_MS);
+    await flush();
+    expect([at.backend.returned.mock.calls, at.backend.use.mock.calls]).toEqual([[["cs_1"], ["cs_1"]], [["org_9", "/start?created=2"]]]);
+  });
+
+  it("asks a switch refused once the organisation is named again with the next read, and then moves the seller into it", async () => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    const unhandled: unknown[] = [];
+    const heard = (reason: unknown): void => { unhandled.push(reason); };
+    process.on("unhandledRejection", heard);
+    try {
+      const at = await opened({ returns: [{ state: "paid", organization: "org_9" }] });
+      at.backend.use.mockRejectedValueOnce(new Error("switch refused"));
+      await named(at);
+      at.root.querySelector<HTMLButtonElement>("[data-key='card-yes']")!.click();
+      await flush();
+      expect(at.backend.use.mock.calls.length).toBe(1);
+      await vi.advanceTimersByTimeAsync(WAIT_MS);
+      await flush();
+      expect([at.backend.returned.mock.calls.length, at.backend.use.mock.calls, unhandled]).toEqual([2, [["org_9", "/start?created=2"], ["org_9", "/start?created=2"]], []]);
+    } finally { process.off("unhandledRejection", heard); }
+  });
+
+  it("says a declined card in the payment box and makes nothing; a session it could not ask says main's sentence, everything kept, and asks again", async () => {
+    const declined = await opened({ pay: async () => ({ state: "refused", code: "card_declined" }) });
+    await named(declined);
+    declined.root.querySelector<HTMLButtonElement>("[data-key='card-yes']")!.click();
+    await flush();
+    expect([plain(declined.root.querySelector("#sw-card-bad")), declined.backend.returned.mock.calls.length, declined.backend.use.mock.calls.length]).toEqual(["银行卡未通过验证，请核对卡片信息或更换银行卡。", 0, 0]);
+    const failed = await opened({ payInFails: true });
+    await named(failed);
+    expect([plain(failed.root.querySelector(".road-fields .road-bad")), plain(failed.root.querySelector(".road-tally .road-sumline"))]).toEqual(["没有成功，请重试。", "2 个席位$40.00"]);
+    failed.root.querySelector<HTMLButtonElement>("[data-key='card-yes']")!.click();
+    await flush();
+    expect(failed.backend.payIn.mock.calls.length).toBe(2);
+  });
+
+  it("asks an account on a public mailbox for a work address first, refuses another public one, and signs in under the work address at the door", async () => {
+    const { root, backend, button } = await opened({ me: me({ terms: true, box: "provisioned", email: "chen@qq.com", publicMailbox: true }) });
+    root.querySelector<HTMLButtonElement>("[data-key='create-org']")!.click();
+    expect([plain(root.querySelector("h1")), plain(root.querySelector(".cl-headerSubtitle"))]).toEqual(["创建组织", "输入工作邮箱即可开始，我们会向这个邮箱发送验证码。"]);
+    const field = root.querySelector<HTMLInputElement>("#work-email")!;
+    for (const [typed, said] of [["", "请输入邮箱。"], ["wang@trading", "请输入正确的邮箱地址。"], ["chen@gmail.com", "创建组织需要工作邮箱，请换成公司邮箱。"]] as const) {
+      field.value = typed;
+      button("继续").click();
+      expect([plain(root.querySelector("#work-bad")), field.getAttribute("aria-invalid")]).toEqual([said, "true"]);
+    }
+    field.value = "chen@trading.example";
+    field.dispatchEvent(new Event("input"));
+    button("继续").click();
+    expect(backend.leave.mock.calls).toEqual([[false, { work: "chen@trading.example" }]]);
+  });
+
+  it("opens the name page for the door's work sign-in, and greets the admin of the organisation just made with 添加成员 in its card", async () => {
+    const work = road({ me: me({ terms: true, box: "provisioned", email: "chen@trading.example" }), create: true, terms: TERMS });
+    await work.settled();
+    expect(work.root.querySelector("#org-name")).not.toBeNull();
+    const made = road({ me: me({ box: "provisioned", organization: { id: "org_9", role: "admin", name: "示例贸易" } }), created: { seats: 2, work: true }, terms: TERMS });
+    await made.settled();
+    await flush();
+    const card = made.root.querySelector(".cl-card")!;
+    expect([plain(card.querySelector(".road-paid")), plain(card.querySelector("h1")), plain(card.querySelector(".iv-left")), plain(card.querySelector(".road-fine"))])
+      .toEqual(["已支付 $40.00。", "邀请成员加入示例贸易", "剩余 1 个席位", "对话、文件、插件和余额仍留在个人邮箱的账户里。之后要查看，用那个邮箱重新登录即可。"]);
+    const field = card.querySelector<HTMLTextAreaElement>("#iv-field")!;
+    field.value = "sun@trading.example";
+    field.dispatchEvent(new Event("input"));
+    card.querySelector<HTMLButtonElement>("[data-key='yes']")!.click();
+    await flush();
+    expect([made.backend.invite.mock.calls[0]?.[0], vi.mocked(made.ports.go).mock.calls]).toEqual([["sun@trading.example"], [["/"]]]);
+    // The switch not read yet: the page waits and reads again, and draws no plans to pay twice.
+    const unswitched = road({ me: me({ terms: true }), created: { seats: 2, work: false }, terms: TERMS });
+    await flush();
+    expect([plain(unswitched.root.querySelector(".road-waits [role=status]")), unswitched.root.querySelector(".plan")]).toEqual(["正在确认付款", null]);
+    const skipped = road({ me: me({ box: "provisioned", organization: { id: "org_9", role: "admin", name: "示例贸易" } }), created: { seats: 2, work: false }, terms: TERMS });
+    await skipped.settled();
+    expect(plain(skipped.root.querySelector(".road-fine"))).toBe("个人账户保持不变，可随时与示例贸易相互切换。");
+    skipped.button("跳过").click();
+    expect(vi.mocked(skipped.ports.go).mock.calls).toEqual([["/"]]);
   });
 });

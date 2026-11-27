@@ -40,14 +40,6 @@ export const NEW_ACCOUNT_CHOICES: CardChoices = Object.freeze({
   vendors: Object.freeze([]), models: Object.freeze({}),
   plugins: Object.freeze(Object.fromEntries(NEW_ACCOUNT_PLUGINS.map((id) => [id, Object.freeze({ on: true, ways: Object.freeze(["platform" as const]) })]))),
 });
-/**
- * A new account's record with the model plugins its first packages build on beside the five, each on and paid from the balance, as a
- * press installs them: the record's cards then hand each one's package at the first open as they do after any card's install.
- */
-export const newAccountChoices = (models: readonly string[]): CardChoices => models.length === 0 ? NEW_ACCOUNT_CHOICES : Object.freeze({
-  ...NEW_ACCOUNT_CHOICES,
-  plugins: Object.freeze({ ...NEW_ACCOUNT_CHOICES.plugins, ...Object.fromEntries(models.map((id) => [id, Object.freeze({ on: true, ways: Object.freeze(["platform" as const]) })])) }),
-});
 
 const VENDOR = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
 const MODEL = /^[\x21-\x7e]{1,256}$/;

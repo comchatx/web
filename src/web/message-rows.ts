@@ -103,8 +103,10 @@ export class MessageRows {
     if (quotes.length === 0) return undefined;
     return h("div", { class: "quote-refs", onkeydown: (event) => roved(event as KeyboardEvent) }, ...quotes.map((quote, at) => {
       // A marker that names no place cannot be gone to: its words are drawn, and it is no control.
-      if (quote.at === "") return h("div", { class: "quote-ref" }, h("span", { class: "excerpt" }, quote.words));
+      if (quote.from === undefined && quote.at === "") return h("div", { class: "quote-ref" }, h("span", { class: "excerpt" }, quote.words));
       const ref = h("button", { type: "button", class: "quote-ref", "data-rove": "", tabindex: at === 0 ? "0" : "-1", onclick: () => this.ports.jump(quote) }, h("span", { class: "excerpt" }, quote.words));
+      // A quote from the board goes back to where on it the words were, named under them in the time's place.
+      if (quote.from !== undefined) { ref.append(h("span", { class: "when from", dir: "auto" }, quote.from.label)); return ref; }
       // Its name is what it draws: the words, and under them their day and time.
       const tell = (said: Said): void => { if (said.when !== undefined) ref.append(h("span", { class: "when" }, said.when)); };
       const held = this.ports.said(quote);

@@ -7,7 +7,7 @@
 
 /* ---- Ours ---- */
 /* The door is the official site's homepage (its stylesheets come first); the door's column stands where the site's drawn card stood,
-   a dialog's width (app.css dialog.confirm), since the theme holds no widths. */
+   a dialog's width (forms.css .f-dialog), since the theme holds no widths. */
 .door-column { width: 100%; max-width: 30rem; display: flex; flex-direction: column; gap: var(--space-7); }
 .door-card { text-align: start; }
 .door-note { display: flex; flex-direction: column; gap: var(--space-2); }

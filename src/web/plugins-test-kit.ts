@@ -114,3 +114,18 @@ export function scrollBox(page: HTMLElement, shown: number): { readonly box: HTM
   };
   return { box, end: () => { HTMLElement.prototype.focus = own; } };
 }
+
+/**
+ * Four presses on an open card, each down at one point and up at another: on its own padding, from the padding out to the dimmed page,
+ * from the dimmed page in, and down and up on the dimmed page. Each reads whether the card still stands. happy-dom's modal does not lay
+ * out, so the card is given a place first.
+ */
+export function scrimPresses(box: HTMLDialogElement): readonly boolean[] {
+  Object.defineProperty(box, "getBoundingClientRect", { value: () => ({ left: 100, top: 100, right: 400, bottom: 300, width: 300, height: 200, x: 100, y: 100 }) });
+  const press = (from: number, to: number): boolean => {
+    box.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true, clientX: from, clientY: from }));
+    box.dispatchEvent(new MouseEvent("click", { bubbles: true, clientX: to, clientY: to }));
+    return box.open && box.isConnected;
+  };
+  return [press(120, 120), press(120, 20), press(20, 120), press(20, 20)];
+}

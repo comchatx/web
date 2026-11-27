@@ -83,7 +83,8 @@ export class BoardOff {
     this.element.classList.toggle("over-last", off !== undefined && under === "last");
     keep(this.#glass, "hidden", off === undefined || under === undefined);
     keep(this.element, "hidden", off === undefined);
-    if (off === undefined) return;
+    // Back on, the status says so rather than keeping the last state it said.
+    if (off === undefined) { if (this.#said.textContent !== "") keep(this.#said, "textContent", this.ports.say("cx.computer.on")); return; }
     const say = this.ports.say;
     const bad = off === "failed" || off === "refused";
     const starting = off === "starting";

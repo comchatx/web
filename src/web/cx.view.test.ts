@@ -90,6 +90,30 @@ describe("cx's scene, as the page's corner needs it", () => {
     expect([target.getAttribute("transform"), target.style.display]).toEqual([rider.getAttribute("transform"), ""]);
     page.cx.destroy();
   });
+
+  it("holds cx at a place it was sent to, where the stream's margin does not move it, lands it there and sends it home only when asked", async () => {
+    const page = await held();
+    const svg = page.slot.querySelector("svg")!;
+    svg.getBoundingClientRect = () => ({ left: 400, top: 700, right: 498, bottom: 740, width: 98, height: 40, x: 400, y: 700, toJSON: () => ({}) });
+    const landed = vi.fn();
+    expect(page.cx.scene!.goTo({ left: 100, top: 200, width: 40, height: 27 }, landed)).toBe(true);
+    expect([svg.getAttribute("data-away"), svg.hasAttribute("data-held")]).toEqual(["true", true]);
+    await vi.advanceTimersByTimeAsync(400);
+    expect(landed).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(600);
+    expect(landed).toHaveBeenCalledTimes(1);
+    const there = svg.querySelector(".cx-rider")!.getAttribute("transform");
+    // The stream's word that cx goes home, or beside a line, leaves it where it was sent.
+    expect(page.cx.scene!.away(null)).toBe(true);
+    expect(page.cx.scene!.away({ y: 300, start: 420, left: 100, top: 0, bottom: 600 })).toBe(true);
+    await vi.advanceTimersByTimeAsync(900);
+    expect(svg.querySelector(".cx-rider")!.getAttribute("transform")).toBe(there);
+    const home = vi.fn();
+    expect(page.cx.scene!.goTo(null, home)).toBe(false);
+    await vi.advanceTimersByTimeAsync(900);
+    expect([home.mock.calls.length, svg.getAttribute("data-away"), svg.hasAttribute("data-held")]).toEqual([1, "false", false]);
+    page.cx.destroy();
+  });
 });
 
 describe("cx's greeting, as the sign-up survey's first page opens on it", () => {

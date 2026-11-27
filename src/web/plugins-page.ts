@@ -1,5 +1,5 @@
 import { linked, OFFER } from "./box-words.js";
-import { ComputerPending, MONEY_AS, NO_PACKAGES, NPM_KINDS, NPM_ORDERS, NPM_STEP, formatTotal, type Backend, type Click, type Features, type Me, type NpmListed, type NpmOrder, type NpmPackage, type PackageList, type Provider, type Words } from "./backend.js";
+import { ComputerPending, MONEY_AS, isMember, NO_PACKAGES, NPM_KINDS, NPM_ORDERS, NPM_STEP, formatTotal, type Backend, type Click, type Features, type Me, type NpmListed, type NpmOrder, type NpmPackage, type PackageList, type Provider, type Words } from "./backend.js";
 import type { Money } from "../shared/money.js";
 import { isOurs } from "../shared/package-names.js";
 import { declaredBy, nameIn, vendorIn, type Bundle, type Catalogue, type Plugin } from "./catalogue.js";
@@ -7,17 +7,18 @@ import { fill, h, placed, refocus, svg, type Child } from "./dom.js";
 import { ART, LINES, LOGOS, ownMark } from "./plugin-marks.js";
 import { drawMark } from "./mark-shapes.js";
 import { cardWord, PROVIDERS } from "../shared/model-makers.js";
-import { failedInstalls, linkedBy,
+import { failedInstalls, linkedBy, sharedEnds,
   PER_SHELF, SHELVES, cardOf, href, holds, inYours, installed, installsOf, isBundle, matches, membersOf, mine, modelOf, offered,
   needsOf, readsOn, shown, sourceFor, sourceOf, type Filter, type Held, type ChatRoute, type HomeRoute, type Item, type Route, bannerOf, cameWith, route,
   skillsFrom, skillWordsIn, standingSources, connectedWays, drawnCatalogue, openingWays, wayWord, type PlatformModel, type Standing, oursNewest,
   servedVendors, soughtOf, THIRD, YOURS_SHELVES, asAsked, filesMissing, isThird, madeByUs, type Third, type YoursShelf, inOrder, ofKind, type Shelf,
 } from "./plugins-model.js";
-import { packageProvider } from "../shared/provider-packages.js";
+import { packageProvider, PLUGIN_PROVIDERS } from "../shared/provider-packages.js";
 import { factsLine, isPiPackage, linksLine, namesMaker, piMark } from "./plugins-card.js";
 import { Doing, doingName, endSaid, failureToast, type About, type Told } from "./plugins-doing.js";
 import { hideTipWithin, switchButton, toastStay, type Menu } from "./forms.js";
 import { iconAct, moreMenu, rowMark, rowShell } from "./plugins-row.js";
+import type { Band } from "./guide-band.js";
 import { newDot, offered as updatesOffered, rowUpdate, sendUpdates, updatesLine, type UpdateContext } from "./plugins-update.js";
 import type { FeatureWorld } from "./feature-card.js";
 import { cancelPlace, installRow, queued, queueOf, queueRow, queueSection, retryPlace, runningRow, updateHeld, type Power, type QueueContext, type RowHead, type QueueRow } from "./plugins-queue.js";
@@ -65,7 +66,8 @@ export type PluginsPagePorts = {
    * Reads the world again after a change, so the sidebar's counts and the sources bar follow; `updated` names, by npm name, each package
    * whose update ended well with it.
    */
-  readonly changed: (updated?: readonly string[]) => Promise<void>;
+  /** Something installed changed; where a queue's entry left it, the packages its list holds are given (`installed`). */
+  readonly changed: (updated?: readonly string[], installed?: number) => Promise<void>;
   /** Where a card opens; the document's body unless a test gives another. */
   readonly cards?: () => HTMLElement;
   /** What the sidebar draws of the page — its dot of plugins with a new version — changed with a read that came in after the page was drawn. */
@@ -89,7 +91,7 @@ export function line(name: string): SVGSVGElement | undefined {
 /** How many marks have been drawn, so each drawing's own names differ from every other's. */
 let drawings = 0;
 /** A card not read yet, in a card's own frame and size: the mark, the name, two lines of what it does, the byline. */
-const cardShape = (): HTMLElement => h("div", { class: "pl-card pl-card-open" }, block(h("span", { class: "tile" })),
+const cardShape = (): HTMLElement => h("div", { class: "f-card pl-card pl-card-open" }, block(h("span", { class: "tile" })),
   h("span", { class: "pl-card-text" }, bar(5), h("span", { class: "pl-about" }, bar(12, "small"), bar(8, "small")), h("span", { class: "pl-meta" }, bar(4, "small"))));
 /** A shelf's head not read yet: its name, as a shelf's heading is drawn. */
 const shelfHead = (): HTMLElement => h("div", { class: "pl-shelf-head" }, h("div", {}, bar("word", "lead")));
@@ -313,10 +315,14 @@ export class PluginsPage {
 
   /**
    * A package of ours by its card's name in the page's language, from the catalogue the page holds, read at start where the page has not
-   * loaded: the board's caption and the line above the message box name it so. Nothing for a package the catalogue gives no record.
+   * loaded: the board's caption and the line above the message box name it so. A provider's package, which is no card itself, is named by
+   * the card it brings (TypeSafe's, Jev). Nothing for a package the catalogue gives no record.
    */
   packageName(npm: string): string | undefined {
-    const record = (this.#loaded ? this.#held.catalogue : this.#records)?.plugins.find((one) => one.own !== true && one.box?.package === npm);
+    const plugins = (this.#loaded ? this.#held.catalogue : this.#records)?.plugins;
+    const provider = packageProvider(`npm:${npm}`);
+    const card = provider === undefined ? undefined : PLUGIN_PROVIDERS[provider] ?? PROVIDERS[provider]?.card;
+    const record = plugins?.find((one) => one.own !== true && one.box?.package === npm) ?? (card === undefined ? undefined : plugins?.find((one) => one.id === card));
     return record === undefined ? undefined : this.#name(record);
   }
 
@@ -391,7 +397,7 @@ export class PluginsPage {
     if (early !== undefined) {
       const catalogue = await catalogueRead.catch(() => undefined);
       if (catalogue !== undefined) {
-        const held: Held = { catalogue: drawnCatalogue(catalogue, this.#features, [], [], undefined, [], undefined), packages: [], onImage: [], sources: [], models: [], newest: {} };
+        const held: Held = { catalogue: drawnCatalogue(catalogue, this.#features, [], [], undefined, [], undefined), packages: [], onImage: [], sources: [], models: [], newest: {}, ...(isMember(this.ports.me()) ? { member: true as const } : {}) };
         early({ held, unread: true, why: "listing", retry: false, listed: false, list: NO_PACKAGES, provided: false });
       }
     }
@@ -410,7 +416,7 @@ export class PluginsPage {
       // A removal or a switch cx's computer has not done yet is drawn done, as the seller asked: it does it when it wakes.
       const packages = asAsked(list.packages, list.waiting ?? []);
       const providers = provided?.providers;
-      const held: Held = { catalogue: drawnCatalogue(catalogue, this.#features, packages, sources, served, list.onImage, accounts), packages, onImage: list.onImage, sources, models: vendorsOf(providers), newest, ...(served === undefined ? {} : { served }), ...(accounts === undefined ? {} : { accounts }), ...(providers === undefined ? {} : { providers }), ...(series === undefined ? {} : { series }), ...(chat === undefined ? {} : { chat }), ...(account === undefined ? {} : account), ...(bundles === undefined ? {} : { pressed: bundles.held }), ...(list.ends === undefined ? {} : { failedInstalls: failedInstalls(list.ends) }) };
+      const held: Held = { catalogue: drawnCatalogue(catalogue, this.#features, packages, sources, served, list.onImage, accounts), packages, onImage: list.onImage, sources, models: vendorsOf(providers), newest, ...(served === undefined ? {} : { served }), ...(accounts === undefined ? {} : { accounts }), ...(providers === undefined ? {} : { providers }), ...(series === undefined ? {} : { series }), ...(chat === undefined ? {} : { chat }), ...(account === undefined ? {} : account), ...(bundles === undefined ? {} : { pressed: bundles.held }), ...(list.ends === undefined ? {} : { failedInstalls: failedInstalls(list.ends) }), ...(isMember(this.ports.me()) ? { member: true as const } : {}) };
       // A computer that is off or not set up yet is no failure: the list is said to wait for it, and a read that failed beside it is offered again.
       return { held, unread: unread || why !== undefined, why: why ?? (unread ? "failed" : undefined), retry: unread || why === "failed", listed: why === undefined, list, provided: provided !== undefined };
     };
@@ -467,6 +473,7 @@ export class PluginsPage {
   }
 
   newDot(): readonly Child[] {
+    if (isMember(this.ports.me())) return [];
     const rows = this.#rows();
     return newDot(this.ports.say, this.ports.language(), this.#loaded && !this.#early ? this.#held : this.#glanced ?? (this.#loaded ? this.#held : EMPTY), this.#doing, (plugin) => this.#updateHeld(plugin, rows));
   }
@@ -618,7 +625,7 @@ export class PluginsPage {
         ?? (npmNameOf(source) === undefined ? undefined : this.#galleryPlugin(npmNameOf(source)!));
       late = this.#doing.heard(
         list.waiting.flatMap((one) => { const item = of(one.source); return item === undefined ? [] : [{ item, act: one.op }]; }),
-        list.ends.flatMap((one) => { const key = `${one.source}\u0000${one.at}`; const item = of(one.source);
+        sharedEnds(list.ends, this.#held.member === true).flatMap((one) => { const key = `${one.source}\u0000${one.at}`; const item = of(one.source);
           return item === undefined || this.#clicks.said.has(key) ? [] : [{ item, act: one.op, ok: one.ok, reason: one.reason, ...(one.detail === undefined ? {} : { detail: one.detail }), key, at: one.at }]; }));
     }
     if (listed) this.#doing.listed(this.#held);
@@ -628,7 +635,7 @@ export class PluginsPage {
     const rows = this.#rows().filter((row) => row.id !== undefined);
     const now = rows.map((row) => row.id!);
     const left = listed ? this.#queued.filter((row) => !now.includes(row.id!)) : [];
-    if (left.length > 0) void this.ports.changed(left.flatMap((row) => (row.act === "update" && list.ends?.some((end) => end.op === "update" && end.ok && end.source === row.source) ? npmNameOf(row.source) ?? [] : [])));
+    if (left.length > 0) void this.ports.changed(left.flatMap((row) => (row.act === "update" && list.ends?.some((end) => end.op === "update" && end.ok && end.source === row.source) ? npmNameOf(row.source) ?? [] : [])), list.packages.length);
     if (listed && now.join(" ") !== this.#queued.map((row) => row.id).join(" ")) { this.#queued = rows; this.#queuedSince = Date.now(); }
     // cx's computer runs what the queue holds one by one and says each only to a read: on, with something in the queue that has not
     // failed, the list is read again as often as a click of the page's is, until it no longer says so, or until the queue has stood
@@ -671,9 +678,23 @@ export class PluginsPage {
   get unasked(): boolean { return !this.#asked; }
 
   /** Leaving the Plugins page leaves its search: a seller back from the chat finds every shelf again. */
-  leave(): void { this.#away = true; this.#page?.page.leave(); this.#sought = ""; this.#named = undefined; this.#removed = undefined; this.#doing.leave(); this.#unland(); this.#lands = true; this.#shutCreate(); this.#listAt = undefined; }
+  /** The band the page gives up at its top or its foot while cx's bubble stands there (guide-band.ts); null for none. */
+  giveWay(band: Band | null): void {
+    const host = this.element.parentElement;
+    if (host === null) return;
+    host.style.marginTop = band?.side === "top" ? `${band.px}px` : "";
+    host.style.marginBottom = band?.side === "foot" ? `${band.px}px` : "";
+  }
+
+  leave(): void { this.giveWay(null); this.#away = true; this.#page?.page.leave(); this.#sought = ""; this.#named = undefined; this.#removed = undefined; this.#doing.leave(); this.#unland(); this.#lands = true; this.#shutCreate(); this.#listAt = undefined; }
 
   show(route: Route): void {
+    // A member chooses no models: the organization's admin does, so the models page's address opens 我的, where they stand.
+    if (route.kind === "chat" && isMember(this.ports.me())) {
+      globalThis.history?.replaceState(null, "", href.home("yours", "all"));
+      this.show({ kind: "home", view: "yours", filter: "all" });
+      return;
+    }
     const moved = JSON.stringify(route) !== JSON.stringify(this.#route);
     const sought = this.#sought;
     if (route.kind === "home") { this.#trail = []; this.#list0 = route; }
@@ -1090,7 +1111,7 @@ export class PluginsPage {
     const body = h("div", { class: "pl-body" });
     const search = h("input", { type: "search", class: "pl-search", placeholder: this.#say("pl.search"), "aria-label": this.#say("pl.search"), value: this.#sought,
       oninput: (event) => { this.#sought = (event.target as HTMLInputElement).value; fill(body, ...this.#shelves(route)); } });
-    const create = this.#createMenu();
+    const create = this.#held.member === true ? undefined : this.#createMenu();
     fill(this.element,
       h("h1", { tabindex: "-1", "data-focus": HEADING }, this.#say("nav.plugins")),
       h("div", { class: "pl-bar" },
@@ -1235,6 +1256,7 @@ export class PluginsPage {
       },
       cancel: (row) => this.#cancel(row),
       shown: async (bundle) => { await Promise.resolve().then(() => this.ports.backend.showBundle(bundle.id)).catch(() => undefined); },
+      words: (words) => this.#words(words), ask: (sentence) => this.ports.ask(sentence, [sentence.length, sentence.length]),
     };
   }
   /** 重试 pressed elsewhere than the page, under a message in the chat. */
@@ -1247,7 +1269,7 @@ export class PluginsPage {
   #queueContext(): QueueContext {
     return {
       say: this.ports.say, language: this.ports.language(), head: (plugin, focus) => this.#head(plugin, focus),
-      cancel: (row) => void this.#cancel(row), retry: (row) => void this.#retryRow(row),
+      cancel: (row) => void this.#cancel(row), retry: (row) => void this.#retryRow(row), member: this.#held.member === true,
     };
   }
   /**
@@ -1504,7 +1526,7 @@ export class PluginsPage {
         h("p", { class: "row" },
           whole === true ? h("span", { class: "pl-done" }, ...this.#done(bundle, true))
             // A press installs where the seller stands, as a card's + does; while it is written down the button turns and takes no press.
-            : whole === false && (busy !== undefined
+            : whole === false && this.#held.member !== true && (busy !== undefined
               ? h("button", { type: "button", class: "primary pl-busy", "aria-disabled": "true", "aria-busy": "true", "aria-label": this.#say(`pl.doing.${busy.act}Name`, { name: this.#name(bundle) }), "data-focus": BANNER_ACT }, spinner())
               : h("button", { type: "button", class: "primary", "data-focus": BANNER_ACT, "data-card": cardFor(this.#held, "install", bundle), onclick: () => void install(this.#cards(bundle, false, BANNER_ACT), bundle) }, `+ ${this.#say("pl.install")}`)),
           h("a", { class: "button", href: href.item(bundle) }, this.#say("pl.view")))),
@@ -1524,7 +1546,7 @@ export class PluginsPage {
   /** ✓, named for what is installed; on a card it holds the place its + had, so the keyboard that pressed + stays on it. */
   #done(item: Item, word = false, place?: string): readonly Child[] {
     const name = this.#say("pl.installedName", { name: this.#name(item) });
-    return [h("span", { class: "pl-done-mark", role: "img", "aria-label": name, title: name, ...(place === undefined ? {} : { tabindex: "-1", "data-focus": place }) }, "✓"), word && h("span", { class: "pl-done-word" }, this.#say("pl.installed"))];
+    return [h("span", { class: "pl-done-mark", role: "img", "aria-label": name, title: name, ...(place === undefined ? {} : { tabindex: "-1", "data-focus": place }) }, "✓"), word && (this.#held.member === true ? h("span", { class: "pl-done-word", "data-key": "org.installedBy" }, this.#say("org.installedBy")) : h("span", { class: "pl-done-word" }, this.#say("pl.installed")))];
   }
 
   /** npm was asked for a name and has not answered it: the read is still out, or failed since the last load. */
@@ -1572,15 +1594,20 @@ export class PluginsPage {
 
 
   /** A record's card. On the Pi section a card wears no tag: the section already says whose it is. */
+  /** A member's installed card says, at the end of its foot, who installed it: the organization, whose admin installs. */
+  #byOrganization(item: Item): HTMLElement | undefined {
+    return this.#held.member === true && this.#whole(item) === true ? h("span", { class: "pl-by-org", "data-key": "org.installedBy" }, this.#say("org.installedBy")) : undefined;
+  }
+
   #card(item: Item, place?: "pi"): HTMLElement {
     if (!isBundle(item)) return this.#packageCard(item, place);
     // A bundle's card is one link, its name's stretched over it by the stylesheet, and + stands above it as a button of its own.
-    return h("div", { class: "pl-card pl-card-open" },
+    return h("div", { class: "f-card pl-card pl-card-open" },
       tile(item, false, this.ports.language()),
       h("span", { class: "pl-card-text" },
         h("a", { class: "pl-card-name", href: href.item(item) }, this.#name(item)),
         h("span", { class: "pl-about" }, this.#about(item)),
-        h("span", { class: "pl-meta" }, h("span", { class: "pl-by" }, this.#byline(item), ` · ${this.#say("pl.members", { count: installsOf(this.#held, item).length })}`))),
+        h("span", { class: "pl-meta" }, h("span", { class: "pl-by" }, this.#byline(item), ` · ${this.#say("pl.members", { count: installsOf(this.#held, item).length })}`), this.#byOrganization(item))),
       ...this.#act(item));
   }
 
@@ -1598,12 +1625,12 @@ export class PluginsPage {
     const about = this.#about(plugin);
     const third = place !== "pi" && !madeByUs(plugin) && (plugin.npm !== undefined || plugin.own === true);
     const words = { say, language, ago: (iso: string) => ago(iso, this.ports.backend.now(), language, say) };
-    return h("div", { class: "pl-card pl-card-open pl-card-one" },
+    return h("div", { class: "f-card pl-card pl-card-open pl-card-one" },
       tile(plugin, false, this.ports.language()),
       h("span", { class: "pl-card-text" },
         name,
         h("span", { class: "pl-about", ...(plugin.npm !== undefined && about !== "" ? authored(about) : {}) }, about),
-        factsLine(words, plugin),
+        factsLine(words, plugin, this.#byOrganization(plugin)),
         (plugin.onNpm !== undefined || third) && linksLine(say, plugin.onNpm, [third && thirdMark(say)])),
       ...this.#act(plugin));
   }
@@ -1621,7 +1648,7 @@ export class PluginsPage {
     // turns its ring. An installed plugin keeps ✓ while it updates: Discover says nothing of a new version (ruled 2026-11-13).
     const queued = whole === true ? undefined : this.#inQueue(item);
     const shown = whole === true && busy?.act === "update" ? undefined : busy;
-    return queued !== undefined ? [queued] : shown !== undefined ? [busyMark(this.ports.say, this.ports.language(), item, shown, "card")] : whole === true ? this.#done(item, false, `act ${href.item(item)}`) : whole === false ? [h("button", { type: "button", class: "pl-act", "aria-label": name, title: name, "data-focus": `act ${href.item(item)}`, "data-card": cardFor(this.#held, "install", item), onclick: () => { void this.#add(item); } }, "+")] : waiting;
+    return queued !== undefined ? [queued] : shown !== undefined ? [busyMark(this.ports.say, this.ports.language(), item, shown, "card")] : whole === true ? this.#done(item, false, `act ${href.item(item)}`) : whole === false && this.#held.member !== true ? [h("button", { type: "button", class: "pl-act", "aria-label": name, title: name, "data-focus": `act ${href.item(item)}`, "data-card": cardFor(this.#held, "install", item), onclick: () => { void this.#add(item); } }, "+")] : waiting;
   }
   /**
    * A card whose install waits in the queue holds a ring that stands still in ✓'s place, named for the queue and going to its row; while
@@ -1755,13 +1782,13 @@ export class PluginsPage {
     // Something is installed, so a filter that holds none of it draws no sentence: "nothing installed" would be false, and no search was typed to quote.
     if (lists.length === 0) return this.#sought.trim() === "" ? [this.#oursUnread(), queue] : [this.#nothing()];
     // How many have a new version is said atop the whole of Yours, after the queue, not over what a search left.
-    return [this.#oursUnread(), queue, this.#sought.trim() === "" && updatesLine(this.#updates()), ...this.#yoursShelves(lists)];
+    return [this.#oursUnread(), queue, this.#sought.trim() === "" && held.member !== true && updatesLine(this.#updates()), ...this.#yoursShelves(lists)];
   }
   #yoursShelves(lists: readonly { readonly shelf: YoursShelf; readonly items: readonly Item[] }[]): readonly Child[] {
     return lists.map(({ shelf, items }) => h("section", { class: shelf === this.#landed?.shelf ? "pl-shelf pl-landed" : "pl-shelf", id: shelf === "models" ? "models" : undefined },
       h("div", { class: "pl-shelf-head" }, h("h2", {}, this.#say(`pl.shelf.${shelf}`), this.#held.catalogue.oursRead === undefined && h("span", { class: "count" }, String(items.length))),
         // Which vendors the card under the message box offers is chosen on the vendors' own page.
-        shelf === "models" && h("a", { class: "pl-showall", href: href.models }, `${this.#say("pl.mo.chooseVendors")} ›`)),
+        shelf === "models" && this.#held.member !== true && h("a", { class: "pl-showall", href: href.models }, `${this.#say("pl.mo.chooseVendors")} ›`)),
       this.#fading(h("ul", { class: "pl-list pl-rows" }, ...items.map((item) => (isBundle(item) ? this.#bundleRow(item) : this.#row(item, shelf)))), shelf)));
   }
 
@@ -1777,7 +1804,7 @@ export class PluginsPage {
     const name = this.#name(bundle);
     return this.#drawRow(bundle, [], [`${this.#say("pl.by", { name: bundle.author })} · ${this.#words(bundle.about)}`],
       [h("span", { class: "pl-count" }, on.length === all.length ? this.#say("pl.members", { count: all.length }) : this.#say("pl.membersSome", { n: on.length, count: all.length })),
-        busy !== undefined ? busyMark(this.ports.say, this.ports.language(), bundle, busy, "row") : this.#moreOf(bundle, name)].flat());
+        busy !== undefined ? busyMark(this.ports.say, this.ports.language(), bundle, busy, "row") : this.#held.member === true ? [] : this.#moreOf(bundle, name)].flat());
   }
 
   /**
@@ -1846,19 +1873,21 @@ export class PluginsPage {
     const model = modelOf(held, plugin);
     const month = plugin.source !== undefined ? sourceOf(held, plugin)?.month?.spent : model?.month;
     // A new version is Update at the row's end, left of the switch; a failed update is the queue's row.
-    const update = this.#unread ? undefined : rowUpdate(this.#updates(), plugin);
+    const member = held.member === true;
+    const update = this.#unread || member ? undefined : rowUpdate(this.#updates(), plugin);
     const busy = this.#doing.busy(plugin);
     const name = this.#name(plugin);
     const ways = openingWays(held, plugin).map((way) => h("span", { class: "pl-tag" }, this.#say(wayWord(plugin, way))));
     const lacks = !this.#unread && needsOf(held, plugin).some((need) => need.kind === "connect");
     const line: readonly Child[] = lacks
-      ? [h("span", { class: "pl-row-lack" }, say("pl.need.connect")), language === "zh" ? "" : " ", h("a", { class: "pl-row-connect f-link", href: `${href.item(plugin)}/settings` }, say("pl.need.connectAct", { name }))]
+      ? [h("span", { class: "pl-row-lack" }, say("pl.need.connect")), ...(member ? [] : [language === "zh" ? "" : " ", h("a", { class: "pl-row-connect f-link", href: `${href.item(plugin)}/settings` }, say("pl.need.connectAct", { name }))])]
       : [plugin.model !== undefined ? [say("pl.by", { name: plugin.author === "" ? "ComChatX" : plugin.author }), this.#about(plugin)].join(" · ")
         : [namesMaker(plugin, language) ? "" : this.#byline(plugin), this.#about(plugin)].filter((one) => one !== "").join(" · ")];
     // A source's month is what `/sources` says was spent at it, drawn for a source with a price; a model's month is its own read.
     const spend = (shelf === "models" || (shelf === "data" && sourceOf(held, plugin)?.unitsPerNative !== undefined)) && month !== undefined && this.#month(month);
     // A model has no switch: it is on while it is installed. A switch whose click is out turns its ring and takes no second change.
-    const turns = has && plugin.model === undefined && !this.#unread;
+    // A member turns nothing: an installed plugin that is off says so where its switch would be.
+    const turns = has && plugin.model === undefined && !this.#unread && !member;
     const on = readsOn(held, plugin);
     // After the write the keyboard is back on the switch it pressed, by the slot the switch carries.
     const slot = `switch ${href.item(plugin)}`;
@@ -1871,11 +1900,11 @@ export class PluginsPage {
     // Not installed, a removal cx's computer has not ended turns where + stands, as the bundle's head turns, until the list says it ended.
     const waits = has || this.#unread ? undefined : busy ?? this.#doing.pending(plugin);
     // A vendor the platform serves is installed by no route where vendors are not plugins: its row, as its head, holds no control.
-    const plus = !has && !this.#unread && waits === undefined && (plugin.model === undefined || this.#features.modelPlugins) && iconAct("plus", say("pl.installName", { name }), () => void this.#add(plugin), { focus: `act ${href.item(plugin)}` });
-    if (plus !== false) { const card = cardFor(held, "install", plugin); if (card !== undefined) plus.setAttribute("data-card", card); }
+    const plus = !has && !this.#unread && waits === undefined && (plugin.model === undefined || this.#features.modelPlugins) && (member ? h("span", { class: "quiet" }, say("pl.side.notInstalled")) : iconAct("plus", say("pl.installName", { name }), () => void this.#add(plugin), { focus: `act ${href.item(plugin)}` }));
+    if (plus !== false && !member) { const card = cardFor(held, "install", plugin); if (card !== undefined) plus.setAttribute("data-card", card); }
     const ring = has ? busy : waits;
     return this.#drawRow(plugin, [...this.#own(plugin, true), ...ways, ...this.#marks(plugin)], line,
-      [spend, update?.end, ring !== undefined && ring.act !== "update" && !turns && busyMark(say, language, plugin, ring, "row"), toggle !== false && toggle.element, plus, ...(has ? this.#moreOf(plugin, name) : [])]);
+      [spend, update?.end, ring !== undefined && ring.act !== "update" && !turns && busyMark(say, language, plugin, ring, "row"), toggle !== false && toggle.element, member && has && plugin.model === undefined && !this.#unread && !on && h("span", { class: "quiet" }, say("pl.switch.off")), plus, ...(has && !member ? this.#moreOf(plugin, name) : [])]);
   }
 }
 

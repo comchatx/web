@@ -1,6 +1,7 @@
 import fallback from "./maker-cards.json" with { type: "json" };
 import { CARD_IDS } from "./model-makers.js";
 import { cardPackage, keyProvidersOf, PLUGIN_PROVIDERS } from "./provider-packages.js";
+import { readBoardLabel, type BoardLabel } from "./board.js";
 
 /**
  * What the registry does not say of a card, as its maker's package says it in its `comchatx` field: the name the card goes by where
@@ -95,4 +96,21 @@ export function cardWords(packages: readonly { readonly name: string; readonly c
     const read = carried ?? (own === undefined ? undefined : readMakerWords(byName.get(own)));
     return read === undefined ? [] : [[card, read]];
   })));
+}
+
+/**
+ * A notice's heading in each language by the `customType` pi records it under, as a package's `comchatx.notices` gives it,
+ * `{ "<customType>": { zh, en } }`, each read by `readBoardLabel`'s bounds: a heading that does not read is none, and a type two
+ * packages head is the first's by name.
+ */
+export type NoticeHeadings = ReadonlyMap<string, BoardLabel>;
+export function noticeHeadings(packages: readonly { readonly name: string; readonly comchatx?: Readonly<Record<string, unknown>> | undefined }[]): NoticeHeadings {
+  const found = new Map<string, BoardLabel>();
+  for (const pkg of [...packages].sort((one, other) => (one.name < other.name ? -1 : one.name > other.name ? 1 : 0))) {
+    for (const [type, value] of Object.entries(fieldOf(pkg.comchatx?.["notices"]) ?? {})) {
+      const heading = readBoardLabel(value);
+      if (heading !== undefined && !found.has(type)) found.set(type, heading);
+    }
+  }
+  return found;
 }

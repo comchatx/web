@@ -7,7 +7,7 @@
  */
 input.tab-rename, .dialog input:not([type="radio"], [type="checkbox"]), .dialog textarea,
 .cl-formFieldInput, .cl-otpCodeFieldInput, .road-name input, .composer, .pl-searchbox, .sw-amount,
-.pl-key, .pl-store-field, .pl-fieldrow > input, .pl-field input[type="text"], .sw-name-field {
+.pl-key, .pl-store-field, .pl-fieldrow > input, .pl-field input[type="text"], .sw-name-field, .st-num, .iv-field {
   border: 1px solid var(--edge); border-radius: var(--radius); background: var(--raised); outline: none; box-shadow: none;
 }
 /* The message box holds a row of controls under its words: it keeps a surface's corners. */
@@ -17,7 +17,7 @@ input.tab-rename:focus-visible,
 .dialog input:not([type="radio"], [type="checkbox"]):focus-visible, .dialog textarea:focus-visible,
 .cl-formFieldInput:focus-visible, .cl-otpCodeFieldInput[data-focus-within="true"], .road-name input:focus-visible,
 .composer:focus-within, .pl-searchbox:focus-within, .sw-amount:has(:focus-visible),
-.pl-key:focus-visible, .pl-store-field:focus-visible, .pl-fieldrow > input:focus-visible, .pl-field input[type="text"]:focus-visible, .sw-name-field:focus-visible {
+.pl-key:focus-visible, .pl-store-field:focus-visible, .pl-fieldrow > input:focus-visible, .pl-field input[type="text"]:focus-visible, .sw-name-field:focus-visible, .st-num:focus-visible, .iv-field:focus-visible {
   border-color: var(--act); outline: 2px solid var(--act); outline-offset: -2px;
 }
 
@@ -25,7 +25,7 @@ input.tab-rename[aria-invalid="true"],
 .dialog input[aria-invalid="true"], .dialog textarea[aria-invalid="true"],
 .cl-formFieldInput[aria-invalid="true"], .cl-otpCodeFieldInput[data-feedback="error"], .road-name input[aria-invalid="true"],
 .composer:has([aria-invalid="true"]), .pl-searchbox:has([aria-invalid="true"]), .sw-amount:has([aria-invalid="true"]),
-.pl-key[aria-invalid="true"], .pl-store-field[aria-invalid="true"], .pl-fieldrow > input[aria-invalid="true"], .pl-field input[aria-invalid="true"], .sw-name-field[aria-invalid="true"] {
+.pl-key[aria-invalid="true"], .pl-store-field[aria-invalid="true"], .pl-fieldrow > input[aria-invalid="true"], .pl-field input[aria-invalid="true"], .sw-name-field[aria-invalid="true"], .st-num[aria-invalid="true"] {
   border-color: var(--bad); outline-color: var(--bad);
 }
 
@@ -33,7 +33,7 @@ input.tab-rename:disabled,
 .dialog input:not([type="radio"], [type="checkbox"]):disabled, .dialog textarea:disabled,
 .cl-formFieldInput:disabled, .road-name input:disabled,
 .composer:has(textarea:disabled), .pl-searchbox:has(:disabled), .sw-amount:has(:disabled),
-.pl-key:disabled, .pl-store-field:disabled, .pl-fieldrow > input:disabled, .pl-field input[type="text"]:disabled {
+.pl-key:disabled, .pl-store-field:disabled, .pl-fieldrow > input:disabled, .pl-field input[type="text"]:disabled, .st-num:disabled {
   border-color: var(--line); background: var(--wash); color: var(--quiet); cursor: default;
 }
 
@@ -54,10 +54,10 @@ a.f-link:hover { border-radius: var(--radius-small); background: var(--shade, va
 .f-btn.primary { border-color: var(--act); background: var(--act); color: var(--act-ink); }
 .f-btn.primary:hover:not(:disabled, [aria-disabled="true"], .busy) { border-color: var(--act-hover); background: var(--act-hover); }
 .f-btn:is(:disabled, [aria-disabled="true"]) { border-color: var(--line); background: var(--wash); color: var(--quiet); cursor: default; }
-/* Busy: the word keeps its room, unseen under the ring. */
-.f-btn.busy { position: relative; border-color: var(--live-edge); background: var(--live-wash); color: var(--ink); cursor: default; }
-.f-btn.busy > .f-word { visibility: hidden; }
-.f-btn.busy > .f-spin { position: absolute; inset: 0; margin: auto; }
+/* Busy: the word keeps its room, unseen under the ring; the road's 开始使用 (road.css `.road-go`) takes the same, its own size kept. */
+:is(.f-btn, .road-go).busy { position: relative; border-color: var(--live-edge); background: var(--live-wash); color: var(--ink); cursor: default; }
+:is(.f-btn, .road-go).busy > .f-word { visibility: hidden; }
+:is(.f-btn, .road-go).busy > .f-spin { position: absolute; inset: 0; margin: auto; }
 /* Words alone that a person presses: a link's colour and a link's shade. */
 .f-quiet { padding: 0; border: none; background: none; color: var(--act); font-size: var(--size-small); line-height: var(--leading-small); cursor: pointer; }
 .f-quiet:hover:not(:disabled) { border-radius: var(--radius-small); background: var(--shade, var(--float-hover)); box-shadow: 0 0 0 var(--space-1) var(--shade, var(--float-hover)); color: var(--act-hover); }
@@ -88,6 +88,10 @@ a.f-link:hover { border-radius: var(--radius-small); background: var(--shade, va
 .f-menu-row > .f-words { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .f-tick { flex: none; width: 1rem; color: var(--ink); }
 .f-menu-row:not([aria-selected="true"], [aria-checked="true"]) > .f-tick { visibility: hidden; }
+/* A list whose values each say a line under their words (a role's list): the row grows to hold it, the line quiet and small. */
+.f-helps .f-menu-row { height: auto; min-height: var(--row); padding-block: var(--space-2); }
+.f-helps .f-menu-row > .f-words { overflow: visible; white-space: normal; line-height: var(--leading-tight); }
+.f-helps .f-help { display: block; margin-top: var(--space-1); color: var(--quiet); font-size: var(--size-caption); line-height: var(--leading-tight); }
 .f-menu-rule { height: 1px; margin: var(--space-2) 0; background: var(--line); }
 /* The accounts a sign-in holds, in a menu (`account-switch.ts`): past eight and a half rows they scroll inside it, as the set's long list does, so the menu keeps to the window. */
 .f-accounts { display: flex; flex-direction: column; max-height: calc(8.5 * var(--row)); overflow-y: auto; overscroll-behavior: contain; }
@@ -161,14 +165,14 @@ a.f-link:hover { border-radius: var(--radius-small); background: var(--shade, va
 .f-tag { flex: none; padding: 0 var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-small); color: var(--quiet); font-size: var(--size-caption); font-weight: var(--weight-regular); line-height: var(--leading-small); white-space: nowrap; }
 .f-tag.failed { border-color: var(--bad-line); color: var(--bad); }
 
-/* Tick and radio: ink when chosen; a radio is round. */
+/* Tick and radio: ink when chosen; a radio is round. A size card of 「cx 的电脑」 (app.css `.cz-pick`) holds the same radio. */
 .f-pick { display: inline-flex; align-items: center; gap: var(--space-4); min-height: var(--space-7); font-size: var(--size-small); line-height: var(--leading-small); cursor: pointer; }
-.f-pick > input { appearance: none; position: relative; flex: none; width: var(--space-6); height: var(--space-6); margin: 0; padding: 0; border: 1px solid var(--edge); border-radius: var(--radius-small); background: none; cursor: pointer; }
-.f-pick > input[type="radio"] { border-radius: var(--radius-round); }
-.f-pick > input:checked { border-color: var(--ink); background: var(--ink); }
-.f-pick > input[type="radio"]:checked { box-shadow: inset 0 0 0 calc(var(--space-2) - 1px) var(--ink), inset 0 0 0 var(--space-6) var(--raised); }
+:is(.f-pick, .cz-pick) > input { appearance: none; position: relative; flex: none; width: var(--space-6); height: var(--space-6); margin: 0; padding: 0; border: 1px solid var(--edge); border-radius: var(--radius-small); background: none; cursor: pointer; }
+:is(.f-pick, .cz-pick) > input[type="radio"] { border-radius: var(--radius-round); }
+:is(.f-pick, .cz-pick) > input:checked { border-color: var(--ink); background: var(--ink); }
+:is(.f-pick, .cz-pick) > input[type="radio"]:checked { box-shadow: inset 0 0 0 calc(var(--space-2) - 1px) var(--ink), inset 0 0 0 var(--space-6) var(--raised); }
 .f-pick > input[type="checkbox"]:checked::after { content: ""; position: absolute; left: 30%; top: 8%; width: 30%; height: 58%; border: solid var(--raised); border-width: 0 2px 2px 0; transform: rotate(45deg); }
-.f-pick > input:disabled { border-color: var(--line); cursor: default; }
+:is(.f-pick, .cz-pick) > input:disabled { border-color: var(--line); cursor: default; }
 
 /* Block: an option the whole of which is pressed, its words alone inside and its tick box kept unseen within it. Under the pointer the
    floating shade; chosen, the action's edge at twice the width, the second line drawn inside so the block keeps its size, on the ground

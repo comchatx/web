@@ -163,10 +163,10 @@ pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
 /* The page icons: one per page of the column, the board's at the right end with its count of what waits, borderless as a message's actions are. */
 .page-icons { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; }
 .page-icons[hidden] { display: none; }
-.page-icon { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-width: calc(var(--size-small) * var(--leading-small) + 2 * var(--space-2) + 2px); height: calc(var(--size-small) * var(--leading-small) + 2 * var(--space-2) + 2px); padding: 0 var(--space-3); border: none; background: none; color: var(--quiet); }
-/* An icon not of the page shown answers the pointer in its mark, as main's views and filters do; the page shown is ink on wash, as theirs. */
-.page-icon:hover:not(:disabled) { background: none; color: var(--ink); }
-.page-icon[aria-pressed="true"], .page-icon[aria-pressed="true"]:hover:not(:disabled) { background: var(--wash); color: var(--ink); }
+/* The board's key, the board base's control and not the set's: its mark, its count and its dot answer the pointer in the mark; open, it is ink on wash. */
+.board-key { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-width: calc(var(--size-small) * var(--leading-small) + 2 * var(--space-2) + 2px); height: calc(var(--size-small) * var(--leading-small) + 2 * var(--space-2) + 2px); padding: 0 var(--space-3); border: none; background: none; color: var(--quiet); }
+.board-key:hover:not(:disabled) { background: none; color: var(--ink); }
+.board-key[aria-pressed="true"], .board-key[aria-pressed="true"]:hover:not(:disabled) { background: var(--wash); color: var(--ink); }
 .page-count { color: var(--ink); font-weight: var(--weight-strong); font-variant-numeric: tabular-nums; }
 .page-count[hidden] { display: none; }
 /* Something landed on a board of the base's own not yet seen, while the icon carries no number: a dot in ink, as the tab's. */
@@ -205,7 +205,18 @@ pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
 /* The tabs scroll in a box that would cut a ring drawn outside them, so the ring is drawn inside. */
 .board-tab:focus-visible, .tab-close:focus-visible { outline-offset: -2px; }
 .board-add { flex: none; }
-.board-add[hidden], .board-full[hidden] { display: none; }
+/* 插件看板, after the plus: its mark and the dot of a board off the strip side by side in the square; a row's count or dot at its end, as its tab carries them. */
+.board-plugins.f-icon { flex: none; display: inline-flex; justify-content: center; align-items: center; gap: var(--space-1); }
+.board-add[hidden], .board-full[hidden], .board-plugins[hidden], .frame-reload[hidden] { display: none; }
+/* The question before a delete: a board's name may run unbroken, and the whole of it is read before 删除. */
+.tab-ask h2 { overflow-wrap: anywhere; }
+.board-plugin-menu .f-words { flex: 1 1 auto; }
+.board-plugin-menu :is(.page-count, .tab-dot)[hidden] { display: none; }
+/* A tab under a drag: lifted where the pointer holds it, the others stepping aside where it would land. */
+.board-tabs.dragging, .board-tabs.dragging .board-tab { cursor: grabbing; }
+.board-tab-wrap.lifted { position: relative; z-index: 2; background: var(--raised); box-shadow: 0 0 0 1px var(--float-edge); color: var(--ink); }
+.board-tabs.dragging .board-tab-wrap:not(.lifted) { transition: transform var(--motion-quick) var(--ease); }
+@media (prefers-reduced-motion: reduce) { .board-tabs.dragging .board-tab-wrap:not(.lifted) { transition: none; } }
 .board-head .sidebar-open { margin: 0; align-self: auto; }
 .app.board-full.board-shown:not(.sidebar-shown) .board-head { margin-left: var(--space-4); }
 /* The name in place: a field where the tab's name stood, as high as the tab and as wide as what is typed. */
@@ -217,21 +228,8 @@ pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
   .board-tab, .tab-rename { min-height: var(--space-8); }
   .tab-close { width: var(--space-8); height: var(--space-8); margin-right: 0; }
 }
-/*
- * The question before a delete, at the tab that was pressed: what lies over the page, drawn by its outline, with main's corner mark
- * pointing at the tab's ×. Nothing dims behind it: it is a word at the tab, not a card across the column. It is as wide as its question
- * and its two buttons need, never past 20rem nor the column less its margins (`board-view.ts`).
- */
-dialog.tab-ask { position: fixed; inset: auto; width: fit-content; max-width: min(20rem, calc(100vw - 2 * var(--space-4))); margin: 0; padding: var(--space-5); overflow: visible; border: 1px solid var(--float-edge); border-radius: var(--radius); background: var(--raised); color: var(--ink); box-shadow: var(--float-shadow); }
-dialog.tab-ask::backdrop { background: transparent; }
-dialog.tab-ask::before { content: ""; position: absolute; left: var(--mark, 2rem); top: calc(-1 * var(--space-2) - 1px); width: var(--space-4); height: var(--space-4); margin-left: calc(-1 * var(--space-2)); transform: rotate(45deg) scale(0.75); background: var(--raised); border-left: 1px solid var(--float-edge); border-top: 1px solid var(--float-edge); }
-dialog.tab-ask.over::before { top: auto; bottom: calc(-1 * var(--space-2) - 1px); border: none; border-right: 1px solid var(--float-edge); border-bottom: 1px solid var(--float-edge); }
-dialog.tab-ask > h2 { margin: 0; font-size: var(--size-body); line-height: var(--leading-tight); overflow-wrap: anywhere; }
-dialog.tab-ask > p { margin: var(--space-2) 0 0; font-size: var(--size-small); line-height: var(--leading-small); }
-dialog.tab-ask > p[hidden] { display: none; }
-.tab-ask-acts { justify-content: flex-end; margin-top: var(--space-5); }
 @media (pointer: coarse), not (min-width: 56rem) {
-  .page-icon { min-width: var(--space-8); height: var(--space-8); }
+  .board-key { min-width: var(--space-8); height: var(--space-8); }
 }
 /* The column: beside the chat, as wide as the seller drags it; on a narrower window, a sheet over the chat, above cx's bubble and the model card. */
 .board { display: none; flex: none; flex-direction: column; width: clamp(24rem, 26vw, 30rem); min-height: 0; background: var(--ground); }
@@ -263,6 +261,12 @@ dialog.tab-ask > p[hidden] { display: none; }
 @media not (min-width: calc(67.5rem + 1px)) {
   .app.board-full .board { width: 100%; border-left: none; }
 }
+/* The whole board in a window of its own (在新窗口中打开): the board alone, the window's width; nothing of the chat, no sheet, no edge. */
+.app.board-window > :not(.board) { display: none; }
+.app.board-window .board { position: static; flex: 1; width: auto; border-left: none; box-shadow: none; }
+.board-window-open[hidden] { display: none; }
+/* No second window beside a phone's. */
+@media not (min-width: 30rem) { .board-window-open.f-icon { display: none; } }
 /* The column's label stands over the column and the sheet: over the page's label's layer, which comes later in this file. */
 /*
  * The divider is the column's edge beside the chat. At rest it is a line, as the sidebar's edge is; while the column lies over the chat,
@@ -288,9 +292,9 @@ dialog.tab-ask > p[hidden] { display: none; }
 /* The column's head: the board's strip and, while the column is open, the row of icons, in the place the row has over the chat. No edge: what the board holds fades under it. */
 .board-head { flex: none; display: flex; align-items: center; gap: var(--space-4); min-height: calc(var(--size-small) * var(--leading-small) + 2 * var(--space-2) + 2 * var(--space-1) + 2px); margin: var(--space-4) var(--space-4) 0 var(--space-6); }
 .board-title { margin: 0; }
-.board-page { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.board-page { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
 /* What the board holds scrolls under its head and fades at both ends, as the chat fades at its foot. */
-.board-body { position: relative; flex: 1; min-height: 0; overflow-y: auto; padding: var(--space-6) var(--space-6) var(--space-7); scroll-padding-block: var(--space-6) var(--space-7); mask-image: linear-gradient(to bottom, transparent, var(--ground) var(--space-6), var(--ground) calc(100% - var(--space-7)), transparent); }
+.board-body { container: board / inline-size; position: relative; flex: 1; min-height: 0; overflow-y: auto; padding: var(--space-6) var(--space-6) var(--space-7); scroll-padding-block: var(--space-6) var(--space-7); mask-image: linear-gradient(to bottom, transparent, var(--ground) var(--space-6), var(--ground) calc(100% - var(--space-7)), transparent); }
 .board-body:focus-visible { outline-offset: -2px; }
 /* The strip and what a board holds take the column's width (round 8, "The width"). */
 .board-pane { display: flex; flex-direction: column; gap: var(--space-7); width: 100%; }
@@ -336,8 +340,17 @@ dialog.tab-ask > p[hidden] { display: none; }
  */
 .board-list.board-cols { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr)); align-items: start; }
 .board-list.board-cols > * { min-width: 0; }
+/* A file of a tab that is no card, as the file-tab sheet's list draws one: the file box, then its time, which wraps under a long name. */
+.board-file { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-4); }
+.board-file-when { color: var(--quiet); font-size: var(--size-caption); line-height: var(--leading-small); }
 .board-list.fall { grid-auto-rows: 1px; row-gap: 0; margin-bottom: calc(-1 * var(--space-5)); }
-.board-empty { margin: 0; color: var(--quiet); font-size: var(--size-small); line-height: var(--leading-small); }
+/* With nothing on the board, the pane takes the board's height, so the group stands in its middle. */
+.board-pane:has(> .board-empty:not([hidden])) { box-sizing: border-box; min-height: 100%; }
+.board-empty { flex: 1 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-3); padding: 0 var(--space-6) var(--space-8); text-align: center; }
+.board-empty > svg { width: var(--space-8); height: var(--space-8); margin-bottom: var(--space-2); color: var(--quiet); }
+.board-empty > h3 { margin: 0; color: var(--ink); font-size: var(--size-lead); line-height: var(--leading-tight); font-weight: var(--weight-strong); }
+.board-empty > p { margin: 0; max-width: 26rem; color: var(--quiet); font-size: var(--size-small); line-height: var(--leading-small); }
+.board-empty > :is(h3, p) { text-wrap: balance; }
 /*
  * A board's page in a frame (`parts/board-page.md` §1). The board's part is the caption row on the wash over the page, in the quiet ink at
  * the caption size, with 重新加载 at its end; the frame has no line round it, takes the column's width and is as tall as the page, never
@@ -353,20 +366,30 @@ dialog.tab-ask > p[hidden] { display: none; }
 .board-body > .board-frame > .frame-stage > .frame-page { flex: 1 0 auto; }
 .board-body > .board-frame > .frame-stage > .frame-page[hidden] { display: block; position: absolute; inset: 0; height: 100% !important; visibility: hidden; }
 .board-frame { gap: 0; max-width: none; margin: 0; }
-.frame-head { display: flex; align-items: center; gap: var(--space-4); padding: 0 var(--space-4) 0 var(--space-6); background: var(--wash); }
-.frame-by { flex: 1; min-width: 0; margin: 0; padding: var(--space-2) 0; color: var(--quiet); font-size: var(--size-caption); line-height: var(--leading-small); overflow-wrap: anywhere; }
 .frame-page { display: block; width: 100%; height: 0; border: none; }
 .frame-page[hidden], .frame-note[hidden], .frame-note > button[hidden] { display: none; }
 .frame-note { order: -1; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-4); padding: var(--space-6); }
 .frame-words { margin: 0; color: var(--quiet); font-size: var(--size-small); line-height: var(--leading-small); }
-/* A file of the computer on its own tab: one row of its facts on the wash, as a page's caption row is, then the file. */
+/* The address row over a page or a file (914 sheet 2): 重新加载 first, then a box drawn as an address bar and never pressed or typed in, whose
+   then which; a file's size and time beside it and its 复制 and 下载 at the end. The controls and facts keep their room and the box takes
+   what is left, its address cut to fit, so the row stays one line; only under 30rem do its facts go to a second line. */
 .board-frame.of-file > .frame-head { display: none; }
-.file-head { display: flex; align-items: center; gap: var(--space-2) var(--space-5); min-height: calc(var(--size-small) * var(--leading-small) + 2 * var(--space-2) + 2px); padding: 0 var(--space-4) 0 var(--space-6); background: var(--wash); color: var(--quiet); font-size: var(--size-caption); line-height: var(--leading-small); font-variant-numeric: tabular-nums; }
-.file-head[hidden], .file-pane[hidden] { display: none; }
-/* A long path gives up its start, so the file's own name stays in sight. */
-.file-path { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; direction: rtl; text-align: left; }
-.file-path > bdi { direction: ltr; unicode-bidi: isolate; }
-.file-fact { flex: none; white-space: nowrap; }
+.address-row { flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); padding: var(--space-2) var(--space-4); background: var(--wash); color: var(--quiet); font-size: var(--size-caption); line-height: var(--leading-small); }
+.address-row[hidden], .file-pane[hidden] { display: none; }
+.frame-by { flex: 1 1 0; min-width: 0; align-self: stretch; display: flex; }
+.address-box { flex: 1 1 0; align-self: stretch; min-width: 0; min-height: var(--row); display: flex; align-items: center; gap: var(--space-3); box-sizing: border-box; padding: 0 var(--space-4); border: 1px solid var(--line); border-radius: var(--radius); background: var(--raised); color: var(--ink); font-size: var(--size-small); cursor: default; }
+.address-box > svg, .address-box > .icon { flex: none; width: var(--size-small); height: var(--size-small); color: var(--quiet); }
+.address-who { flex: none; display: inline-flex; align-items: center; gap: var(--space-2); padding-right: var(--space-3); border-right: 1px solid var(--line); color: var(--quiet); font-size: var(--size-caption); white-space: nowrap; }
+/* A long path gives up its start, so the file's own name stays in sight; a plugin's name gives up its end. */
+.address-where { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.address-path { direction: rtl; text-align: left; }
+.address-path > bdi { direction: ltr; unicode-bidi: isolate; }
+.address-facts { flex: none; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.address-acts { flex: none; display: inline-flex; gap: var(--space-1); margin-right: calc(-1 * var(--space-2)); }
+.address-acts:empty { display: none; }
+@container board (max-width: 30rem) {
+  .file-head > .address-facts { order: 1; flex-basis: 100%; padding-left: calc(var(--row) + var(--space-3)); }
+}
 .board-pane.file-pane { gap: 0; max-width: none; margin: 0; }
 .file-stage { padding: var(--space-6) var(--space-6) var(--space-7); }
 .file-wait { display: flex; flex-direction: column; gap: var(--space-4); max-width: 44rem; font-size: var(--size-small); line-height: var(--leading-small); }
@@ -388,6 +411,10 @@ dialog.tab-ask > p[hidden] { display: none; }
 .board-entry > * + *:not([hidden]) { margin-top: var(--space-4); }
 .board-entry > .board-meta + * { margin-top: var(--space-2); }
 .board-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-4); color: var(--quiet); font-size: var(--size-caption); line-height: var(--leading-small); }
+/* 引用 stands in the card's corner, a mark in a row of marks, its row no taller for it. */
+.board-meta > .board-quote { margin: calc(-1 * var(--space-2)) 0 calc(-1 * var(--space-2)) auto; }
+.board-meta > .board-copy { margin: calc(-1 * var(--space-2)) calc(-1 * var(--space-3)) calc(-1 * var(--space-2)) auto; }
+.board-meta > .board-quote + .board-copy { margin-left: 0; }
 /* In the words' place, why a file is not drawn. Quiet, as the meta is: nothing the seller did failed. */
 .board-unshown { margin: var(--space-2) 0 0; color: var(--quiet); font-size: var(--size-small); line-height: var(--leading-small); }
 .board-unshown[hidden] { display: none; }
@@ -510,6 +537,8 @@ main { flex: 1; min-height: 0; display: flex; flex-direction: column; position: 
 .item.user .quote-ref::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--edge); }
 .quote-ref .excerpt { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
 .quote-ref .when { display: block; font-size: var(--size-caption); }
+/* Where on the board a quote's words were stands on one line, cut at its end. */
+.quoted .when.from, .quote-ref .when.from { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .item.user .note { margin-bottom: var(--space-4); }
 .markdown > :first-child { margin-top: 0; }
 .markdown > :last-child { margin-bottom: 0; }
@@ -655,12 +684,17 @@ main { flex: 1; min-height: 0; display: flex; flex-direction: column; position: 
 }
 /* The feature card at the end of the conversation (sheet lv——乙): the paged card with a cover band of the records' tiles, a round close
    on its corner, dots over its foot, and every page in one cell, so the card is as tall as its tallest page. Four sizes the theme holds
-   none for are the sheet's: the band 7rem (6rem at a phone's width), its tiles 3.5rem (2.75rem), the close 1.75rem and a dot's 1.5rem. */
-.dialog.oc.fd { position: relative; }
+   none for are the sheet's: the band 7rem (6rem at a phone's width), its tiles 3.5rem (2.75rem), the close 1.75rem and a dot's 1.5rem.
+   It stands centred in the chat; a card cx asks a question with keeps the left. */
+.dialog.oc.fd { position: relative; margin-inline: auto; }
 .fd-pages { display: grid; }
 .fd-page { grid-area: 1 / 1; display: flex; flex-direction: column; min-width: 0; }
 .fd-page[aria-hidden="true"] { visibility: hidden; }
-.fd-cover { display: flex; align-items: center; justify-content: center; gap: var(--space-5); height: 7rem; margin: var(--space-5) var(--space-5) 0; padding-bottom: var(--space-5); border-radius: var(--radius); background: var(--wash); }
+.fd-cover { position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center; gap: var(--space-5); height: 7rem; margin: var(--space-5) var(--space-5) 0; padding-bottom: var(--space-5); border-radius: var(--radius); background: var(--wash); }
+/* The home page's lines, as its picture draws them (www/assets/css/sign-in.css .art::before): the same file, a mask over --raised on the
+   cover's --wash. The dots and the close stand above them. */
+.fd-cover::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--raised); pointer-events: none;
+  -webkit-mask: url("./www/assets/art/lines.svg") center / cover no-repeat; mask: url("./www/assets/art/lines.svg") center / cover no-repeat; }
 .fd:not(:has(> .fd-dots)) .fd-cover { padding-bottom: 0; }
 .fd-cover > .tile { width: 3.5rem; height: 3.5rem; border-radius: var(--radius-large); background: var(--raised); font-size: var(--size-body); }
 .fd-cover > .tile > svg { width: 56%; height: 56%; }
@@ -671,18 +705,22 @@ main { flex: 1; min-height: 0; display: flex; flex-direction: column; position: 
 .fd .fd-close { position: relative; width: 1.75rem; height: 1.75rem; min-height: 0; border: 1px solid var(--line); border-radius: var(--radius-round); background: var(--raised); color: var(--ink); }
 .fd-dots { position: absolute; top: calc(var(--space-5) + 7rem - var(--space-6)); left: 50%; z-index: 1; transform: translate(-50%, -50%); display: flex; align-items: center; }
 .fd .fd-dot { display: grid; place-items: center; width: 1.5rem; height: 1.5rem; min-height: 0; padding: 0; border: 0; background: none; }
-.fd-dot::before { content: ""; width: 0.5rem; height: 0.5rem; border: 1px solid var(--edge); border-radius: var(--radius-round); }
-.fd-dot[aria-current="page"]::before { border-color: var(--ink); background: var(--ink); }
+/* Every dot is a ring that stays put; the page's fill lies over its ring and is what slides on a turn. */
+.fd-dot::before, .fd-fill { grid-area: 1 / 1; width: 0.5rem; height: 0.5rem; border-radius: var(--radius-round); }
+.fd-dot::before { content: ""; border: 1px solid var(--edge); }
+.fd-fill { background: var(--ink); pointer-events: none; }
 .fd-phead { display: flex; align-items: center; padding: var(--space-6) var(--space-6) var(--space-2); }
 .fd-phead > .dialog-title { flex: 1 1 auto; min-width: 0; margin: 0; font-weight: var(--weight-regular); }
 .fd-title { display: flex; flex-direction: column; gap: var(--space-1); }
+.fd-nameline { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
+.fd-nameline > .fd-bundle { color: inherit; font-size: var(--size-lead); line-height: var(--leading-tight); text-decoration: none; overflow-wrap: anywhere; }
 .fd-title > .fd-bundle { align-self: flex-start; color: inherit; font-size: var(--size-lead); line-height: var(--leading-tight); text-decoration: none; overflow-wrap: anywhere; }
 .fd-title > small { color: var(--quiet); font-size: var(--size-small); line-height: var(--leading-small); text-wrap: pretty; }
 a.fd-bundle:hover { border-radius: var(--radius-small); background: var(--shade); box-shadow: 0 0 0 var(--space-1) var(--shade); }
 .fd-body { flex: 1 1 auto; }
 /* The install card's box of rows: past four rows and a half it scrolls inside the card. The rows are the Plugins page's one row. */
 .fd .ir-box { margin: var(--space-4) var(--space-5) 0; max-height: calc(4.5 * (3.2rem + 1px)); overflow-y: auto; overscroll-behavior: contain; border: 1px solid var(--line); border-radius: var(--radius-large); }
-.fd .ir-rows { margin: 0; padding: 0; list-style: none; }
+.fd .ir-rows { margin: 0; padding: 0; list-style: none; border: 0; }
 .fd .ir-rows > li + li { border-top: 1px solid var(--line); }
 .fd .ir-rows .pl-row { min-height: 3.2rem; }
 .fd .ir-box:focus-visible { outline: 2px solid var(--act); outline-offset: 2px; }
@@ -690,6 +728,14 @@ a.fd-bundle:hover { border-radius: var(--radius-small); background: var(--shade)
 .fd .pl-row-end { display: flex; align-items: center; gap: var(--space-5); padding-right: var(--space-5); }
 .fd .pl-done-mark { position: static; }
 .fd .pl-row-line > bdi { font-variant-numeric: tabular-nums; }
+/* A sentence to try is a row's press, in the row's inset and gap: its mark in a tile's slot, so its words start where a row's name
+   does, at the row's name size, two lines at most. */
+.fd .fd-try { display: flex; align-items: center; gap: var(--space-5); width: 100%; min-height: 3.2rem; padding: var(--space-3) var(--space-5); border: 0; background: none; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.fd .fd-try:hover { background: var(--shade); }
+.fd .fd-try:focus-visible { outline: 2px solid var(--act); outline-offset: -2px; border-radius: var(--radius); }
+.fd-try-mark { flex: none; width: 1.8rem; color: var(--quiet); line-height: var(--leading-tight); text-align: center; }
+.fd-try-words { flex: 1; min-width: 0; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; line-height: var(--leading-tight); }
+a.f-btn.fd-details { text-decoration: none; }
 .fd-foot { justify-content: flex-end; padding: var(--space-5); }
 .fd .fd-foot > .f-btn { flex: 1 1 0; }
 @media (max-width: 30rem) {
@@ -731,12 +777,17 @@ mark.t-removed { color: var(--ink); text-decoration: line-through; }
 
 /* Nothing stands under the message box: it stands as far from the window's foot as from its sides on a narrow window. */
 .bottom { position: relative; flex: none; padding: var(--space-2) 0 var(--space-6); background: var(--ground); }
+/* cx's place under the Plugins page while a tutorial step leads there: no height of its own, the status words unshown. */
+.bottom.afield { padding: 0; background: none; }
+.afield .status-words { visibility: hidden; }
 /* The status line: cx above the composer at its left edge, then what the page has to say, coloured by what it says. A line that says
    something failed and may need the person to act is brick; the low balance is money's; every other line is quiet, a wait included. */
 /* It stands over the conversation's faded foot rather than on a row of its own: nobody reads there, and the conversation keeps the room.
    The row lets a scroll through to the conversation; cx and its computer still take a click. */
 .status { position: absolute; bottom: 100%; left: 0; right: 0; display: flex; align-items: flex-end; gap: var(--space-4); min-height: 1.3rem; margin: 0 auto var(--space-1) !important; color: var(--quiet); font-size: var(--size-small); line-height: var(--leading-small); pointer-events: none; }
 .status :is(a, button, svg) { pointer-events: auto; }
+/* cx sent to a key on the page (cx.js goTo) stands over the page's surfaces, the message box and a card among them, under menus and tips. */
+.status:has(.cx[data-held]) { z-index: 6; }
 /* The status row's words: main's sentence, when there is one, over the line, which stays where it stands beside the desk. */
 .status-words { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
 .status-words > .status-text { max-width: 100%; }
@@ -789,13 +840,51 @@ mark.t-removed { color: var(--ink); text-decoration: line-through; }
 .cx-bubble { position: absolute; left: calc(-1 * var(--space-2)); bottom: calc(100% + var(--space-2)); z-index: 5; padding: var(--space-1) var(--space-4); border: 1px solid var(--float-edge); border-radius: var(--radius-large) var(--radius-large) var(--radius-large) var(--radius-small); background: var(--raised); color: var(--ink); font-size: var(--size-small); line-height: var(--leading-small); white-space: nowrap; box-shadow: var(--float-shadow); pointer-events: none; }
 .cx-bubble::after { content: ""; position: absolute; left: var(--space-4); bottom: calc(-1 * var(--space-2) - 1px); width: var(--space-4); height: var(--space-4); transform: rotate(45deg) scale(0.75); background: var(--raised); border-right: 1px solid var(--float-edge); border-bottom: 1px solid var(--float-edge); }
 /* Out of sight, never out of the tree: a live region shown in the same step its words arrive is often not spoken. */
-.cx-bubble.quiet, .cx-place.open .cx-bubble, .cx-place.tipped .cx-bubble { width: 1px; height: 1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; box-shadow: none; }
-.cx-bubble.quiet::after, .cx-place.open .cx-bubble::after, .cx-place.tipped .cx-bubble::after { content: none; }
+.cx-bubble.quiet, .cx-place.open .cx-bubble:not(.teach), .cx-place.tipped .cx-bubble { width: 1px; height: 1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; box-shadow: none; }
+.cx-bubble.quiet::after, .cx-place.open .cx-bubble:not(.teach)::after, .cx-place.tipped .cx-bubble::after { content: none; }
 .cx-bubble .money { font-size: inherit; }
+/* A bubble that teaches (guide-bubble.ts): main's bubble beside a key a guided step leads to, holding a title in a card's name, a line
+   or two in a card's text, and the last row the press with 跳过 (main's plain button) at its end; as wide as its widest line. It takes
+   the pointer and the keys. In a modal dialog that holds the key it stands inside the dialog, fixed where it would be beside cx. */
+.cx-bubble.teach:not(.quiet) { width: max-content; max-width: min(20rem, calc(100vw - 2 * var(--space-4))); padding: var(--space-3) var(--space-5); white-space: normal; pointer-events: auto; }
+.cx-bubble.teach.fixed { position: fixed; bottom: auto; z-index: 30; }
+/* Unseen while it is measured and cx goes out; still in the tree, since the bubble is cx's live region. */
+.cx-bubble.teach.hold { opacity: 0; pointer-events: none; }
+/* The place to fill in at the tutorial's last scene: the message box's words laid out again unseen, and a mark without ink over the place. */
+.cx-fill-mirror { position: fixed; left: 0; top: 0; visibility: hidden; pointer-events: none; box-sizing: border-box; border: 0; margin: 0; height: auto; }
+.cx-fill { position: fixed; pointer-events: none; }
+.cx-fill[hidden] { display: none; }
+/* Its tail towards cx: at its lower left over cx to the right; at its lower right where it opens to the left; on top where it stands
+   under cx; at its middle, towards cx, where it stands at cx's side. */
+.cx-bubble.teach.left { border-radius: var(--radius-large) var(--radius-large) var(--radius-small) var(--radius-large); }
+.cx-bubble.teach.left::after { left: auto; right: var(--space-4); }
+.cx-bubble.teach.under { border-radius: var(--radius-small) var(--radius-large) var(--radius-large) var(--radius-large); }
+.cx-bubble.teach.under::after { bottom: auto; top: calc(-1 * var(--space-2) - 1px); transform: rotate(225deg) scale(0.75); }
+.cx-bubble.teach.left.under { border-radius: var(--radius-large) var(--radius-small) var(--radius-large) var(--radius-large); }
+.cx-bubble.teach.side { border-radius: var(--radius-large); }
+.cx-bubble.teach.side::after { left: calc(-1 * var(--space-2) - 1px); right: auto; top: 50%; bottom: auto; margin-top: calc(-1 * var(--space-2)); transform: rotate(135deg) scale(0.75); }
+.cx-bubble.teach.side.left::after { left: auto; right: calc(-1 * var(--space-2) - 1px); transform: rotate(-45deg) scale(0.75); }
+.cx-bubble.teach > .teach-said { display: block; text-wrap: pretty; }
+.cx-bubble.teach .teach-title { display: block; font-size: var(--size-body); font-weight: var(--weight-strong); line-height: var(--leading-tight); text-wrap: balance; }
+.cx-bubble.teach .teach-line { display: block; margin-top: var(--space-2); text-wrap: balance; }
+.cx-bubble.teach .teach-title + .teach-line { margin-top: var(--space-3); }
+.cx-bubble.teach > .teach-foot { display: flex; align-items: last baseline; justify-content: space-between; gap: var(--space-4); margin-top: var(--space-3); }
+.cx-bubble.teach > .teach-foot > button { flex: none; }
+:lang(zh) .cx-bubble.teach :is(.teach-title, .teach-line, .teach-press) { word-break: keep-all; overflow-wrap: anywhere; }
 /* cx's word as a way: the bubble takes one press, drawn as the bubble is, with the arrow of the line beside the desk. */
 .cx-bubble.go { padding: 0; pointer-events: auto; }
 .cx-bubble.go button { display: inline-flex; align-items: baseline; gap: var(--space-3); min-height: var(--space-7); padding: var(--space-1) var(--space-4); border: 0; border-radius: inherit; background: none; white-space: nowrap; }
 .cx-bubble.go button:hover:not(:disabled) { background: var(--shade); }
+/* The key a guided step leads to (ripple.ts): a 2 px ring of --act leaves the press's own edge, follows its corners, grows 10 px out and
+   fades, once every 2 s, while the step waits for the press. Under the tooltip, over menus and cards; it takes no pointer. Under reduced
+   motion it stands still, a 4 px band of --act-wash round the press, apart from the keyboard's focus ring. */
+.ripple { position: fixed; z-index: 29; pointer-events: none; }
+.ripple[hidden] { display: none; }
+.ripple::after { content: ""; position: absolute; inset: 0; border-radius: inherit; outline: 2px solid var(--act); outline-offset: 0; opacity: 0; animation: ripple 2s var(--ease) infinite; }
+@keyframes ripple { 0% { outline-offset: 0; opacity: 0.85; } 55% { outline-offset: 10px; opacity: 0; } 100% { outline-offset: 10px; opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .ripple::after { animation: none; outline: none; opacity: 1; box-shadow: 0 0 0 4px var(--act-wash); }
+}
 /* cx's card: about cx. It grows out of cx with a tail, as cx's bubble does, and carries cx's face. */
 .cc-card { position: fixed; z-index: 5; left: 0; top: 0; width: 20rem; max-width: calc(100vw - 2 * var(--space-4)); padding: var(--space-6);
   border: 1px solid var(--float-edge); border-radius: var(--radius-large) var(--radius-large) var(--radius-large) var(--radius-small);
@@ -1084,6 +1173,8 @@ button.file-open { cursor: pointer; text-align: start; vertical-align: baseline;
 .mp-row { display: flex; align-items: center; gap: var(--space-4); min-width: 0; height: var(--row); margin: 0; padding: 0 var(--space-4); border: none; border-radius: var(--radius); background: none; color: inherit; font: inherit; font-size: inherit; text-align: left; cursor: pointer; }
 .mp-row:hover, .mp-row:focus-visible { background: var(--float-hover); }
 .mp-row:focus-visible { outline: 2px solid var(--act); outline-offset: -2px; }
+/* A member's line where 更多模型 stood: at the rows' own inset, so it starts on the column of their marks. */
+.mp-ask { margin: 0; padding: 0 var(--space-4); align-self: center; }
 .mp-empty { cursor: default; }
 .mp-empty:hover { background: none; }
 .mp-slot { flex: none; width: 1.3rem; display: grid; place-items: center; color: var(--quiet); }
@@ -1205,9 +1296,6 @@ a.button:hover, a.button:focus-visible { background: var(--shade); }
 .pl-way-list .pl-last { max-width: none; margin: 0 var(--space-5) var(--space-5); overflow-wrap: anywhere; }
 .pl-last .pl-last-words { display: block; flex-basis: 100%; }
 /* A dialog over the page it stops: drawn by its outline, the page under it still seen through the scrim. */
-dialog.confirm { max-width: 30rem; padding: var(--space-6) var(--space-7); border: 1px solid var(--float-edge); border-radius: var(--radius-large); background: var(--raised); color: var(--ink); box-shadow: var(--float-shadow); }
-dialog.confirm::backdrop { background: var(--scrim); }
-dialog.confirm h2 { margin-top: 0; font-size: var(--size-lead); }
 
 /* The Plugins page drawn from the catalogue. The page scrolls in main, so the bar sits at the window's right edge. */
 main:has(> .pl-page) { overflow-y: auto; scroll-padding-block: var(--space-3); }
@@ -1293,7 +1381,7 @@ main:has(> .pl-page) { overflow-y: auto; scroll-padding-block: var(--space-3); }
 .pl-showall { color: var(--ink); font-size: var(--size-small); line-height: var(--leading-small); text-decoration: none; }
 .pl-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 1fr; grid-auto-flow: row dense; gap: var(--space-5); }
 @media not (min-width: 48rem) { .pl-cards { grid-template-columns: minmax(0, 1fr); } }
-.pl-card { position: relative; display: flex; gap: var(--space-5); min-height: 6.5rem; padding: var(--space-5); border: 1px solid var(--line); border-radius: var(--radius-large); background: var(--hover); }
+.f-card.pl-card { position: relative; flex-direction: row; gap: var(--space-5); min-height: 6.5rem; }
 .pl-card:hover { border-color: var(--edge); cursor: pointer; }
 @media (max-width: 56rem) { .pl-tools { flex: 1 1 100%; min-width: 0; justify-content: flex-end; margin-left: 0; } .pl-searchbox { flex: 0 1 15rem; min-width: 0; } }
 .pl-card-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-1); padding-right: var(--space-8); }
@@ -1302,6 +1390,7 @@ main:has(> .pl-page) { overflow-y: auto; scroll-padding-block: var(--space-3); }
 /* One card, one height, for every kind, a bundle's too (ruled 2026-11-13): 128px. A bundle's facts stand at its foot, where a package's do. */
 .pl-card-open { height: 8.5rem; }
 .pl-card-open:has(.pl-needs-row) { height: auto; min-height: 8.5rem; }
+.pl-card-open:has(.pl-by-org) { height: auto; min-height: 8.5rem; }
 .pl-card-open > .pl-card-text > .pl-meta:last-child { margin-top: auto; }
 .pl-card-open .pl-card-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pl-card-open .pl-card-name::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-large); }
@@ -1317,6 +1406,9 @@ main:has(> .pl-page) { overflow-y: auto; scroll-padding-block: var(--space-3); }
 .pl-card-open .pl-needs-row { position: relative; }
 .pl-about { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--ink); font-size: var(--size-small); line-height: var(--leading-small); }
 .pl-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); margin-top: auto; color: var(--quiet); font-size: var(--size-small); line-height: var(--leading-small); }
+/* A member's installed card says at its foot's end who installed it; where the foot runs short, it takes the next line whole. */
+.pl-card-open .pl-meta:has(> .pl-by-org) { flex-wrap: wrap; row-gap: var(--space-1); white-space: normal; }
+.pl-meta > .pl-by-org { flex: 0 1 auto; min-width: 0; }
 .pl-act { position: absolute; top: var(--space-5); right: var(--space-5); display: grid; place-items: center; width: 1.75rem; height: 1.75rem; padding: 0; border-radius: var(--radius); font-size: var(--size-body); line-height: var(--leading-glyph); }
 /* +, and Update on a row or a news line, after Claude's (ruled 2026-11-13): a ground a step deeper than the card's, deeper still under the
    pointer, and no outline; the keyboard's ring is the theme's. */
@@ -1592,8 +1684,8 @@ button.pl-hold .pl-spin { position: absolute; inset: 0; margin: auto; }
 /* The banner's link lies on the wash, where the site's fill under the pointer is a step too slight to see: its edge answers. */
 .pl-banner-text a.button:hover { border-color: var(--edge); }
 /* On the Plugins page and in its cards a control is filled with the surface a list and a card are, inside the faint edge: a quiet button, a field and a tick box are darker than the page they lie on and one tone with a row or a card they lie on. Under the pointer a button is the wash, and since the wash is a step the eye barely tells from the surface, its edge goes to a control's, as a shelf card's does. */
-:where(.pl-page, .pl-card-dialog) button, :where(.pl-page, .pl-card-dialog) select, :where(.pl-page, .pl-card-dialog) input { border-color: var(--line); background: var(--hover); }
-:where(.pl-page, .pl-card-dialog) button:hover:not(:disabled) { border-color: var(--edge); }
+:where(.pl-page) button, :where(.pl-page, .pl-card-dialog) select, :where(.pl-page, .pl-card-dialog) input { border-color: var(--line); background: var(--hover); }
+:where(.pl-page) button:hover:not(:disabled) { border-color: var(--edge); }
 /* A drop-down is a field: the browser sizes it by its own line, so the field's height is stated. */
 :where(.pl-page, .pl-card-dialog) select { height: calc(1em * var(--leading-body) + 2 * var(--space-2) + 2px); font-size: var(--size-body); }
 .pl-news .pl-quietbtn, .pl-quietbtn { border-color: transparent; background: none; color: var(--quiet); }
@@ -1641,7 +1733,7 @@ button.pl-hold .pl-spin { position: absolute; inset: 0; margin: auto; }
 /* The cards: install, remove, turn off and turn on, one drawing; Remove acts in forest like any act. */
 /* A card opens at its title with the keyboard on its middle. Taller than the screen, its middle scrolls: the title, what an install buys and the buttons stay in view. */
 /* A card is the surface a list and a card on the page are, inside the faint edge a menu has. */
-dialog.pl-card-dialog { width: min(34rem, calc(100vw - var(--space-8))); max-width: none; max-height: calc(100vh - var(--space-8)); overflow: hidden; border-color: var(--line); background: var(--hover); }
+dialog.pl-card-dialog { width: min(34rem, calc(100vw - var(--space-8))); max-width: none; max-height: calc(100vh - var(--space-8)); overflow: hidden; }
 dialog.pl-card-dialog[open] { display: flex; flex-direction: column; }
 dialog.pl-card-dialog > * { flex: none; }
 /* The middle clips what it scrolls: the room around it holds the keyboard's ring whole, and so does the room the browser leaves when it scrolls what the keyboard reaches into view. */
@@ -1654,7 +1746,6 @@ dialog.pl-card-dialog:focus, .pl-card-body:focus { outline: none; }
 /* What stands under a card's head: a sentence or the label of what it installs four steps down, the label of what stops or a field three, the line about a stranger's code two. */
 .pl-card-head { display: flex; align-items: center; gap: var(--space-5); margin-bottom: var(--space-6); }
 .pl-card-body a.pl-inline { color: var(--ink); }
-.pl-card-head h2 { margin: 0; }
 .pl-card-body { display: flex; flex-direction: column; gap: var(--space-5); }
 .pl-card-body p, .pl-card-body h3 { margin: 0; }
 /* One sentence under another stands a whole step off, in the card's own column and inside one of its parts. */
@@ -1681,9 +1772,6 @@ dialog.pl-card-dialog:has(.pl-card-rows) > .pl-card-body { max-height: 28rem; }
 .pl-more-link { padding: 0; border: none; background: none; color: var(--quiet); font-size: var(--size-small); }
 .pl-more-link:hover { color: var(--ink); }
 .pl-card-acts { justify-content: flex-end; gap: var(--space-5); margin: var(--space-6) 0 0; }
-.pl-card-acts button { font-size: var(--size-body); line-height: var(--leading-body); }
-/* An act that cannot be pressed yet is itself, faded. */
-.pl-card-acts button.primary:disabled { border-color: var(--act); background: var(--act); color: var(--act-ink); opacity: 0.45; }
 dialog.pl-tool-dialog .pl-tool-title { margin: 0 0 var(--space-6); }
 dialog.pl-tool-dialog .pl-tool-title:has(+ .pl-card-body > .pl-field:first-child) { margin-bottom: var(--space-5); }
 .pl-tool-failed { margin: var(--space-5) 0 0; }
@@ -1737,7 +1825,6 @@ button.pl-busy { display: inline-flex; align-items: center; justify-content: cen
 .pl-again { padding: 0 var(--space-3); }
 .pl-failed-help { color: inherit; }
 /* What stands under a card's title, the by-line or the sentence that names its parts, is a small step under it. */
-.pl-card-headtext p { margin: var(--space-1) 0 0; }
 .pl-card-by { font-size: var(--size-small); line-height: var(--leading-small); }
 /* A README is a stranger's words under the page's own: its headings are its body's size in the strong weight, never smaller than what they head. */
 .pl-readme h1, .pl-readme h2, .pl-readme h3, .pl-readme h4 { margin: var(--space-6) 0 var(--space-3); color: inherit; font-size: inherit; line-height: inherit; }
@@ -1831,7 +1918,7 @@ button.pl-act-ring:hover:not(:disabled) { border-color: var(--live-edge); backgr
   .pl-list > li:has(.pl-act-doing) .pl-row { padding-right: 4.25rem; }
   .pl-card-text { padding-right: 3.25rem; }
   .pl-list > li:has(.pl-act-ring) .pl-row { padding-right: 4.25rem; }
-  .pl-again, .pl-failed-help, .pl-head-tools button.primary, .pl-card-acts button { min-height: 2.75rem; }
+  .pl-again, .pl-failed-help, .pl-head-tools button.primary, .pl-card-acts .f-btn { min-height: 2.75rem; }
 }
 
 /* The page where the chat's models are chosen. Default stands apart above the vendors, as far from them as one shelf is from the next. */
@@ -2064,6 +2151,27 @@ a.sw-line:focus-visible { outline-offset: -2px; }
 .sw-label > .pl-tag { margin-left: var(--space-2); }
 /* The card form: our step, the provider's fields in its box. */
 dialog.f-dialog.sw-card { width: min(30rem, calc(100vw - 2 * var(--space-6))); }
+/* 管理席位 and 购买席位: one count, typed or stepped by the two presses beside it, then the sums. */
+dialog.f-dialog.st-step { width: min(30rem, calc(100vw - 2 * var(--space-6))); }
+.st-count { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); flex-wrap: wrap; }
+.st-count[hidden], .st-notes[hidden] { display: none; }
+.st-count p { margin: 0; }
+.st-label { font-size: var(--size-body); line-height: var(--leading-body); }
+.st-each { font-size: var(--size-small); line-height: var(--leading-small); }
+.st-stepper { display: inline-flex; align-items: center; gap: var(--space-2); }
+.st-stepper .f-btn { width: var(--space-8); height: var(--space-8); padding: 0; display: inline-flex; align-items: center; justify-content: center; font-size: var(--size-lead); line-height: var(--leading-glyph); }
+/* The count takes the name field's edge and ground (forms.css), and three figures' room. */
+.st-num { box-sizing: border-box; width: calc(3ch + 2 * var(--space-4)); height: var(--space-8); padding: 0 var(--space-2); color: var(--ink); text-align: center; font-family: var(--font-mono); font-size: var(--size-lead); font-variant-numeric: tabular-nums; }
+.st-notes p { margin: var(--space-4) 0 0; font-size: var(--size-small); line-height: var(--leading-small); text-wrap: pretty; }
+.st-sums { margin: var(--space-6) 0 0; padding: var(--space-4) 0 0; border-top: 1px solid var(--line); }
+/* A sum keeps to one line; where its name leaves it no room (English at 320 px) it stands under the name, at the right edge. */
+.st-sums > div { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0 var(--space-5); padding: var(--space-2) 0; }
+.st-sums dt { font-size: var(--size-body); line-height: var(--leading-body); }
+.st-sums dd { margin: 0 0 0 auto; text-align: right; white-space: nowrap; font-size: var(--size-body); line-height: var(--leading-body); font-variant-numeric: tabular-nums; }
+/* On the second of two steps the sums stand first under the title, and need no rule over them. */
+.st-count[hidden] ~ .st-body > .st-sums, .sw-card-head > .st-sums:first-child { margin-top: var(--space-4); padding-top: 0; border-top: none; }
+.st-help { margin: var(--space-3) 0 0; font-size: var(--size-small); line-height: var(--leading-small); text-wrap: pretty; }
+.st-step .sw-card-bad { margin: var(--space-4) 0 0; }
 /* 条款 with its way back held at the top, and the invitation sheet: the window without its side. */
 dialog.sw.sheet { width: min(36rem, calc(100vw - 2 * var(--space-6))); height: fit-content; max-height: calc(100vh - 2 * var(--space-6)); }
 dialog.sw.sheet .sw-nav { display: none; }
@@ -2224,10 +2332,14 @@ a:not([class]):not(:where([role="menuitem"], .sw-nav a)):hover, .fold:hover:not(
 .cz-pick { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); width: 100%; min-height: 0; padding: var(--space-4) var(--space-5); border: 0; border-radius: var(--radius); background: none; color: inherit; font: inherit; text-align: left; }
 .cz-name { white-space: nowrap; }
 .cz-price { color: var(--quiet); white-space: nowrap; font-variant-numeric: tabular-nums; }
-button.cz-pick { cursor: pointer; }
-button.cz-pick:is(:hover, .is-hover):not([aria-disabled="true"]) { background: var(--shade); }
-button.cz-pick[aria-disabled="true"] { cursor: default; }
-button.cz-pick[aria-disabled="true"] > .cz-name { color: var(--quiet); }
+/* Each card is a radio, as the sheet draws the sizes (forms.css's tick): its dot at the card's top end, its words as they stood. */
+.cz-pick { position: relative; cursor: pointer; }
+.cz-pick > input { position: absolute; inset-block-start: var(--space-4); inset-inline-end: var(--space-5); }
+.cz-pick:has(> input:not(:disabled):not(:checked)):is(:hover, .is-hover) { background: var(--shade); }
+.cz-pick:has(> input:disabled) { cursor: default; }
+.cz-pick:has(> input:disabled:not(:checked)) > .cz-name { color: var(--quiet); }
+.cz-pick:has(> input:focus-visible) { outline: 2px solid var(--act); outline-offset: 2px; }
+.cz-pick > input:focus-visible { outline: none; }
 .sw-said.asks.cz-refused { text-align: left; }
 #cz-row-size:focus-visible, #cz-row-disk:focus-visible { outline: 2px solid var(--act); outline-offset: var(--space-2); border-radius: var(--radius-small); }
 .cz-change { display: grid; grid-template-columns: auto auto 1fr; gap: var(--space-2) var(--space-6); margin: var(--space-5) 0; }
@@ -2237,6 +2349,8 @@ button.cz-pick[aria-disabled="true"] > .cz-name { color: var(--quiet); }
 @media not (min-width: 30rem) {
   .cz-sizes { grid-template-columns: minmax(0, 1fr); }
   .cz-pick { flex-direction: row; align-items: center; justify-content: space-between; gap: var(--space-5); min-height: 2.75rem; }
+  .cz-pick { padding-inline-end: calc(var(--space-5) * 2 + var(--space-6)); }
+  .cz-pick > input { inset-block-start: calc(50% - var(--space-6) / 2); }
   dialog.cz-step { max-width: calc(100vw - 2 * var(--space-6)); }
   .cz-change { grid-template-columns: auto 1fr; column-gap: var(--space-5); }
   .cz-pair > dt { grid-column: 1 / -1; }
@@ -2262,3 +2376,52 @@ a.cz-go:hover .cw-spec { color: var(--ink); }
   .cw-parts > .cw-part:has(.cz-up) > .cw-part-name { grid-column: 1 / -1; }
   .cw-parts > .cw-part:has(.cz-up) > .bar { grid-column: 2; }
 }
+
+/* 组织设置 › 成员 and 添加成员, as the members sheet draws them after Claude's members page: the head's two presses, the tabs, the filter and the
+   search over main's table, the waiting rows that fold under 56rem, the foot; and the step's field and role. */
+/* The head: Claude's two presses, 导出 CSV and the primary, side by side at the heading's end. */
+.iv-head-acts { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-3) var(--space-4); }
+
+/* Over the list, as Claude's: the tabs at the start, the role's filter and the search at the end; where they do not fit on one line
+   the filter and the search go under the tabs, at the end, and the search gives up its width first. */
+.iv-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-4); margin: var(--space-4) 0; }
+.iv-tools { display: flex; flex: 1 1 16rem; align-items: center; justify-content: flex-end; gap: var(--space-4); min-width: 0; }
+.iv-tools > .f-select { flex: none; }
+.iv-search { flex: 0 1 auto; width: 14rem; min-width: 8rem; }
+
+/* The list: main's table. A member's name over their address; a waiting row's address, its role, who sent it, the day it expires and
+   its ⋮, always in sight as Claude's and GitHub's are. */
+.iv-table td p { margin: 0; overflow-wrap: anywhere; }
+.iv-table :is(.iv-role, .iv-by, .iv-until) { white-space: nowrap; }
+.iv-table .iv-act { width: var(--space-8); text-align: right; }
+.iv-table .iv-sub { display: none; }
+.iv-nothing { padding-block: var(--space-6); }
+/* The heads stay where the rows put them, with rows or with none (a search that finds nothing, the last invitation revoked): each
+   column but the first keeps the share of the width the rows gave it, and the first takes the rest. */
+.iv-table:not(.iv-pending) .iv-role { width: 25%; }
+@media (min-width: 56rem) {
+  .iv-pending .iv-role { width: 18%; }
+  .iv-pending .iv-by { width: 13.5%; }
+  .iv-pending .iv-until { width: 22%; }
+}
+/* A half-screen window has no room for the columns: a waiting row says its role and its day under its address, as Claude's own
+   invitation rows do. */
+@media not (min-width: 56rem) {
+  .iv-pending .iv-fold { display: none; }
+  .iv-pending .iv-sub { display: block; }
+}
+
+/* The foot, as Claude's: how many are shown at the start, the page and its two presses at the end (main's pager, the option card's). */
+.iv-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2) var(--space-5); margin-top: var(--space-3); }
+.iv-pager { display: flex; align-items: center; gap: var(--space-1); margin-left: auto; }
+.iv-at { color: var(--quiet); font-size: var(--size-small); line-height: var(--leading-small); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* The step that invites: main's step, as wide as the third piece's; the seats left under its heading, where Claude's line stands. */
+.iv-step .iv-left { margin: 0; }
+.iv-name { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-5); margin: var(--space-6) 0 var(--space-3); font-size: var(--size-body); line-height: var(--leading-body); }
+.iv-field { box-sizing: border-box; display: block; width: 100%; min-height: calc(3 * var(--size-body) * var(--leading-body) + 2 * var(--space-3)); padding: var(--space-3) var(--space-4); color: var(--ink); font: inherit; font-size: var(--size-body); line-height: var(--leading-body); resize: vertical; }
+.iv-field::placeholder { color: var(--quiet); opacity: 1; }
+.iv-field[readonly] { color: var(--quiet); }
+.iv-pick { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-4); font-size: var(--size-body); line-height: var(--leading-body); }
+.iv-notes p { margin: var(--space-3) 0 0; font-size: var(--size-small); line-height: var(--leading-small); text-wrap: pretty; overflow-wrap: anywhere; }
+.iv-notes p:first-child { margin-top: var(--space-4); }

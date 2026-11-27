@@ -1,6 +1,6 @@
 import type { NpmKind, NpmPackage, Words } from "./backend.js";
 import { balanceReaches, CARD_IDS, CARDS, isTenantBase, PROVIDERS } from "../shared/model-makers.js";
-import { cardWords, RANKED, type CardWords, type DeclaredStep } from "../shared/maker-words.js";
+import { cardWords, noticeHeadings, RANKED, type CardWords, type DeclaredStep, type NoticeHeadings } from "../shared/maker-words.js";
 import { cardPackage, packageProvider, PLUGIN_PROVIDERS, providerPackage } from "../shared/provider-packages.js";
 import { makesKey, runsSignIn, subscribes } from "../shared/sign-in.js";
 import { LANGUAGES, text, type Language, type StringKey } from "./strings.js";
@@ -154,9 +154,11 @@ export type Bundle = {
 /**
  * The catalogue's plugins and bundles, and each card's words as its maker's package says them (`cardWords`), which every page that names a
  * maker reads. `oursRead` says where ours are not all here: `partial` while the platform's answer is not every one npm holds, `failed`
- * where ours could not be read at all; neither is a list to count.
+ * where ours could not be read at all; neither is a list to count. `headings` are the notices' headings ours give (`noticeHeadings`).
  */
-export type Catalogue = { readonly plugins: readonly Plugin[]; readonly bundles: readonly Bundle[]; readonly words: CardWords; readonly oursRead?: "partial" | "failed" };
+export type Catalogue = {
+  readonly plugins: readonly Plugin[]; readonly bundles: readonly Bundle[]; readonly words: CardWords; readonly headings?: NoticeHeadings; readonly oursRead?: "partial" | "failed";
+};
 
 
 
@@ -613,7 +615,7 @@ export function catalogueWith(given: readonly NpmPackage[], official: readonly O
   }));
   const bundles = pointed.filter((bundle, n) => bundle.members.every((member) => known.has(member) && !refused.has(member)) && new Set(bundle.members).size === bundle.members.length
     && !known.has(bundle.id) && pointed.findIndex((other) => other.id === bundle.id) === n);
-  return linked(plugins, bundles.map((bundle) => Object.freeze({ ...bundle, members: Object.freeze([...bundle.members]) })), words);
+  return Object.freeze({ ...linked(plugins, bundles.map((bundle) => Object.freeze({ ...bundle, members: Object.freeze([...bundle.members]) })), words), headings: noticeHeadings(given) });
 }
 
 /** A maker card's package: the first of its card's providers that has one, as npm holds it; none where npm gave none. */

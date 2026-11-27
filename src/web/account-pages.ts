@@ -38,6 +38,8 @@ export type AccountPorts = {
   readonly appearance: () => Appearance; readonly setAppearance: (appearance: Appearance) => void;
   readonly ready: ReadyPort;
   readonly email: () => string | undefined;
+  /** The asker is the organization's member: the account is held by the organization, so it is not deleted from here. */
+  readonly member?: () => boolean;
   readonly reads: () => UsageReads | undefined;
   /** The balance as this opening read it, read once whichever pane or question asks first. */
   readonly money: () => Promise<UsageReads["money"]>;
@@ -78,7 +80,7 @@ export const PHOTO_MOST = 10 * 1000 * 1000;
 export const avatar = (who: string, photo: string | undefined, extra?: string): HTMLElement =>
   h("span", { class: extra === undefined ? "avatar" : `avatar ${extra}`, "aria-hidden": "true" }, photo !== undefined ? h("img", { src: photo, alt: "" }) : firstLetter(who));
 /** The mark of a menu of what can be done with a row: three dots, one over another, in the 16 px icon box. */
-const dots = (): SVGElement => svg("svg", { class: "icon", viewBox: "0 0 16 16", "aria-hidden": "true" },
+export const dots = (): SVGElement => svg("svg", { class: "icon", viewBox: "0 0 16 16", "aria-hidden": "true" },
   ...[3.5, 8, 12.5].map((cy) => svg("circle", { cx: "8", cy: String(cy), r: "1.3", fill: "currentColor", stroke: "none" })));
 /** This device first, then the newest activity first. */
 const newest = (a: Device, b: Device): number => Number(b.current) - Number(a.current) || b.activeAt - a.activeAt;
@@ -172,7 +174,7 @@ export class AccountPages {
     this.#devices = await this.ports.backend.devices().then((list) => [...list].sort(newest), () => "unread" as const);
   }
 
-  /** 账户: the photo and the name cx calls the seller, the devices the account is signed in on, and its deletion. */
+  /** 账户: the photo and the name cx calls the seller, the devices the account is signed in on, and its deletion, which a member is not offered. */
   account(w: Writer): readonly Child[] {
     const say = this.ports.say;
     return [
@@ -180,7 +182,7 @@ export class AccountPages {
       h("section", { class: "sw-group sw-devices-group", "aria-labelledby": "sw-g-g.signIn" },
         h("div", { class: "sw-head" }, h("h3", { id: "sw-g-g.signIn" }, say("sw.g.signIn")), this.#signOutAll()),
         this.#devices === "unread" ? h("p", { class: "sw-help quiet" }, say("sw.unread")) : this.#devicesTable(w)),
-      group(say, "sw.g.deleteAccount", [this.#deleteRow(w)]),
+      ...(this.ports.member?.() === true ? [] : [group(say, "sw.g.deleteAccount", [this.#deleteRow(w)])]),
     ];
   }
 

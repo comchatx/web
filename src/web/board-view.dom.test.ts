@@ -5,13 +5,14 @@ import { BoardRefused, type BoardRead, type BoardTabAsk } from "./backend.js";
 import { BoardView } from "./board-view.js";
 import type { Off } from "./board-off.js";
 import { text, type StringKey } from "./strings.js";
+import type { QuoteFrom } from "./quote.js";
 
 const entry = (file: string, kind: string, at: number, more: Partial<Record<string, unknown>> = {}): BoardEntry => ({ file, place: "todo", modified: at, readable: true, kind, title: `Title of ${file}`, at, body: `Words of **${file}**.`, ...more }) as BoardEntry;
 const read = (shown: boolean, entries: readonly BoardEntry[], next?: string): BoardRead => ({ shown, entries, ...(next === undefined ? {} : { next }) });
 
 afterEach(() => { document.body.replaceChildren(); });
 
-function world(places: { todo: BoardEntry[] }, options: { readonly shown?: boolean; readonly fail?: boolean } = {}) {
+function world(places: { todo: BoardEntry[] }, options: { readonly shown?: boolean; readonly fail?: boolean; readonly openFile?: (path: string, from: string) => void; readonly quote?: (words: string, from: QuoteFrom) => void } = {}) {
   const asked: string[] = [];
   const backend = {
     board: vi.fn(async (before?: string): Promise<BoardRead> => {
@@ -27,6 +28,8 @@ function world(places: { todo: BoardEntry[] }, options: { readonly shown?: boole
   const view = new BoardView({
     backend, say: (key: StringKey, values) => text("en", key, values), now: () => 1_000,
     time: (time) => `t${time}`, clock: (time) => `c${time}`, day: (time) => (time >= 100 ? "Today" : "Yesterday"), changed,
+    ...(options.openFile === undefined ? {} : { openFile: options.openFile }),
+    ...(options.quote === undefined ? {} : { quote: options.quote }),
   }, () => "en");
   document.body.append(view.head, view.page);
   return { view, backend, asked, changed };
@@ -36,17 +39,33 @@ const words = (selector: string): string[] => [...document.querySelectorAll<HTML
 const card = (file: string): HTMLElement => document.querySelector<HTMLElement>(`#board-pending [data-file="${file}"]`)!;
 
 describe("the board's base", () => {
-  it("draws every file of 待办 as one list with no group's name, each its time, title and words, with no views, no press and nothing to answer, and counts nothing", async () => {
+  it("draws every file of 待办 as one list with no group's name, each its time, title and words, with no views, nothing to press but 复制 and nothing to answer, and counts nothing", async () => {
     const { view, asked } = world({ todo: [entry("c.md", "choice", 20, { options: ["Red"] }), entry("f.md", "finding", 10), entry("d.md", "proposal", 5, { done: "answered", doneAt: 50, answer: "Go ahead." })] });
     await view.read();
     view.draw();
     const shown = [...document.querySelectorAll<HTMLElement>(".board-section")].filter((one) => !one.hidden);
     expect([cards(), shown.length, shown[0]!.hasAttribute("aria-label"), view.count, asked]).toEqual([["c.md", "f.md", "d.md"], 1, false, 0, ["todo"]]);
     expect([document.querySelector(".board-views"), document.querySelector("#board-done"), document.querySelector(".board-handover")]).toEqual([null, null, null]);
-    expect(document.querySelectorAll("#board-pending .board-entry button, #board-pending .board-answer, #board-pending .board-field, #board-pending .board-foot").length).toBe(0);
+    // With no chat beside the board to quote into, a card's one press is 复制.
+    expect([...document.querySelectorAll("#board-pending .board-entry button")].map((press) => press.getAttribute("aria-label"))).toEqual([...document.querySelectorAll("#board-pending .board-entry")].map(() => "Copy"));
+    expect(document.querySelectorAll("#board-pending .board-answer, #board-pending .board-field, #board-pending .board-foot").length).toBe(0);
     // The time is the file's, as the base reads no front matter; a file done says nothing of it.
     expect([document.querySelector('[data-file="c.md"] .board-meta')!.textContent, words('[data-file="c.md"] .board-words').map((one) => one.trim()), card("d.md").querySelector(".board-outcome")]).toEqual(["t20", ["Words of c.md."], null]);
     expect([...document.querySelectorAll("#board-pending .board-entry")].map((one) => one.className)).toEqual(["board-entry board-generic", "board-entry board-generic", "board-entry board-generic"]);
+  });
+
+  it("draws a file of the tab that is no Markdown among its cards as the file box and its time, which opens it from the board by its path", async () => {
+    const openFile = vi.fn();
+    const box: BoardEntry = { file: "文档/报告.docx", place: "todo", modified: 30, readable: false, title: "报告.docx", body: "", box: `board/acct-1/${TASKS_TAB}/文档/报告.docx` };
+    const { view } = world({ todo: [entry("c.md", "finding", 20), box] }, { openFile });
+    await view.read();
+    view.draw();
+    expect([...document.querySelectorAll<HTMLElement>("#board-pending .board-list > *")].map((one) => [one.className, one.dataset["file"]])).toEqual([["board-file", "文档/报告.docx"], ["board-entry board-generic", "c.md"]]);
+    const row = card("文档/报告.docx");
+    const pressed = row.querySelector<HTMLButtonElement>("button.file-open")!;
+    expect([pressed.dataset["cxFile"], pressed.textContent, row.querySelector(".board-file-when")!.textContent, row.querySelector(".board-entry-title")]).toEqual([`board/acct-1/${TASKS_TAB}/文档/报告.docx`, "报告.docx", "t30", null]);
+    pressed.click();
+    expect(openFile).toHaveBeenCalledWith(`board/acct-1/${TASKS_TAB}/文档/报告.docx`, "card");
   });
 
   it("reads every file of 待办, part after part, and nothing done", async () => {
@@ -108,7 +127,7 @@ describe("the board's base", () => {
   it("says what will come on a board that never held anything", async () => {
     const { view } = world({ todo: [] });
     await view.read();
-    expect(words("#board-pending .board-empty")).toEqual(["What cx leaves for you will be here."]);
+    expect(words("#board-pending .board-empty > :is(h3, p)")).toEqual(["Nothing shown on this board yet", "Ask cx to make or open a file to preview here."]);
   });
 
   it("reads once more when asked while a read runs, keeps what it drew when a read fails, and knows no board the packages do not show", async () => {
@@ -123,6 +142,43 @@ describe("the board's base", () => {
     const hidden = world(places, { shown: false });
     await hidden.view.read();
     expect([hidden.view.shown, hidden.view.count, hidden.asked]).toEqual([false, 0, ["todo"]]);
+  });
+});
+
+describe("quoting a card the board draws", () => {
+  it("quotes a card whole from 引用 in its corner, by the board's name, and words selected in it with its title; none where no chat takes them", async () => {
+    const quote = vi.fn();
+    const { view } = world({ todo: [entry("f.md", "finding", 10)] }, { quote });
+    await view.read();
+    view.draw();
+    const press = card("f.md").querySelector<HTMLButtonElement>(".board-meta .board-quote")!;
+    expect([press.getAttribute("aria-label"), press.hasAttribute("title")]).toEqual(["Quote “Title of f.md”", false]);
+    press.click();
+    expect(quote).toHaveBeenLastCalledWith("Title of f.md\n\nWords of **f.md**.", { board: "待办", card: "f.md", label: view.label("待办") });
+    // Words selected in the card's text float 引用 over them; its press quotes them with the card's title.
+    const text = card("f.md").querySelector(".board-words p")!;
+    const range = document.createRange();
+    range.selectNodeContents(text);
+    getSelection()!.removeAllRanges();
+    getSelection()!.addRange(range);
+    document.dispatchEvent(new Event("selectionchange"));
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    const pick = document.querySelector<HTMLButtonElement>(".board-page .quote-pick")!;
+    expect([pick.hidden, pick.getAttribute("aria-label")]).toEqual([false, "Quote the selected words"]);
+    pick.click();
+    expect(quote).toHaveBeenLastCalledWith("Words of f.md.", { board: "待办", card: "f.md", label: `${view.label("待办")} · Title of f.md` });
+    // Words selected outside a card's text float nothing.
+    range.selectNodeContents(card("f.md").querySelector(".board-entry-title")!);
+    getSelection()!.removeAllRanges();
+    getSelection()!.addRange(range);
+    document.dispatchEvent(new Event("selectionchange"));
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    expect(pick.hidden).toBe(true);
+    document.body.replaceChildren();
+    const plain = world({ todo: [entry("f.md", "finding", 10)] });
+    await plain.view.read();
+    plain.view.draw();
+    expect([card("f.md").querySelector(".board-quote"), document.querySelector(".quote-pick")]).toEqual([null, null]);
   });
 });
 
@@ -162,7 +218,7 @@ describe("the board's tabs", () => {
     expect([...document.querySelectorAll(".board-tabs [role=tab]")].map((one) => one.getAttribute("aria-controls"))).toEqual(["board-pending", "board-pending", "board-pending"]);
     // An empty tab says what the base's empty list says.
     view.showTab("Watch");
-    expect([cards().length, document.querySelector<HTMLElement>("#board-pending .board-empty")!.hidden, document.querySelector("#board-pending .board-empty")!.textContent]).toEqual([0, false, text("en", "board.neverYet")]);
+    expect([cards().length, document.querySelector<HTMLElement>("#board-pending .board-empty")!.hidden, document.querySelector("#board-pending .board-empty > p")!.textContent]).toEqual([0, false, text("en", "board.neverYet")]);
     view.showTab("Reports");
     const row = document.querySelector<HTMLElement>(".board-tabs")!;
     document.querySelector<HTMLButtonElement>(".board-tabs [aria-selected=true]")!.dispatchEvent(new KeyboardEvent("keydown", { key: "End", bubbles: true }));
@@ -229,7 +285,7 @@ describe("the base's own boards at the strip", () => {
     await settle();
     expect(backend.boardTab).toHaveBeenCalledWith({ op: "make", tab: "Board 2" });
     expect([view.tab, names(), document.activeElement]).toEqual(["Board 2", ["Board 1", "Board 2", "Board 3", TASKS_TAB], tabNamed("Board 2")]);
-    expect(document.querySelector("#board-pending .board-empty:not([hidden])")!.textContent).toBe(text("en", "board.neverYet"));
+    expect(document.querySelector("#board-pending .board-empty:not([hidden]) > p")!.textContent).toBe(text("en", "board.neverYet"));
   });
 
   it("draws a board made at the plus before the box answers and reads nothing once it does; a board the box does not make is taken back, the name said", async () => {
@@ -278,6 +334,32 @@ describe("the base's own boards at the strip", () => {
     late.hold.resolve();
     await new Promise((resolve) => setTimeout(resolve, 80));
     expect([names(), view.tab, held.has("Reports"), backend.board.mock.calls.length - reads, view.page.querySelector(".unseen[role=status]")!.textContent]).toEqual([["Watch", TASKS_TAB], "Watch", false, 0, "Deleted “Reports”."]);
+  });
+
+  it("gives a file box of a renamed board its new address once the list read after the rename gives it, and offers no old one meanwhile", async () => {
+    const { view, backend } = own({ [TASKS_TAB]: [], Reports: [{ file: "weekly.pdf", place: "todo", modified: 7, readable: false, title: "weekly.pdf", body: "" }] });
+    // The steward's address is the file's place in the tree, as it is when the list is read; the file's time does not change with the rename.
+    const read = backend.board.getMockImplementation()!;
+    let gate: PromiseWithResolvers<void> | undefined;
+    backend.board.mockImplementation(async (before, tab = TASKS_TAB) => {
+      if (gate !== undefined) await gate.promise;
+      const answer = await read(before, tab);
+      return { ...answer, entries: answer.entries.map((one) => (one.file.endsWith(".pdf") ? { ...one, box: `board/acct-1/${tab}/${one.file}` } : one)) };
+    });
+    await view.read();
+    tabNamed("Reports").click();
+    await vi.waitFor(() => expect(view.tab).toBe("Reports"));
+    const boxes = (): (string | undefined)[] => [...document.querySelectorAll<HTMLElement>("#board-pending:not([hidden]) button.file-open")].map((one) => one.dataset["cxFile"]);
+    expect(boxes()).toEqual(["board/acct-1/Reports/weekly.pdf"]);
+    gate = Promise.withResolvers<void>();
+    key(tabNamed("Reports"), "F2");
+    document.querySelector<HTMLInputElement>(".tab-rename:not([hidden])")!.value = "Weekly";
+    key(document.querySelector<HTMLInputElement>(".tab-rename:not([hidden])")!, "Enter");
+    await settle();
+    expect([view.tab, boxes()]).toEqual(["Weekly", []]);
+    gate.resolve();
+    await vi.waitFor(() => expect(boxes()).toEqual(["board/acct-1/Weekly/weekly.pdf"]));
+    expect(document.querySelectorAll("#board-pending:not([hidden]) .board-file").length).toBe(1);
   });
 
   it("renames in place: a double press, F2 or Enter makes the name a selected field; Enter or leaving it keeps it, Escape and an empty name do not", async () => {
@@ -362,7 +444,7 @@ describe("the base's own boards at the strip", () => {
     }
   });
 
-  it("asks before a delete at the tab with the name and the count of cards, the keyboard on Cancel; Escape and a press outside are Cancel", async () => {
+  it("asks before a delete at the tab with the name and the count of cards, the keyboard on Cancel; Escape and Cancel delete nothing", async () => {
     const { view, backend } = own({ [TASKS_TAB]: [], Reports: [card("r.md", 5), card("q.md", 7)], Watch: [card("w.md", 3)] });
     await view.read();
     view.showTab("Reports");
@@ -374,11 +456,34 @@ describe("the base's own boards at the strip", () => {
     key(ask()!, "Escape");
     expect([ask(), backend.boardTab.mock.calls.length, document.activeElement]).toEqual([null, 0, tabNamed("Reports")]);
     key(tabNamed("Reports"), "Delete");
-    ask()!.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, clientX: -50, clientY: -50 }));
-    expect([ask(), backend.boardTab.mock.calls.length]).toEqual([null, 0]);
-    key(tabNamed("Reports"), "Delete");
     [...ask()!.querySelectorAll("button")].find((one) => one.textContent === "Cancel")!.click();
     expect([ask(), backend.boardTab.mock.calls.length]).toEqual([null, 0]);
+  });
+
+  it("asks in the set's dialog over the dimmed page: a press there is Cancel, one on its own padding is not, and Cancel gives the keyboard back to the tab's ×", async () => {
+    const { view, backend } = own({ [TASKS_TAB]: [], Reports: [card("r.md", 5)] });
+    await view.read();
+    view.showTab("Reports");
+    const close = tabNamed("Reports").parentElement!.querySelector<HTMLButtonElement>(".tab-close")!;
+    const ask = (): HTMLDialogElement | null => document.querySelector<HTMLDialogElement>("dialog.tab-ask");
+    // The stand-in DOM lays nothing out: the card is given the box a browser would draw it in, its padding inside it.
+    const opened = (): HTMLDialogElement => { close.focus(); close.click(); const one = ask()!; one.getBoundingClientRect = () => new DOMRect(100, 100, 300, 160); return one; };
+    const press = (one: HTMLDialogElement, x: number, y: number): void => {
+      one.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, clientX: x, clientY: y }));
+      one.dispatchEvent(new MouseEvent("click", { bubbles: true, clientX: x, clientY: y }));
+    };
+    let one = opened();
+    expect([one.classList.contains("f-dialog"), one.open, document.activeElement!.textContent]).toEqual([true, true, "Cancel"]);
+    press(one, 110, 110);
+    expect([ask(), one.open]).toEqual([one, true]);
+    press(one, 20, 20);
+    expect([ask(), backend.boardTab.mock.calls.length, document.activeElement]).toEqual([null, 0, close]);
+    one = opened();
+    key(one, "Escape");
+    expect([ask(), backend.boardTab.mock.calls.length]).toEqual([null, 0]);
+    one = opened();
+    [...one.querySelectorAll("button")].find((button) => button.textContent === "Cancel")!.click();
+    expect([ask(), backend.boardTab.mock.calls.length, document.activeElement]).toEqual([null, 0, close]);
   });
 
   it("deletes at 删除, saying so and showing the next board; a board changed since says so and counts again, and one cx is writing waits", async () => {
@@ -658,5 +763,308 @@ describe("the board while cx's computer is off", () => {
     view.draw();
     tab().dispatchEvent(new KeyboardEvent("keydown", { key: "F2", bubbles: true }));
     expect(field()).toBeDefined();
+  });
+});
+
+describe("the strip's order and the plugins' boards", () => {
+  const plugin = { kind: "third", name: "example-restock" } as const;
+  type StripOptions = { readonly plugins?: readonly string[]; readonly store?: Map<string, string>; readonly entries?: Map<string, BoardEntry[]>; readonly off?: { now: Off | undefined }; readonly refuse?: boolean };
+  const strip = (boards: readonly string[], options: StripOptions = {}) => {
+    const store = options.store ?? new Map<string, string>();
+    const backend = {
+      board: vi.fn(async (_before?: string, tab = TASKS_TAB): Promise<BoardRead> => ({ shown: true, tab, tabs: [...boards], entries: [...(options.entries?.get(tab) ?? [])], pages: (options.plugins ?? []).map((one) => ({ tab: one, by: plugin })) })),
+      boardTab: vi.fn(async () => { if (options.refuse === true) throw new Error("/board/tab answered 500"); }),
+    };
+    const storage = { keys: () => [...store.keys()], read: (key: string) => store.get(key) ?? null, write: (key: string, value: string) => { store.set(key, value); }, remove: (key: string) => { store.delete(key); } };
+    const page = vi.fn(async () => ({ html: "<p>page</p>", by: plugin }));
+    const view = new BoardView({ backend, say: (key: StringKey, values) => text("en", key, values), now: () => 1_000, time: String, clock: String, day: () => "Today", changed: vi.fn(),
+      frame: { origin: "https://pages.example", appOrigin: "https://app.example", read: page }, store: storage, account: () => "acct-1", inSight: () => true,
+      ...(options.off === undefined ? {} : { computer: { off: () => options.off!.now, wake: vi.fn(), help: "mailto:help@example.com", floor: () => [] } }) }, () => "en");
+    document.body.append(view.head, view.page);
+    return { view, backend, store, page };
+  };
+  const names = (): string[] => [...document.querySelectorAll<HTMLElement>(".board-tabs [role=tab] .tab-label")].map((one) => one.textContent!);
+  const tabNamed = (name: string): HTMLButtonElement => [...document.querySelectorAll<HTMLButtonElement>(".board-tabs [role=tab]")].find((one) => one.querySelector(".tab-label")!.textContent === name)!;
+  const key = (target: Element, name: string, more: KeyboardEventInit = {}): void => { target.dispatchEvent(new KeyboardEvent("keydown", { key: name, bubbles: true, ...more })); };
+  const said = async (): Promise<string> => { await new Promise((resolve) => setTimeout(resolve, 80)); return document.querySelector<HTMLElement>(".unseen[role=status]")!.textContent ?? ""; };
+  const plugs = (): HTMLButtonElement => document.querySelector<HTMLButtonElement>(".board-plugins")!;
+
+  it("moves the tab shown one place at Control+Shift+arrow, the keyboard staying on it, says where, and keeps the order for the account", async () => {
+    const store = new Map<string, string>();
+    const { view } = strip([TASKS_TAB, "Reports", "Watch"], { store });
+    await view.read();
+    view.showTab(TASKS_TAB);
+    expect(names()).toEqual([TASKS_TAB, "Reports", "Watch"]);
+    expect(tabNamed("Reports").getAttribute("aria-description")).toBe("Press Control+Shift+Left Arrow or Right Arrow to move the tab");
+    tabNamed(TASKS_TAB).focus();
+    key(tabNamed(TASKS_TAB), "ArrowRight", { ctrlKey: true, shiftKey: true });
+    expect([names(), document.activeElement, view.tab]).toEqual([["Reports", TASKS_TAB, "Watch"], tabNamed(TASKS_TAB), TASKS_TAB]);
+    expect(await said()).toBe(`Moved tab ${TASKS_TAB}, 2 of 3`);
+    // At the end it goes no further, and nothing is said.
+    key(tabNamed(TASKS_TAB), "ArrowRight", { ctrlKey: true, shiftKey: true });
+    key(tabNamed(TASKS_TAB), "ArrowRight", { ctrlKey: true, shiftKey: true });
+    expect(names()).toEqual(["Reports", "Watch", TASKS_TAB]);
+    expect(JSON.parse(store.get("cmx-board-order:acct-1")!)).toEqual(["Reports", "Watch", TASKS_TAB]);
+    document.body.replaceChildren();
+    const again = strip([TASKS_TAB, "Reports", "Watch", "Ads"], { store });
+    await again.view.read();
+    // A board made since stands after the one it follows in the board's own order.
+    expect(names()).toEqual(["Reports", "Watch", "Ads", TASKS_TAB]);
+  });
+
+  it("keeps one strip with another window of the browser: what one moves or takes off the other draws at the storage event, each keeping the tab it shows", async () => {
+    const store = new Map<string, string>();
+    const boards = [TASKS_TAB, "Restock", "Watch"];
+    const one = strip(boards, { plugins: ["Restock"], store });
+    const two = strip(boards, { plugins: ["Restock"], store });
+    await one.view.read();
+    await two.view.read();
+    one.view.showTab("Watch");
+    two.view.showTab("Restock");
+    const of = (view: BoardView): string[] => [...view.head.querySelectorAll<HTMLElement>(".board-tabs [role=tab] .tab-label")].map((tab) => tab.textContent!);
+    const shownOf = (view: BoardView): HTMLButtonElement => view.head.querySelector<HTMLButtonElement>(".board-tab-wrap.on [role=tab]")!;
+    key(shownOf(one.view), "ArrowLeft", { ctrlKey: true, shiftKey: true });
+    key(shownOf(one.view), "ArrowLeft", { ctrlKey: true, shiftKey: true });
+    expect([of(one.view), of(two.view)]).toEqual([["Watch", TASKS_TAB, "Restock"], boards]);
+    dispatchEvent(new StorageEvent("storage", { key: "cmx-board-order:acct-1" }));
+    expect([of(two.view), two.view.tab, one.view.tab]).toEqual([["Watch", TASKS_TAB, "Restock"], "Restock", "Watch"]);
+    two.view.head.querySelector<HTMLButtonElement>(".board-tab-wrap.on .tab-close")!.click();
+    dispatchEvent(new StorageEvent("storage", { key: "cmx-board-unpinned:acct-1" }));
+    expect([of(one.view), one.view.tab]).toEqual([["Watch", TASKS_TAB], "Watch"]);
+    // A key of another kind changes nothing drawn.
+    store.set("cmx-board-unpinned:acct-1", "[]");
+    dispatchEvent(new StorageEvent("storage", { key: "cmx-language" }));
+    expect(of(one.view)).toEqual(["Watch", TASKS_TAB]);
+  });
+
+  it("gives way as a tab closed here does when the other window takes off the tab shown here, and keeps its own tab when it comes back", async () => {
+    const store = new Map<string, string>();
+    const boards = [TASKS_TAB, "Reports", "Watch"];
+    const here = strip(boards, { plugins: ["Reports"], store });
+    const there = strip(boards, { plugins: ["Reports"], store });
+    await here.view.read();
+    await there.view.read();
+    here.view.showTab("Reports");
+    there.view.showTab("Reports");
+    const shownOf = (view: BoardView): string | null | undefined => view.head.querySelector(".board-tab-wrap.on .tab-label")?.textContent;
+    there.view.head.querySelector<HTMLButtonElement>(".board-tab-wrap.on .tab-close")!.click();
+    dispatchEvent(new StorageEvent("storage", { key: "cmx-board-unpinned:acct-1" }));
+    // The next tab still on the strip, not the board's first.
+    expect([here.view.tab, shownOf(here.view)]).toEqual(["Watch", "Watch"]);
+    // Put back there, shown there; here stays where it went.
+    there.view.showTab("Reports");
+    dispatchEvent(new StorageEvent("storage", { key: "cmx-board-unpinned:acct-1" }));
+    expect([here.view.tab, shownOf(here.view), there.view.tab]).toEqual(["Watch", "Watch", "Reports"]);
+    // A file shown here and closed there: the tab after it, else the one before; opened again there, it is not shown here.
+    here.view.openFile("notes/a.md", "chat");
+    there.view.openFile("notes/a.md", "chat");
+    dispatchEvent(new StorageEvent("storage", { key: "cmx-board-files:acct-1" }));
+    expect(here.view.file).toBe("notes/a.md");
+    there.view.head.querySelector<HTMLButtonElement>(".board-tab-wrap.on .tab-close")!.click();
+    dispatchEvent(new StorageEvent("storage", { key: "cmx-board-files:acct-1" }));
+    expect([here.view.file, here.view.shownKey]).toEqual([undefined, "Watch"]);
+    there.view.openFile("notes/a.md", "chat");
+    dispatchEvent(new StorageEvent("storage", { key: "cmx-board-files:acct-1" }));
+    expect([here.view.file, here.view.shownKey]).toEqual([undefined, "Watch"]);
+  });
+
+  it("shows the first board put back after the other window took off every one, and keeps it as the next comes back", async () => {
+    const store = new Map<string, string>();
+    const boards = ["Reports", "Watch"];
+    const here = strip(boards, { plugins: boards, store });
+    const there = strip(boards, { plugins: boards, store });
+    await here.view.read();
+    await there.view.read();
+    here.view.showTab("Reports");
+    const shownOf = (view: BoardView): string | null | undefined => view.head.querySelector(".board-tab-wrap.on .tab-label")?.textContent;
+    const takeOff = (tab: string): void => {
+      there.view.showTab(tab);
+      there.view.head.querySelector<HTMLButtonElement>(".board-tab-wrap.on .tab-close")!.click();
+      dispatchEvent(new StorageEvent("storage", { key: "cmx-board-unpinned:acct-1" }));
+    };
+    takeOff("Watch");
+    takeOff("Reports");
+    expect(here.view.shownKey).toBeUndefined();
+    there.view.showTab("Watch");
+    dispatchEvent(new StorageEvent("storage", { key: "cmx-board-unpinned:acct-1" }));
+    expect(shownOf(here.view)).toBe("Watch");
+    there.view.showTab("Reports");
+    dispatchEvent(new StorageEvent("storage", { key: "cmx-board-unpinned:acct-1" }));
+    expect([here.view.tab, shownOf(here.view), there.view.tab]).toEqual(["Watch", "Watch", "Reports"]);
+  });
+
+  it("takes a plugin's board off the strip at its ×, asking nothing and deleting nothing, and brings it back to its place from 插件看板", async () => {
+    const store = new Map<string, string>();
+    const { view, backend } = strip([TASKS_TAB, "Restock", "Watch"], { plugins: ["Restock"], store });
+    await view.read();
+    view.showTab("Restock");
+    const close = document.querySelector<HTMLButtonElement>(".board-tab-wrap.on .tab-close")!;
+    expect([close.hidden, close.getAttribute("aria-label"), close.hasAttribute("title"), plugs().hidden, plugs().getAttribute("aria-label"), plugs().classList.contains("f-icon")]).toEqual([false, "Close “Restock”", false, false, "Plugin boards", true]);
+    close.click();
+    expect([names(), view.tab, document.activeElement, backend.boardTab.mock.calls.length, document.querySelector("dialog[open], .board-ask:not([hidden])")]).toEqual([[TASKS_TAB, "Watch"], "Watch", tabNamed("Watch"), 0, null]);
+    expect(JSON.parse(store.get("cmx-board-unpinned:acct-1")!)).toEqual(["Restock"]);
+    // The board's own tabs keep the mark that deletes them, with its question.
+    view.showTab(TASKS_TAB);
+    expect(document.querySelector(".board-tab-wrap.on .tab-close")!.getAttribute("aria-label")).toBe(`Delete “${TASKS_TAB}”`);
+    plugs().click();
+    const rows = [...document.querySelectorAll<HTMLElement>(".board-plugin-menu [role=menuitem]")];
+    expect([rows.map((one) => one.querySelector(".f-words")!.textContent), plugs().getAttribute("aria-expanded"), document.activeElement]).toEqual([["Restock"], "true", rows[0]]);
+    rows[0]!.click();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect([names(), view.tab, document.activeElement, plugs().getAttribute("aria-expanded"), store.has("cmx-board-unpinned:acct-1")]).toEqual([[TASKS_TAB, "Restock", "Watch"], "Restock", tabNamed("Restock"), "false", false]);
+  });
+
+  it("says where boards come back when every tab is off the strip, and draws no 插件看板 where no plugin draws a board", async () => {
+    const { view } = strip(["Restock"], { plugins: ["Restock"] });
+    await view.read();
+    view.showTab("Restock");
+    key(tabNamed("Restock"), "Delete");
+    expect([document.querySelector<HTMLElement>(".board-tabs")!.hidden, [...document.querySelectorAll("#board-pending .board-empty > :is(h3, p)")].map((one) => one.textContent), document.activeElement]).toEqual([true, ["Open boards and files appear here", "Reopen one from Plugin boards."], plugs()]);
+    document.body.replaceChildren();
+    const own = strip([TASKS_TAB, "Reports"]);
+    await own.view.read();
+    expect(plugs().hidden).toBe(true);
+  });
+
+  const settle = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 0));
+
+  it("shows no board where every tab is off the strip: the door's mark and a board's unseen card stay, and an accepted show brings the tab back", async () => {
+    const entries = new Map<string, BoardEntry[]>([["Restock", [entry("20261101-0900-a.md", "finding", 5)]]]);
+    const { view } = strip(["Restock"], { plugins: ["Restock"], entries });
+    await view.read();
+    view.showTab("Restock");
+    expect(view.visible).toBe("Restock");
+    key(tabNamed("Restock"), "Delete");
+    expect(view.visible).toBe(undefined);
+    // The door marks it: drawn again, the mark stands, on its row and on 插件看板.
+    view.doorMarked("Restock");
+    view.draw();
+    const row = (): HTMLElement => { if (plugs().getAttribute("aria-expanded") !== "true") plugs().click(); return document.querySelector<HTMLElement>(".board-plugin-menu [role=menuitem]")!; };
+    expect([row().querySelector<HTMLElement>(".tab-dot")!.hidden, row().getAttribute("aria-label"), plugs().getAttribute("aria-label")]).toEqual([false, "Restock, new", "Plugin boards, new"]);
+    key(document.querySelector(".board-plugin-menu")!, "Escape");
+    // Shown again, as an accepted show does: back on the strip, seen, the mark gone.
+    view.showTab("Restock");
+    expect([names(), view.visible, row().querySelector<HTMLElement>(".tab-dot")!.hidden, plugs().getAttribute("aria-label")]).toEqual([["Restock"], "Restock", true, "Plugin boards"]);
+    key(document.querySelector(".board-plugin-menu")!, "Escape");
+    // Off the strip again, it gains a card at the next read: its row and 插件看板 carry the dot.
+    key(tabNamed("Restock"), "Delete");
+    entries.set("Restock", [entry("20261101-0900-a.md", "finding", 5), entry("20261101-1000-b.md", "finding", 9)]);
+    await view.read();
+    expect([row().querySelector<HTMLElement>(".tab-dot")!.hidden, plugs().getAttribute("aria-label")]).toEqual([false, "Plugin boards, new"]);
+  });
+
+  it("puts no dot on 插件看板 for a board's last count alone, and keeps the count beside the row's dot", async () => {
+    const store = new Map<string, string>([["cmx-board-counts:acct-1", JSON.stringify({ Restock: [3] })], ["cmx-board-unpinned:acct-1", JSON.stringify(["Restock"])]]);
+    const { view } = strip([TASKS_TAB, "Restock"], { plugins: ["Restock"], store });
+    await view.read();
+    const row = (): HTMLElement => { if (plugs().getAttribute("aria-expanded") !== "true") plugs().click(); return document.querySelector<HTMLElement>(".board-plugin-menu [role=menuitem]")!; };
+    expect([row().querySelector(".page-count")!.textContent, row().querySelector<HTMLElement>(".tab-dot")!.hidden, plugs().getAttribute("aria-label")]).toEqual(["3", true, "Plugin boards"]);
+    view.doorMarked("Restock");
+    expect([row().querySelector(".page-count")!.textContent, row().querySelector<HTMLElement>(".tab-dot")!.hidden, row().getAttribute("aria-label")]).toEqual(["3", false, "Restock, new"]);
+  });
+
+  it("takes a plugin's board off the strip and brings it back while the computer is off; the base's own keep no × then", async () => {
+    const off = { now: undefined as Off | undefined };
+    const { view } = strip([TASKS_TAB, "Restock"], { plugins: ["Restock"], off });
+    await view.read();
+    off.now = "off";
+    view.showTab("Restock");
+    const close = (): HTMLButtonElement => document.querySelector<HTMLButtonElement>(".board-tab-wrap.on .tab-close")!;
+    expect([close().hidden, plugs().hidden]).toEqual([false, false]);
+    close().click();
+    expect(names()).toEqual([TASKS_TAB]);
+    expect(close().hidden).toBe(true);
+    plugs().click();
+    document.querySelector<HTMLElement>(".board-plugin-menu [role=menuitem]")!.click();
+    expect([names(), view.tab]).toEqual([[TASKS_TAB, "Restock"], "Restock"]);
+  });
+
+  it("reads one order everywhere: the menu, the tab after a delete, a refused delete's place, and a key on the tab with the keyboard", async () => {
+    const store = new Map<string, string>([["cmx-board-order:acct-1", JSON.stringify(["A", "C", "B", "Zed", "Ads"])], ["cmx-board-unpinned:acct-1", JSON.stringify(["Zed", "Ads"])]]);
+    const { view, backend } = strip(["A", "Ads", "B", "C", "Zed"], { plugins: ["Ads", "Zed"], store });
+    await view.read();
+    expect(names()).toEqual(["A", "C", "B"]);
+    // 插件看板 lists its boards in the seller's order.
+    plugs().click();
+    expect([...document.querySelectorAll(".board-plugin-menu [role=menuitem] .f-words")].map((one) => one.textContent)).toEqual(["Zed", "Ads"]);
+    key(document.querySelector(".board-plugin-menu")!, "Escape");
+    // Deleting A shows the tab after it on the strip, C.
+    view.showTab("A");
+    document.querySelector<HTMLButtonElement>(".board-tab-wrap.on .tab-close")!.click();
+    document.querySelector<HTMLButtonElement>("dialog.tab-ask .tab-ask-acts button:last-child")!.click();
+    await settle();
+    expect([names(), view.tab, (backend.boardTab.mock.calls[0] as readonly unknown[] | undefined)?.[0]]).toMatchObject([["C", "B"], "C", { op: "delete", tab: "A" }]);
+    // Its place goes with it: a new A stands where a new board does.
+    expect(JSON.parse(store.get("cmx-board-order:acct-1")!)).not.toContain("A");
+    // The keyboard on B, not shown: Control+Shift+Left moves B; Shift+Left alone chooses nothing.
+    tabNamed("B").focus();
+    key(tabNamed("B"), "ArrowLeft", { ctrlKey: true, shiftKey: true });
+    expect([names(), view.tab, document.activeElement]).toEqual([["B", "C"], "C", tabNamed("B")]);
+    key(tabNamed("C"), "ArrowLeft", { shiftKey: true });
+    expect(view.tab).toBe("C");
+  });
+
+  it("puts a board the box refused to delete back in its place on the strip", async () => {
+    const store = new Map<string, string>([["cmx-board-order:acct-1", JSON.stringify(["C", "A", "B"])]]);
+    const { view } = strip(["A", "B", "C"], { store, refuse: true });
+    await view.read();
+    view.showTab("A");
+    document.querySelector<HTMLButtonElement>(".board-tab-wrap.on .tab-close")!.click();
+    document.querySelector<HTMLButtonElement>("dialog.tab-ask .tab-ask-acts button:last-child")!.click();
+    await settle();
+    expect([names(), view.tab]).toEqual([["C", "A", "B"], "A"]);
+  });
+
+  it("says no board is open where the board has none, and names the pane by its heading", async () => {
+    const { view } = strip([]);
+    await view.read();
+    expect([[...document.querySelectorAll("#board-pending .board-empty > :is(h3, p)")].map((one) => one.textContent), document.querySelector("#board-pending")!.getAttribute("aria-labelledby"), document.getElementById("board-empty-title")?.textContent])
+      .toEqual([[text("en", "board.noneOpenTitle"), text("en", "board.neverYet")], "board-empty-title", text("en", "board.noneOpenTitle")]);
+  });
+
+  it("lets the page of a board off the strip go, and loads it again when it comes back", async () => {
+    const { view } = strip([TASKS_TAB, "Restock"], { plugins: ["Restock"] });
+    await view.read();
+    const framed = (): string[] => [...document.querySelectorAll<HTMLIFrameElement>("#board-frame iframe")].map((one) => one.title);
+    expect(framed()).toEqual(["Restock"]);
+    view.showTab("Restock");
+    key(tabNamed("Restock"), "Delete");
+    await view.read();
+    expect(framed()).toEqual([]);
+    view.showTab("Restock");
+    expect(framed()).toEqual(["Restock"]);
+  });
+
+  it("shows the board again where the box refused its delete, a file's tab that took its place no longer chosen", async () => {
+    const { view } = strip(["A"], { refuse: true });
+    await view.read();
+    view.openFile("report.txt", "chat");
+    view.showTab("A");
+    expect(view.visible).toBe("A");
+    document.querySelector<HTMLButtonElement>(".board-tab-wrap.on .tab-close")!.click();
+    document.querySelector<HTMLButtonElement>("dialog.tab-ask .tab-ask-acts button:last-child")!.click();
+    // While the box is asked, the file's tab after it is shown.
+    expect(view.file).toBe("report.txt");
+    await settle();
+    expect([view.visible, view.file, document.querySelector(".board-tabs [aria-selected=true] .tab-label")?.textContent]).toEqual(["A", undefined, "A"]);
+  });
+
+  it("asks the computer for no page when a plugin's board is closed and put back while it is off, and loads it by the read once it is on", async () => {
+    const off = { now: undefined as Off | undefined };
+    const { view, page } = strip([TASKS_TAB, "Restock"], { plugins: ["Restock"], off });
+    await view.read();
+    const reads = page.mock.calls.length;
+    expect(reads).toBe(1);
+    off.now = "off";
+    view.showTab("Restock");
+    document.querySelector<HTMLButtonElement>(".board-tab-wrap.on .tab-close")!.click();
+    expect(document.querySelectorAll("#board-frame iframe").length).toBe(0);
+    plugs().click();
+    document.querySelector<HTMLElement>(".board-plugin-menu [role=menuitem]")!.click();
+    view.showTab("Restock");
+    expect([names(), view.tab, page.mock.calls.length]).toEqual([[TASKS_TAB, "Restock"], "Restock", reads]);
+    off.now = undefined;
+    await view.read();
+    expect(page.mock.calls.length).toBe(reads + 1);
   });
 });

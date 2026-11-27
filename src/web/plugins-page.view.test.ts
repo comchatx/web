@@ -51,6 +51,8 @@ const { Element } = vi.hoisted(() => {
       return body === undefined ? undefined : all(body).slice(1).find((node) => node.tag === "a" || node.tag === "button");
     }
     focus(): void { (globalThis as { focused?: Element }).focused = this; }
+    // The set's dialog opens a card as the browser's own modal.
+    showModal(): void {}
     set textContent(value: string) { this.textContent_ = value; }
     get textContent(): string { return this.textContent_ ?? this.children.map((child) => (typeof child === "string" ? child : child.textContent)).join(""); }
   }
@@ -308,7 +310,8 @@ it("keeps the search's width beside Create on a narrow window, a card's buttons 
   expect(css).toMatch(/@media \(max-width: 56rem\) \{ \.pl-tools \{[^}]*justify-content: flex-end;[^}]*\} \.pl-searchbox \{ flex: 0 1 15rem;/);
   // The row of the two may be narrower than what it holds, so the search box gives way and Create ends at the page's margin.
   expect(css).toMatch(/@media \(max-width: 56rem\) \{ \.pl-tools \{ flex: 1 1 100%; min-width: 0;/);
-  expect(css).toMatch(/^\.pl-card-acts button \{ font-size: var\(--size-body\)/m);
+  // A card's buttons are the set's, with no size of the page's own.
+  expect(css).not.toMatch(/^\.pl-card-acts button \{/m);
   expect(css).toMatch(/^\.pl-empty button \{[^}]*font-size: var\(--size-body\)/m);
   expect(css).toMatch(/@media not \(min-width: 40rem\) \{[^@]*\.pl-table \.pl-meter \{ width: 2\.5rem; \}/);
   expect(css).toMatch(/^\.pl-model-rows \.pl-models tbody td \{ height: 3\.4375rem; \}/m);
@@ -444,7 +447,7 @@ it("answers the pointer in its words where a view, a quiet button or a card's li
   const quiet = ".pl-quietbtn:hover:not(:disabled)";
   expect(ruleOf(css, quiet)).toBe(`${quiet} { border-color: transparent; background: none; color: var(--ink); }`);
   // After the rule that fills every button of these pages under the pointer, and more particular than it.
-  expect(css.indexOf(`${quiet} {`)).toBeGreaterThan(css.indexOf(":where(.pl-page, .pl-card-dialog) button:hover:not(:disabled) {"));
+  expect(css.indexOf(`${quiet} {`)).toBeGreaterThan(css.indexOf(":where(.pl-page) button:hover:not(:disabled) {"));
   // A card's link takes the one ground under the pointer, and nothing is underlined.
   expect(css).toMatch(/^[^{]*a\.pl-inline:hover[^{]* \{\s*border-radius: var\(--radius-small\); background: var\(--shade\);/m);
   expect(css).not.toContain("underline");
@@ -452,11 +455,11 @@ it("answers the pointer in its words where a view, a quiet button or a card's li
 
 it("answers the pointer on a surface where the fill's step is too slight to see: a filled quiet button and the banner's link in their edge, a row that is a link in its name", () => {
   const css = sheet();
-  const filled = ":where(.pl-page, .pl-card-dialog) button:hover:not(:disabled)";
+  const filled = ":where(.pl-page) button:hover:not(:disabled)";
   // Its ground is every button's, the one under the pointer.
   expect(ruleOf(css, filled)).toBe(`${filled} { border-color: var(--edge); }`);
   // The edge at rest is the faint one a shelf card has, which goes to the same edge under the pointer.
-  expect(ruleOf(css, ":where(.pl-page, .pl-card-dialog) button, :where(.pl-page, .pl-card-dialog) select, :where(.pl-page, .pl-card-dialog) input")).toContain("border-color: var(--line);");
+  expect(ruleOf(css, ":where(.pl-page) button, :where(.pl-page, .pl-card-dialog) select, :where(.pl-page, .pl-card-dialog) input")).toContain("border-color: var(--line);");
   expect(ruleOf(css, ".pl-card:hover")).toBe(".pl-card:hover { border-color: var(--edge); cursor: pointer; }");
   // A button with no edge of its own to show, and one that is busy, keep theirs.
   expect(ruleOf(css, ".pl-quietbtn:hover:not(:disabled)")).toContain("border-color: transparent;");
@@ -485,7 +488,7 @@ it("gives a row of Create's menu the theme's ground for a row over the page unde
   // The message box's / list reads it too, by a rule of its own.
   expect(ruleOf(css, '.slash-row[aria-selected="true"]')).toBe('.slash-row[aria-selected="true"] { background: var(--float-hover); }');
   expect(ruleOf(css, "a.pl-row:hover")).toBe("a.pl-row:hover { background: var(--shade); }");
-  expect(ruleOf(css, ":where(.pl-page, .pl-card-dialog) button:hover:not(:disabled)")).toBe(":where(.pl-page, .pl-card-dialog) button:hover:not(:disabled) { border-color: var(--edge); }");
+  expect(ruleOf(css, ":where(.pl-page) button:hover:not(:disabled)")).toBe(":where(.pl-page) button:hover:not(:disabled) { border-color: var(--edge); }");
 });
 
 it("draws \"Models in chat ›\" as one link wherever it stands, the action's colour on a vendor's Overview and at the end of its Settings alike", () => {
@@ -507,7 +510,7 @@ it("draws a drop-down at a field's height, and the search's clear mark small", (
   expect(ruleOf(css, ":where(.pl-page, .pl-card-dialog) select")).toBe(":where(.pl-page, .pl-card-dialog) select { height: calc(1em * var(--leading-body) + 2 * var(--space-2) + 2px); font-size: var(--size-body); }");
   // The field it matches: the same padding and the same edge, from the rules every field of these pages has.
   expect(ruleOf(css, "select, input")).toContain("padding: var(--space-2) var(--space-4); border: 1px solid");
-  expect(ruleOf(css, ":where(.pl-page, .pl-card-dialog) button, :where(.pl-page, .pl-card-dialog) select, :where(.pl-page, .pl-card-dialog) input")).toContain("border-color: var(--line); background: var(--hover);");
+  expect(ruleOf(css, ":where(.pl-page) button, :where(.pl-page, .pl-card-dialog) select, :where(.pl-page, .pl-card-dialog) input")).toContain("border-color: var(--line); background: var(--hover);");
   expect(ruleOf(css, ".pl-search::-webkit-search-cancel-button")).toContain("width: 0.65rem; height: 0.65rem;");
 });
 
@@ -545,7 +548,8 @@ it("draws a list, a card, a dialog and every control on them as one surface dark
   const css = sheet();
   // Every list and every card, the ways and the order of use among them: one surface, no list of its own tone.
   expect(ruleOf(css, ".pl-list")).toContain("background: var(--hover);");
-  expect(ruleOf(css, ".pl-card")).toContain("background: var(--hover);");
+  // A shelf card is the set's card, which is that surface; the page keeps only its row of mark and words.
+  expect(ruleOf(css, ".f-card.pl-card")).toBe(".f-card.pl-card { position: relative; flex-direction: row; gap: var(--space-5); min-height: 6.5rem; }");
   // A step short of the wash, which fills the banner over the cards and a new series' band and a needs line inside a list.
   for (const band of [".pl-banner", ".pl-news", ".pl-needs"]) expect(ruleOf(css, band)).toContain("background: var(--wash);");
   expect(css).not.toMatch(/^\.pl-way-list, \.pl-order \{/m);
@@ -553,17 +557,16 @@ it("draws a list, a card, a dialog and every control on them as one surface dark
   // placeholder asks where a plan's name is longer (its `size`), within its row.
   expect(ruleOf(css, ".pl-way-list .pl-key")).toBe("");
   expect(ruleOf(css, ".pl-key")).toBe(".pl-key { width: auto; min-width: 18rem; max-width: 100%; }");
-  // A dialog is that surface inside the faint edge a menu has, so a list or a card in one has no tone of its own.
+  // A card that asks is the set's dialog, white inside the float's edge: the page gives it no ground or edge of its own.
   const dialog = ruleOf(css, "dialog.pl-card-dialog");
-  expect(dialog).toContain("border-color: var(--line); background: var(--hover);");
-  expect(css.indexOf("dialog.pl-card-dialog {")).toBeGreaterThan(css.indexOf("dialog.confirm {"));
+  expect([dialog.includes("background"), dialog.includes("border-color"), css.includes("dialog.confirm")]).toEqual([false, false, false]);
   expect(css).not.toMatch(/^dialog \.pl-list|^dialog a\.pl-row:hover/m);
   // A row that is a link darkens once more under the pointer.
   expect(ruleOf(css, "a.pl-row:hover")).toBe("a.pl-row:hover { background: var(--shade); }");
-  // Every button, field, tick box and radio of the page and its cards: the surface, the faint edge, and under the pointer the edge and the one ground.
-  const control = ":where(.pl-page, .pl-card-dialog) button, :where(.pl-page, .pl-card-dialog) select, :where(.pl-page, .pl-card-dialog) input";
+  // Every button, field, tick box and radio of the page, and every field of its cards: the surface, the faint edge, and under the pointer the edge and the one ground.
+  const control = ":where(.pl-page) button, :where(.pl-page, .pl-card-dialog) select, :where(.pl-page, .pl-card-dialog) input";
   expect(ruleOf(css, control)).toBe(`${control} { border-color: var(--line); background: var(--hover); }`);
-  const under = ":where(.pl-page, .pl-card-dialog) button:hover:not(:disabled)";
+  const under = ":where(.pl-page) button:hover:not(:disabled)";
   expect(ruleOf(css, under)).toBe(`${under} { border-color: var(--edge); }`);
   // After the site's own button, field and link-button, which are the lighter surface inside the strong edge, and weighing no more than they do, so a filled button keeps its fill and its edge.
   for (const own of ["\na.button {", "\nbutton:hover:not(:disabled, :where(.f-btn, .f-quiet, .f-icon, .f-select, .f-switch, .f-menu-row, .f-seg > button)) {", "\nselect, input {"]) {
@@ -582,7 +585,8 @@ it("sets each gap of a card, a row and a line of Settings on a step of the scale
   const css = sheet();
   // A card: its two buttons, its title's by-line or sentence, its groups of rows and the label over each, a sentence over its table.
   expect(ruleOf(css, ".pl-card-acts")).toContain("gap: var(--space-5);");
-  expect(ruleOf(css, ".pl-card-headtext p")).toBe(".pl-card-headtext p { margin: var(--space-1) 0 0; }");
+  // The by-line stands under the set's dialog title, at the title's own margin.
+  expect([ruleOf(css, ".pl-card-headtext p"), ruleOf(css, ".pl-card-head h2")]).toEqual(["", ""]);
   expect(ruleOf(css, ".pl-card-by")).not.toContain("margin");
   expect(ruleOf(css, ".pl-card-rows")).toContain("gap: var(--space-5);");
   expect(ruleOf(css, ".pl-card-label")).toContain("margin: 0 0 var(--space-2);");
@@ -676,9 +680,11 @@ it("keeps the gaps under the tab rule and a part's closing hairline on the scale
   expect(ruleOf(css, ".pl-tabbody > .pl-setting")).toContain("margin-bottom: var(--space-3); padding-bottom: var(--space-6);");
 });
 
-it("keeps a card's title a step above its body, its link in the body's ink, its sentences a step apart, and an act that cannot be pressed yet faded", () => {
+it("keeps a card's title a step above its body, its link in the body's ink, its sentences a step apart, and an act that cannot be pressed yet grey", () => {
   const css = sheet();
-  expect(css).toMatch(/^dialog\.confirm h2 \{[^}]*font-size: var\(--size-lead\)/m);
+  const forms = readFileSync(new URL("./site/forms.css", import.meta.url), "utf8");
+  // The title is the set's dialog title, at the lead size.
+  expect(forms).toMatch(/^\.f-dialog h2 \{[^}]*font-size: var\(--size-lead\)/m);
   expect(ruleOf(css, ".pl-card-body a.pl-inline")).toBe(".pl-card-body a.pl-inline { color: var(--ink); }");
   expect(css.indexOf(".pl-card-body a.pl-inline {")).toBeGreaterThan(css.indexOf(".pl-item .back a, .pl-inline"));
   // A link under a figure or a table is the back link's step, a step under the sentence over it.
@@ -688,7 +694,9 @@ it("keeps a card's title a step above its body, its link in the body's ink, its 
   expect(css).not.toContain(".pl-card-body > p.pl-rule:first-child");
   expect(ruleOf(css, ".pl-card-body > p + p")).toContain("margin-top: var(--space-2);");
   expect(ruleOf(css, ".pl-card-body section > p + p")).toContain("margin-top: var(--space-6);");
-  expect(ruleOf(css, ".pl-card-acts button.primary:disabled")).toContain("background: var(--act); color: var(--act-ink); opacity: 0.45;");
+  // An act that cannot be pressed yet is the set's grey button, not a faded green.
+  expect(css).not.toContain(".pl-card-acts button.primary:disabled");
+  expect(forms).toMatch(/^\.f-btn:is\(:disabled, \[aria-disabled="true"\]\) \{ border-color: var\(--line\); background: var\(--wash\); color: var\(--quiet\);/m);
 });
 
 it("keeps the shelves, the banner and a card on the steps the signed page's gaps land on", () => {

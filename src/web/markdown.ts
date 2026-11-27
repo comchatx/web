@@ -1,7 +1,7 @@
 import MarkdownIt from "markdown-it";
 import { h } from "./dom.js";
 import { markdownHtml } from "../shared/markdown.js";
-import { codePath, findPaths } from "./paths.js";
+import type { FileNames } from "./paths.js";
 
 export { markdownHtml };
 
@@ -246,7 +246,8 @@ function withoutShells(tokens: readonly Token[]): Token[] {
   return out;
 }
 
-export type PathLink = (path: string, shown: string) => HTMLElement;
+/** The files the board lists, and the file box a file named among them is drawn as. */
+export type PathLink = { readonly names: FileNames; readonly box: (path: string) => HTMLElement };
 
 const SKIPPED = new Set(["A", "PRE"]);
 
@@ -260,18 +261,14 @@ function linkPaths(root: Node, link: PathLink): void {
     for (; inside !== null && inside !== root; inside = inside.parentNode) if (SKIPPED.has(inside.nodeName)) skip = true;
     if (skip) continue;
     const parent = node.parentNode;
-    if (parent !== null && parent.nodeName === "CODE" && parent.childNodes.length === 1) {
-      const path = codePath(node.data);
-      if (path !== undefined) { node.replaceWith(link(path, node.data)); }
-      continue;
-    }
-    const pieces = findPaths(node.data);
-    if (pieces.every((piece) => piece.path === undefined)) continue;
-    node.replaceWith(...pieces.map((piece) => (piece.path === undefined ? piece.text : link(piece.path, piece.text))));
+    // Only a span of inline code that is one listed file is the file box: cx marks a file so, and prose stays words.
+    if (parent === null || parent.nodeName !== "CODE" || parent.childNodes.length !== 1) continue;
+    const path = link.names.whole(node.data);
+    if (path !== undefined) node.replaceWith(link.box(path));
   }
 }
 
-/** The session's markdown as elements, with every file path it prints made a way to the file where files can be fetched, and left as text where they cannot. */
+/** The session's markdown as elements, each span of inline code that is one file the board lists drawn as the file box; prose, a link and a code block stay as written; no link, no box. */
 export function renderMarkdown(source: string, link: PathLink | undefined): HTMLElement {
   const holder = h("div", { class: "markdown" });
   holder.innerHTML = markdownHtml(source);

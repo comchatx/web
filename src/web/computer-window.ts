@@ -124,7 +124,7 @@ type Choice = "never" | "custom" | number;
  * written goes back to the one in force and says so.
  */
 export class ComputerWindow {
-  readonly element = h("div", { class: "cw", id: "cw", role: "dialog", tabindex: "-1", "aria-labelledby": "cw-name", hidden: true });
+  readonly element = h("div", { class: "cw", "data-zone": "", id: "cw", role: "dialog", tabindex: "-1", "aria-labelledby": "cw-name", hidden: true });
   readonly #name = h("h2", { class: "cw-name", id: "cw-name" });
   readonly #close: HTMLButtonElement = tip(h("button", { type: "button", class: "sw-close", "data-key": "close", onclick: () => this.ports.close(true) }, icon(CROSS)), () => [this.#close.getAttribute("aria-label") ?? ""]);
   readonly #pic = h("div", { class: "cw-pic", "aria-hidden": "true", inert: true });

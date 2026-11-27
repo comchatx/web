@@ -171,6 +171,12 @@ export class UsagePage {
     return [...this.#top(reads, w), ...this.#lots(reads, w), ...this.#spent(reads, w), ...this.#history(reads, w)];
   }
 
+  /** A member's own 用量: their spending alone, with no money of the organization's (Claude's help: "This page shows only your own usage."). */
+  spent(w: Writer): readonly Child[] {
+    const reads = this.#reads;
+    return reads === undefined ? [] : this.#spent(reads, w);
+  }
+
 
   #top(reads: UsageReads, w: Writer): readonly Child[] {
     const say = this.ports.say;

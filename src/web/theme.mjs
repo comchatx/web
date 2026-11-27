@@ -54,6 +54,9 @@ const DARK = Object.freeze({ paper: "#0E110E", ink: "#EDE8DC", forest: "#4E8B6F"
 // The one job no brand colour can carry is an error: forest is what a person acts on, sand is money, ink is everything else. Brick:
 // sand's warmth turned toward red, at a chroma near the brand's own.
 const ERROR = Object.freeze({ light: oklch(0.5, 0.14, 28), dark: oklch(0.72, 0.12, 28) });
+// A warning, as pi's own theme holds `warning` beside `error`: mustard, as far from sand as brick is, for what needs the person soon and
+// has not failed; a mark only, never words.
+const WARNING = Object.freeze({ light: oklch(0.6, 0.12, 88), dark: oklch(0.86, 0.14, 88) });
 // cx's own props from src/web/cx.js, part of its figure and so kept: the pencil's wood and its chalk.
 const CX_PROPS = Object.freeze({ sandLight: "#EBD9A9", chalk: "#F3EFE4" });
 
@@ -113,8 +116,8 @@ function tokens(theme) {
   // Money: the person's own money, and nothing else. Spend figures and the balance, the receipt, the cost bars, and a price
   // on the product's own controls; an amount inside an answer's text is ink.
   set("money-wash", mix(P, S, light ? 0.16 : 0.14), `${light ? "sand 16% into paper" : "the dark-ground sand 14% into ink"}`);
-  // Failure: the one hue the brand does not have, for what failed and may need the person to act. A warning is not a failure: a step
-  // the person stopped says so in ink, and a wait that ends by itself is quiet.
+  // Failure: the one hue the brand does not have, for what failed and may need the person to act, or the most urgent level. A warning
+  // is not a failure: a step the person stopped says so in ink, and a wait that ends by itself is quiet.
   set("bad", err, `brick, oklch(${light ? "0.50 0.14" : "0.72 0.12"} 28): the one new hue, for a job no brand colour carries`);
   set("bad-wash", mix(P, err, light ? 0.08 : 0.12), `brick ${light ? 8 : 12}% into ${into}`);
   set("bad-line", mix(P, err, 0.45), `brick 45% into ${into}`);
@@ -149,6 +152,10 @@ function tokens(theme) {
   // Over the page: a menu or cx's bubble, drawn by its outline; a dialog, over the page it stops
   set("float-hover", mix(v("hover"), I, light ? 0.045 : 0.06), `${toward} ${light ? 4.5 : 6}% into hover: a row under the pointer in a menu or a list of ticks, and the ground under the pointer app-wide on anything a person can press`);
   set("float-shadow", "none", "none: what lies over the page is drawn by its outline");
+  // Warning: what needs the person soon and has not failed, today an urgent card's level; a mark only, never words.
+  const markGrounds = ["ground", "raised", "wash", "hover", "float-hover"].map(v);
+  set("warn", light ? deepen(WARNING.light, markGrounds, LARGE) : WARNING.dark,
+    light ? "mustard, oklch(0.60 0.12 88), darkened until a mark reads 3:1 on every ground it sits on" : "mustard, oklch(0.86 0.14 88)");
   set("scrim", light ? alpha(I, 0.3) : alpha(DARK.paper, 0.6), light ? "ink at 30%: the page under a dialog, still seen" : "the logo's dark ground at 60%: the page under a dialog, still seen");
 
   // The logo, as §8.2 draws it: its light-ground colours on paper, its dark-ground colours on a dark ground
@@ -192,7 +199,8 @@ const ORDER = Object.freeze([
   ["What a person acts on: buttons, links, focus, selected text, a switch that is on", ["act", "act-ink", "act-hover", "act-wash"]],
   ["A step, and work under way", ["step", "step-edge", "step-hover", "live", "live-wash", "live-edge"]],
   ["Money: the person's own money, and nothing else", ["money", "money-wash", "money-bar-1", "money-bar-2", "money-bar-3"]],
-  ["Failure: what failed and may need the person to act; a warning is not one", ["bad", "bad-wash", "bad-line"]],
+  ["Failure: what failed and may need the person to act, or the most urgent level; a warning is not one", ["bad", "bad-wash", "bad-line"]],
+  ["Warning: what needs the person soon and has not failed; a mark only", ["warn"]],
   ["Over the page: a menu, cx's bubble, a dialog", ["float-edge", "float-hover", "float-shadow", "scrim"]],
   ["The logo", ["logo-forest", "logo-sand"]],
   ["cx and its computer: what cx.js reads", ["cx-line", "cx-forest", "cx-forest-shade", "cx-sand", "cx-sand-shade", "cx-sand-light", "cx-chalk", "cx-bezel", "cx-bezel-top", "cx-bezel-side", "cx-tube-top", "cx-tube-side", "cx-paper", "cx-coin", "cx-screen-off", "cx-screen-on", "cx-good", "cx-warn", "cx-quiet", "cx-accent", "cx-bad"]],
@@ -246,6 +254,11 @@ export const PAIRS = Object.freeze([
   ["money", "line", LARGE, "a bar of money on its track: the credit bar, a warned bar, a lot's bar in Settings"],
   ["quiet", "line", LARGE, "a bar on its track: the computer's three, cx's card, the model picker, a Plugins usage bar"],
   ["bad", "line", LARGE, "a failed bar on its track"],
+  ["warn", "ground", LARGE, "an urgent card's lit level bars"],
+  ["warn", "raised", LARGE, "the same on a card"],
+  ["warn", "wash", LARGE, "the same on a held card"],
+  ["warn", "hover", LARGE, "the same on a hovered card"],
+  ["warn", "float-hover", LARGE, "the same in its menu, under the pointer"],
   ["money-bar-1", "raised", LARGE, "a spending bar's foot in the settings window"],
   ["money-bar-2", "raised", LARGE, "a spending bar's second part in the settings window"],
   ["money-bar-3", "raised", LARGE, "a spending bar's third part in the settings window"],
@@ -298,6 +311,8 @@ const SCALES = `/* ---- The scales: one set for light and dark ---- */
   --radius-round: 999px;
   /* Motion: one quick settle, never a bounce. */
   --motion-quick: 120ms;
+  /* One travel across a surface: a mark sliding to its place, a card stretching to its new height (Material 3's medium2). */
+  --motion-travel: 300ms;
   --ease: cubic-bezier(0.2, 0, 0, 1);
   /* The glass over the board while cx's computer is off (ruled 2026-11-12): how far it blurs what lies under it, how much of the
      ground it lays over it (half that while the computer starts), and how long it takes to clear as the board comes. */

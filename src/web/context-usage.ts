@@ -1,5 +1,5 @@
 /**
- * How full cx's context is, as pi says it in its answer to `get_session_stats` (pi 1.6.0, `contextUsage`): the figure pi itself compacts
+ * How full cx's context is, as pi says it in its answer to `get_session_stats` (pi 1.6.1, `contextUsage`): the figure pi itself compacts
  * by. `null` is pi's own word right after a compaction, until its next answer has a figure: the context is summarised. An answer with no
  * figure — no model, no window, a refusal, a box older than the read — is `undefined`, and the card draws no figure for it.
  */

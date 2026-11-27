@@ -1,9 +1,9 @@
 /**
  * The Plugins page's marks. A vendor's logo, monochrome in the text's own colour, keyed by its name in the set it comes from. The model
  * plugins' come from one set, @lobehub/icons-static-svg 1.95.1 (MIT; its notice ships as `site/assets/third-party-notices.txt`), by
- * one rule: a maker card wears its vendor's mark where the set has one, else its product's (Amazon's Nova, Meituan's LongCat, Ant Group's
+ * one rule: a maker card wears its vendor's mark where the set has one, else its product's (Amazon's Nova, Ant Group's
  * for its inclusionAI), a host's card its host's, else its initial (the card words' `mark`, from the `comchatx` field of its maker's package or
- * its own (`cardPackage`), names which; the set has none for Elorian, KT, Motif Technologies, Nex AGI, PrismML, Radius, Recursive, Reflection, Ricursive,
+ * its own (`cardPackage`), names which; the set has none for Elorian, KT, Motif Technologies, Nex AGI, PrismML, Radius, RadixArk, Recursive, Reflection, Ricursive,
  * Thinking Machines Lab or Unbiased). TypeSafe's, Jev's, is the mark its site draws in its header (typesafe.ai, read 2026-11-13). Keepa's is its own site's pinned-tab icon. pi's is pi's
  * own mark as pi.dev serves it for its tab (`pi.dev/favicon.svg`), drawn on a pi package; npm's and GitHub's are the marks pi.dev's
  * package cards draw beside their links (read 2026-11-05). Trademarks stay their owners'. A record without a logo draws its line icon, a 24-unit path; one with neither draws its initial.

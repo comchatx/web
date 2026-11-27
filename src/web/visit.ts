@@ -1,7 +1,7 @@
 import { Refused, Unopened, type Backend, type HeldMessage, type Me, type Opened } from "./backend.js";
 import { takesMessages, type Blocked, type Box } from "./box-state.js";
 import { afterEnd, type Next } from "./reconnect.js";
-import { closed, DROPPED_NOTICE, EMPTY, earlier, letGo, NEWEST, NOTICE_MS, placeWord, readPlace, reconnected, reduce, sent, stamped, waitsForBox, withdrawn, working, type Item, type StreamEvent, type StreamState } from "./stream-model.js";
+import { closed, CX_SAYS, cxSays, DROPPED_NOTICE, EMPTY, earlier, letGo, NEWEST, NOTICE_MS, placeWord, readCxSays, readPlace, reconnected, reduce, sent, stamped, waitsForBox, withdrawn, working, type Item, type StreamEvent, type StreamState } from "./stream-model.js";
 import { DIALOG_ANSWER, isOptionCard, type Dialog, type DialogAnswer } from "../shared/dialog.js";
 
 /** `idle` holds no stream — the box asleep, or the stream let go until an open answers; `held` waits for the person after the store and the box disagreed. */
@@ -857,7 +857,17 @@ export class Visit {
       const closing = this.ports.backend.close();
       closing.catch(() => undefined);
       try {
-        if (await Promise.race([closing, ended]) !== "closed") throw new Error("close refused as busy");
+        const answer = await Promise.race([closing, ended]);
+        // A close the platform stopped waiting for (its fetch ends at 300 s) runs on in a box the platform still reads on: it ends on the
+        // box's sleep, or on the platform reading it off, and is drawn as switching off until then.
+        if (answer === "unanswered") {
+          const me = await this.ports.account().catch(() => undefined);
+          if (me !== undefined) this.me = me;
+          const machine = me?.kind === "signed_in" ? me.machine : undefined;
+          if (machine === "on") { await ended; return; }
+          if (machine === "off") { this.#asleep(); return; }
+        }
+        if (answer !== "closed") throw new Error(`close ${answer}`);
         this.#asleep();
       } catch (error) {
         // A close that did not end is drawn as the platform reads the computer: off, it did end; on, the close the box began is over.
@@ -1095,8 +1105,13 @@ export class Visit {
     return new Promise((resolve) => { this.ports.later(ms, resolve); });
   }
 
-  /** A frame of the connection the page holds. */
+  /** A frame of the connection the page holds, or the page's own word that cx says a tutorial line, which says nothing of the box. */
   receive(event: StreamEvent): void {
+    if (event.event === CX_SAYS) {
+      const said = readCxSays(event.data);
+      if (said !== undefined) { this.stream = cxSays(this.stream, said); this.ports.changed("stream"); }
+      return;
+    }
     this.answered = true;
     const data = record(event.data) ? event.data : {};
     const was = this.box;

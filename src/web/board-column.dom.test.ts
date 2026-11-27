@@ -13,7 +13,7 @@ const shown = (): string | undefined => { const box = document.querySelector<HTM
 const realMatch = window.matchMedia.bind(window);
 
 /** The column's own media query, which happy-dom does not evaluate, held by the test: beside the chat or over it. */
-function column(beside = true, sidebar = 248, kept?: string, keptOver?: string, reduced = false) {
+function column(beside = true, sidebar = 248, kept?: string, keptOver?: string, reduced = false, more: { readonly openWindow?: () => void; readonly windowed?: boolean } = {}) {
   const listeners: (() => void)[] = [];
   const query = { matches: beside, addEventListener: (_: string, listener: () => void) => { listeners.push(listener); } };
   const calm = { matches: reduced, addEventListener: () => {} };
@@ -31,7 +31,7 @@ function column(beside = true, sidebar = 248, kept?: string, keptOver?: string, 
   const changed = vi.fn();
   const opening = vi.fn();
   const tab = page.querySelector<HTMLButtonElement>(".in-page")!;
-  const made = new BoardColumn({ say: (key, values) => text("en", key, values), top, chat, root, sidebarWidth: () => sidebar, changed, opening, landing: () => tab, store: { read: (key) => kept_[key]?.at(-1) ?? null, write: (key, value) => { kept_[key]!.push(value); } } }, head, page);
+  const made = new BoardColumn({ say: (key, values) => text("en", key, values), top, chat, root, sidebarWidth: () => sidebar, changed, opening, landing: () => tab, store: { read: (key) => kept_[key]?.at(-1) ?? null, write: (key, value) => { kept_[key]!.push(value); } }, ...more }, head, page);
   changed.mockImplementation(() => made.draw(4));
   // The column is as wide as it is drawn: happy-dom lays nothing out.
   Object.defineProperty(made.element, "offsetWidth", { get: () => parseFloat(made.element.style.width) || 0 });
@@ -47,6 +47,37 @@ const MOST = ROOM - CHAT_STRIP * REM;
 const MEET = ROOM - CHAT_LEAST * REM;
 
 describe("the board's column", () => {
+  it("draws 在新窗口中打开 before full screen while the column is open, its word its name and its tip, and a press opens the window", () => {
+    const openWindow = vi.fn();
+    const { made, head } = column(true, 248, undefined, undefined, false, { openWindow });
+    made.install(true);
+    const button = head.querySelector<HTMLButtonElement>(".board-window-open")!;
+    expect(button.hidden).toBe(true);
+    made.set(true);
+    expect([button.hidden, button.getAttribute("aria-label"), button.nextElementSibling?.classList.contains("board-full")]).toEqual([false, "Open in new window", true]);
+    button.dispatchEvent(new MouseEvent("pointerover", { bubbles: true }));
+    button.click();
+    expect(openWindow).toHaveBeenCalledTimes(1);
+    // Without a way to open one, there is no such control.
+    document.body.replaceChildren();
+    const plain = column();
+    plain.made.install(true);
+    plain.made.set(true);
+    expect(plain.head.querySelector<HTMLButtonElement>(".board-window-open")!.hidden).toBe(true);
+  });
+
+  it("in a window of its own is always open, over nothing, with no icon, divider, full screen or 在新窗口中打开, and nothing closes it", () => {
+    const { made, head, flip } = column(false, 0, undefined, undefined, false, { windowed: true });
+    made.install(true);
+    expect([made.open, made.over, made.covers, made.row.hidden, made.divider.hidden]).toEqual([true, false, false, true, true]);
+    expect([head.querySelector<HTMLElement>(".board-full")!.hidden, head.querySelector<HTMLElement>(".board-window-open")!.hidden]).toEqual([true, true]);
+    made.set(false);
+    flip(true);
+    flip(false);
+    expect([made.open, made.took(new KeyboardEvent("keydown", { key: "Escape" }))]).toEqual([true, false]);
+    expect(made.element.style.width).toBe("");
+  });
+
   it("shows no icon and no column without the package, and with it the clipboard at the chat's top right, counting what waits", () => {
     const { made, top } = column();
     made.draw(0);

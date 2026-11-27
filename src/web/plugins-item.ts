@@ -19,7 +19,7 @@ import { again, cardFor, factLine, failureLine, install, needAgainPlace, needPla
 import { endSaid, switching, type About, type Busy, type Doing, type Failed } from "./plugins-doing.js";
 import { readmeHtml } from "./markdown.js";
 import { rowUpdate } from "./plugins-update.js";
-import { switchButton, tip, type Menu } from "./forms.js";
+import { dialog as modal, switchButton, tip, type Menu } from "./forms.js";
 import { iconAct, moreMenu, rowIcon } from "./plugins-row.js";
 import { cancelPlace, retryPlace, type QueueRow } from "./plugins-queue.js";
 import { authored, downloadsWord, galleryPlugin, langOf, npmFacts, npmPageOf, thirdMark } from "./plugins-npm.js";
@@ -679,7 +679,8 @@ export class ItemPage {
   /** A tab that counts says how many: the plugins it uses, the models served. */
   #count(plugin: Plugin, tab: Tab): number | undefined {
     if (tab === "deps") return directOf(this.#heldFor(plugin), plugin).length;
-    if (tab === "models") return this.#modelCount(plugin);
+    // A member's Models tab lists the chat's models alone, so it counts none of the vendor's.
+    if (tab === "models") return this.#member ? undefined : this.#modelCount(plugin);
     return undefined;
   }
 
@@ -765,6 +766,7 @@ export class ItemPage {
       this.#backLink(this.context.back),
       h("header", { class: "pl-head" }, this.context.tile(bundle, true),
         h("div", { class: "pl-head-text" }, h("h1", { tabindex: "-1", "data-focus": "heading" }, this.#name(bundle)), h("p", { class: "quiet" }, this.#say("pl.head.members", { author: bundle.author, count })),
+          this.#member && this.#managed("org.bundleManaged"),
           // A bundle has no switch of its own: what it installed that is off now is said under its name.
           !this.context.unread && off.length > 0 && h("p", { class: "quiet pl-head-off" }, this.#say(off.length > 1 ? "pl.head.offMany" : "pl.head.offOne", { names: names(off) })),
           // What it lacks is said the same way, beside Install the rest.
@@ -772,17 +774,32 @@ export class ItemPage {
         // The state, then ⋮, as on a plugin's page (sheet 3c).
         h("div", { class: "pl-head-tools" }, this.context.unread ? "" : busy !== undefined ? install : queued !== undefined ? queued : whole
           ? h("span", { class: "pl-state pl-done", tabindex: "-1", "data-focus": "tool" }, this.#say("pl.installed"))
-          : install, ...(!this.context.unread && busy === undefined && inYours(held, bundle) ? this.#moreOf(bundle) : []))),
+          : this.#member ? h("span", { class: "quiet" }, this.#say("pl.side.notInstalled"))
+          : install, ...(!this.context.unread && busy === undefined && inYours(held, bundle) && !this.#member ? this.#moreOf(bundle) : []))),
       this.#unreadLine(),
       // What a plugin it installed waits on from the seller, as that plugin's own page says it.
       ...(this.context.unread || busy !== undefined ? [] : installsOf(held, bundle).flatMap((plugin) => needsOf(held, plugin).some((needs) => needs.kind === "connect")
-        ? [h("div", { class: "pl-needs", role: "status" }, h("span", {}, this.#say("pl.need.unconnected", { name: this.#name(plugin) })), h("a", { class: "pl-needs-act", href: `${href.item(plugin)}/settings` }, this.#say("pl.need.connectAct", { name: this.#name(plugin) })))] : [])),
+        ? [h("div", { class: "pl-needs", role: "status" }, h("span", {}, this.#say("pl.need.unconnected", { name: this.#name(plugin) })), !this.#member && h("a", { class: "pl-needs-act", href: `${href.item(plugin)}/settings` }, this.#say("pl.need.connectAct", { name: this.#name(plugin) })))] : [])),
       this.#noteLine(),
       ...this.#doingLines(bundle),
       h("nav", { class: "pl-tabs", role: "tablist", onfocusin: tabInView }, ...(["overview", "plugins"] as const).map((one) =>
         h("a", { class: "pl-tab", role: "tab", href: `${href.item(bundle)}/${one}`, "aria-selected": String(one === shown), "data-focus": `tab ${one}` }, this.#say(`pl.tab.${one}`), one === "plugins" && h("span", { class: "pl-tab-count" }, ` · ${count}`)))),
       h("div", { class: "pl-tabbody" }, ...(shown === "plugins" ? this.#bundlePlugins(bundle) : this.#overview(bundle, membersOf(held, bundle)))),
     );
+  }
+
+  /** The asker is the organization's member: what only its admin changes is not offered on the page. */
+  get #member(): boolean { return this.context.held.member === true; }
+
+  /** Under the name, for a member, that the organization manages it, where main says a plugin's files are gone. */
+  #managed(key: "org.pluginManaged" | "org.bundleManaged"): HTMLElement {
+    return h("p", { class: "quiet pl-head-off", "data-key": key }, this.#say(key));
+  }
+
+  /** For a member, a form the admin fills says only whether it is connected, in main's pair of words. */
+  #connectedOnly(title: string, connected: boolean): HTMLElement {
+    return h("section", { class: "pl-setting" }, h("h2", {}, title),
+      connected ? h("p", { tabindex: "-1", "data-focus": "sf-connected" }, this.#say("pl.ms.connected")) : h("p", { class: "quiet" }, this.#say("pl.mp.notConnected")));
   }
 
   #backLink(back: { readonly href: string; readonly name: string }): HTMLElement {
@@ -807,12 +824,15 @@ export class ItemPage {
       : busy?.act === "install" || busy?.act === "remove" ? [this.#busyButton(plugin, busy)]
       : queued !== undefined ? [queued]
       : !has ? (failed?.row.act === "install" ? this.#failedEnd(plugin, failed)
+        // A member installs nothing: the organization's admin does, so where Install stood the page says it is not installed.
+        : this.#member ? [h("span", { class: "quiet" }, this.#say("pl.side.notInstalled"))]
         : [h("button", { type: "button", class: "primary", "data-focus": "tool", "data-card": cardFor(held, "install", plugin), onclick: () => void this.#install(plugin, true) }, `+ ${this.#say("pl.install")}`)])
-      : [...(failed?.row.act === "update" ? this.#failedEnd(plugin, failed) : [this.#updateEnd(plugin)]), ...this.#installedEnd(plugin, busy)];
+      : [...(failed?.row.act === "update" ? this.#failedEnd(plugin, failed) : this.#member ? [] : [this.#updateEnd(plugin)]), ...this.#installedEnd(plugin, busy)];
     return h("header", { class: "pl-head" }, this.context.tile(plugin, true),
       h("div", { class: "pl-head-text" }, h("h1", { tabindex: "-1", "data-focus": "heading" }, this.#name(plugin)), // Who checked it stands where who made it does, which is where the eye looks for whose it is.
         this.#headMeta(plugin, meta),
-        !this.context.unread && has && filesMissing(held, plugin) && h("p", { class: "quiet pl-head-off" }, this.#say("pl.head.missing"))),
+        !this.context.unread && has && filesMissing(held, plugin) && h("p", { class: "quiet pl-head-off" }, this.#say("pl.head.missing")),
+        this.#member && this.#managed("org.pluginManaged")),
       h("div", { class: "pl-head-tools" }, ...tools));
   }
 
@@ -834,7 +854,8 @@ export class ItemPage {
     return [
       h("span", { class: "pl-q-state pl-q-state-bad", role: "alert" }, mark, h("span", { class: "pl-q-state-word" }, words)),
       h("span", { class: "f-marks" },
-        iconAct("again", this.#say(update ? "pl.q.retryUpdate" : "pl.q.retryInstall", { name }), failed.retry, { focus: retryPlace(failed.row) }),
+        // A member tries nothing again, an install being the admin's; the failed row is the organization's, so ✕ clears it for everyone.
+        !this.#member && iconAct("again", this.#say(update ? "pl.q.retryUpdate" : "pl.q.retryInstall", { name }), failed.retry, { focus: retryPlace(failed.row) }),
         iconAct("close", this.#say(update ? "pl.q.cancelUpdate" : "pl.q.cancelInstall", { name }), failed.cancel, { focus: cancelPlace(failed.row) })),
     ];
   }
@@ -848,6 +869,8 @@ export class ItemPage {
     const on = readsOn(held, plugin);
     const name = this.#name(plugin);
     const word = (key: StringKey): HTMLElement => h("span", { class: "pl-state" }, this.#say(key));
+    // A member is told the state alone: the switch and ⋮ are the admin's.
+    if (this.#member) return [word(plugin.model !== undefined ? "pl.installed" : on ? "pl.switch.on" : "pl.switch.off")];
     if (plugin.model !== undefined) return [word("pl.installed"), ...this.#moreOf(plugin)];
     if (this.context.doing.facts(plugin).has("single_file")) return [word(on ? "pl.switch.on" : "pl.switch.off"), ...this.#moreOf(plugin)];
     // A press asks for the other state than the one held, however often it comes before the page is drawn again; a card closed with
@@ -911,6 +934,13 @@ export class ItemPage {
    */
   #needsLine(plugin: Plugin, tab: Tab): readonly Child[] {
     const press = (place: string, work: () => Promise<boolean>): void => void work().then((done) => { if (!done) placed(this.element, place)?.focus(); this.#land(); });
+    // A member is told what the plugin lacks and offered none of the presses that install, turn on or connect it: those are the admin's.
+    if (this.#member) {
+      if (this.context.unread) return [];
+      const name = (one: Plugin): string => nameIn(one, this.context.language);
+      return needsOf(this.context.held, plugin).flatMap((needs) => needs.kind === "connect" ? (tab === "settings" && connects(this.context.held, plugin) ? [] : [h("div", { class: "pl-needs", role: "status" }, h("span", {}, this.#say("pl.need.connect")))])
+        : [h("div", { class: "pl-needs", role: "status" }, h("span", {}, needs.kind === "gone" ? this.#say("pl.need.gone", { plugin: name(plugin), name: name(needs.root) }) : this.#say("pl.need.off", { name: name(needs.root) })))]);
+    }
     return needsLine(this.context, plugin, this.context.unread, {
       // A source's own Settings is where its store is connected, so it draws no line sending the seller there, as round 27 does.
       connect: !(tab === "settings" && connects(this.context.held, plugin)),
@@ -1029,6 +1059,8 @@ export class ItemPage {
     const prompts = plugin.box?.prompts ?? [];
     const unread = plugin.box?.unread?.includes("prompts") === true && !this.context.unread;
     if (prompts.length === 0 && !unread) return "";
+    // A Try it installs a plugin not installed before it puts its sentence, an install a member does not make: there, none is drawn.
+    if (this.#member && !installed(this.context.held, plugin)) return "";
     return h("section", {}, h("h2", {}, this.#say("pl.ov.try")),
       unread && h("p", { class: "quiet" }, this.#say("pl.pkg.promptsUnread")),
       prompts.length > 0 && h("ul", { class: "pl-tries" }, ...prompts.map((prompt) =>
@@ -1213,6 +1245,11 @@ export class ItemPage {
       if (value === "") { keyNote.textContent = this.#say("pl.st.keyEmpty"); field.focus(); return; }
       await this.#act(() => backend.saveSourceKey(source.name, value));
     };
+    // A member is told only the way that pays, its press gone: who pays is the admin's to change.
+    if (this.#member) return source.unitsPerNative === undefined ? [] : [h("section", { class: "pl-setting" }, h("h2", {}, this.#say("pl.st.pay")),
+      h("ul", { class: "pl-list pl-way-list" }, key && source.ownKey !== undefined
+        ? row("key", this.#say("pl.src.key", { supplier: source.supplier }), h("span", { class: "quiet" }, this.#say("pl.ms.keySaved")))
+        : row("platform", this.#say("pl.src.platform", { price: this.context.money === undefined ? "" : unitPrice(source, this.context.money) }))))];
     const pay = source.unitsPerNative === undefined ? "" : h("section", { class: "pl-setting" }, h("h2", {}, this.#say("pl.st.pay")),
       h("ul", { class: "pl-list pl-way-list" },
         row("platform", this.#say("pl.src.platform", { price: this.context.money === undefined ? "" : unitPrice(source, this.context.money) }), key && toBalance("pl.src.use")),
@@ -1233,6 +1270,7 @@ export class ItemPage {
    * clears every field and turns the source off.
    */
   #fieldsSettings(plugin: Plugin, source: Source): HTMLElement {
+    if (this.#member) return this.#connectedOnly(this.#say("pl.sf.title"), source.enabled && Object.keys(source.fields ?? {}).length > 0 && Object.values(source.fields ?? {}).every(Boolean));
     if (this.#fieldsForm?.source !== source.name) this.#fieldsForm = { source: source.name, values: {}, checking: false };
     const form = this.#fieldsForm;
     const saved = source.fields ?? {};
@@ -1390,7 +1428,9 @@ export class ItemPage {
     // A connection whose pair is not listed still stands under its pair's name, so its Remove is reached.
     const pairs: readonly SourcePair[] = [...listed, ...[...new Set(connections.map(pairOf))].filter((name) => !listed.some((one) => one.name === name)).map((name) => ({ name, fields: {} }))];
     const open = this.#pairForm?.source === source.name ? this.#pairForm.at : undefined;
-    if (pairs.length === 0) return [this.#pairFormDrawn(plugin, source, this.#pairFormAt(source, FIRST_PAIR), true)];
+    // A member connects and removes nothing here: the stores are the admin's, the rows only said.
+    const member = this.#member;
+    if (pairs.length === 0) return [member ? this.#connectedOnly(this.#line(plugin, "connect") ?? "", false) : this.#pairFormDrawn(plugin, source, this.#pairFormAt(source, FIRST_PAIR), true)];
     const backend = this.context.backend;
     // After a row's Remove the keyboard goes to the press that adds under its pair; with the pair gone, to the press that adds a pair; with nothing left, to the form.
     const landed = (pair: string): void => { (placed(this.element, `add ${pair}`) ?? placed(this.element, "add-pair") ?? placed(this.element, "sp-client_id"))?.focus(); };
@@ -1402,7 +1442,7 @@ export class ItemPage {
       const said = names.length > 0 ? this.#places(names) : one.refused === true ? this.#line(plugin, "refused") : one.accounts?.length === 0 ? this.#line(plugin, "none") : undefined;
       return h("li", {}, h("div", { class: "pl-row pl-way-row", tabindex: "-1", "data-focus": `row ${one.store}` },
         h("span", { class: "pl-row-text" }, ...this.#rowLines(plugin, one)),
-        h("span", { class: "pl-way-act" }, this.#waits.ring(`row-remove ${source.name}\u0000${one.store}`, h("button", { type: "button", "data-focus": `remove ${one.store}`, "data-removes": true,
+        !member && h("span", { class: "pl-way-act" }, this.#waits.ring(`row-remove ${source.name}\u0000${one.store}`, h("button", { type: "button", "data-focus": `remove ${one.store}`, "data-removes": true,
           "aria-label": said === undefined ? undefined : `${this.#say("pl.c.remove")} ${said}`, onclick: this.#waits.press(`row-remove ${source.name}\u0000${one.store}`, () => removeRow(one)) }, this.#say("pl.c.remove"))))));
     };
     const opened = (at: string, first: string) => (): void => { this.#pairForm = undefined; this.#pairFormAt(source, at); this.again(); placed(this.element, first)?.focus(); };
@@ -1414,15 +1454,15 @@ export class ItemPage {
       return [
         h("div", { class: "pl-pair" },
           h("h3", {}, field !== undefined && h("span", {}, this.#fieldName(plugin, field)), field !== undefined && " ", value !== undefined && h("span", { class: "pl-pair-id" }, value)),
-          this.#waits.ring(`pair-remove ${source.name}\u0000${pair.name}`, h("button", { type: "button", "data-focus": `remove-pair ${pair.name}`, "data-removes": true,
+          !member && this.#waits.ring(`pair-remove ${source.name}\u0000${pair.name}`, h("button", { type: "button", "data-focus": `remove-pair ${pair.name}`, "data-removes": true,
             "aria-label": value === undefined ? undefined : `${this.#say("pl.cl.remove")} ${value}`, onclick: (event: Event) => { const pressed = event.currentTarget as HTMLElement | undefined; void this.#askRemovePair(plugin, source, pair, mine, (work) => this.#waits.run(`pair-remove ${source.name}\u0000${pair.name}`, work, pressed)); } }, this.#say("pl.cl.remove")))),
         mine.length > 0 && h("ul", { class: "pl-list pl-way-list" }, ...mine.map(row)),
-        open === pair.name ? this.#pairFormDrawn(plugin, source, this.#pairFormAt(source, pair.name), false)
+        member ? false : open === pair.name ? this.#pairFormDrawn(plugin, source, this.#pairFormAt(source, pair.name), false)
           : add !== undefined && h("p", { class: "pl-after" }, h("button", { type: "button", "data-focus": `add ${pair.name}`, "aria-label": value === undefined ? undefined : `${add} ${value}`, onclick: opened(pair.name, `sp-${token ?? ""}`) }, add)),
       ];
     };
     return [h("section", { class: "pl-setting" }, h("h2", {}, this.#line(plugin, "rows") ?? ""), ...pairs.flatMap(group),
-      open === "new" ? this.#pairFormDrawn(plugin, source, this.#pairFormAt(source, "new"), false)
+      member ? false : open === "new" ? this.#pairFormDrawn(plugin, source, this.#pairFormAt(source, "new"), false)
         : h("p", { class: "pl-after pl-add-pair" }, h("button", { type: "button", "data-focus": "add-pair", onclick: opened("new", "sp-client_id") }, this.#say("pl.cl.add"))))];
   }
 
@@ -1525,24 +1565,28 @@ export class ItemPage {
     const names = this.#rowNames(rows);
     if (names.length === 0) return go();
     return new Promise<void>((resolve) => {
-      const dialog = h("dialog", { class: "confirm pl-card-dialog", "aria-labelledby": "pl-card-title", tabindex: "-1", "data-card": "remove-pair" }) as HTMLDialogElement;
+      const dialog = h("dialog", { class: "f-dialog pl-card-dialog", "aria-labelledby": "pl-card-title", tabindex: "-1", "data-card": "remove-pair" }) as HTMLDialogElement;
+      let shut = false;
       const close = (removing: boolean): void => {
+        if (shut) return;
+        shut = true;
         dialog.close?.();
         dialog.remove();
         if (removing) { void go().then(() => resolve()); return; }
         placed(this.element, `remove-pair ${pair.name}`)?.focus();
         resolve();
       };
-      dialog.addEventListener("cancel", (event) => { event.preventDefault(); close(false); });
+      // Escape and a press on the dimmed page close the box, as Cancel does.
+      dialog.addEventListener("close", () => close(false));
       const middle = h("div", { class: "pl-card-body", tabindex: "-1" }, h("p", {}, this.#line(plugin, "removedWith", { names: this.#places(names) }) ?? ""));
       dialog.append(
         h("div", { class: "pl-card-head" }, h("div", { class: "pl-card-headtext" }, h("h2", { id: "pl-card-title" }, this.#say("pl.cl.removeTitle")))),
         middle,
-        h("p", { class: "row pl-card-acts" },
-          h("button", { type: "button", "data-focus": "card-cancel", onclick: () => close(false) }, this.#say("pl.c.cancel")),
-          h("button", { type: "button", class: "primary", "data-focus": "card-remove", onclick: () => close(true) }, this.#say("pl.c.remove"))));
+        h("div", { class: "f-acts pl-card-acts" },
+          h("button", { type: "button", class: "f-btn", "data-focus": "card-cancel", onclick: () => close(false) }, this.#say("pl.c.cancel")),
+          h("button", { type: "button", class: "f-btn primary", "data-focus": "card-remove", onclick: () => close(true) }, this.#say("pl.c.remove"))));
       (this.context.cards?.() ?? globalThis.document.body).append(dialog);
-      if (typeof dialog.showModal === "function") dialog.showModal();
+      modal(dialog, middle)(placed(this.element, `remove-pair ${pair.name}`) ?? middle);
       middle.focus?.({ preventScroll: true });
     });
   }
@@ -1611,7 +1655,8 @@ export class ItemPage {
   #ways(plugin: Plugin): HTMLElement {
     const states = this.#wayStates(plugin);
     const used = connectedWays(this.context.held, plugin).flatMap((way) => states.filter((one) => one.way === way && one.on));
-    return h("ul", { class: "pl-list pl-way-list" }, ...[...used, ...states.filter((one) => !used.includes(one))].map((door) => {
+    // A member is told the ways that pay alone: a way not set up is the admin's to set up.
+    return h("ul", { class: "pl-list pl-way-list" }, ...[...used, ...(this.#member ? [] : states.filter((one) => !used.includes(one)))].map((door) => {
       return h("li", {}, h("a", { class: "pl-row pl-way-link", href: `${href.item(plugin)}/settings` },
         h("span", { class: "pl-row-text" }, h("strong", {}, this.#doorLabel(plugin, door)),
           h("span", { class: "quiet" }, ...this.#doorBill(plugin, door))),
@@ -1719,7 +1764,7 @@ export class ItemPage {
     // nothing there, it says what it waits for in that page's words.
     const offered = has ? offeredInChat(this.context.held, plugin) : ticked;
     const count = this.#modelCount(plugin) ?? 0;
-    const ways = h("section", {}, h("h2", {}, this.#say("pl.mo.ways")), this.#ways(plugin), this.#chooseVendors());
+    const ways = h("section", {}, h("h2", {}, this.#say("pl.mo.ways")), this.#ways(plugin), !this.#member && this.#chooseVendors());
     // A vendor serving nothing today has said so under its header; its Overview sells no model, and keeps its package's own words, which
     // say how it is reached, over the ways it is reached by.
     if (idle(this.context.held, plugin)) return [h("div", { class: "pl-columns" }, h("div", { class: "pl-main pl-model-main" },
@@ -1765,6 +1810,13 @@ export class ItemPage {
     };
     // The sentence promises a tick: both are drawn only where some model can be ticked.
     const tickable = this.context.features.modelPlugins && models.some((model) => served(model) !== undefined && model.via !== undefined);
+    // A member chooses no model: the tab lists what the chat offers them, each series at its version and price; with none, nothing.
+    if (this.#member) {
+      const inChat = series?.filter((one) => one.inChat) ?? [];
+      const chosen = series === undefined ? this.#inUse(models) : [];
+      return plugin.model?.chat === false || (inChat.length === 0 && chosen.length === 0) ? []
+        : [h("section", {}, h("h2", {}, this.#say("pl.mt.chat")), h("div", { class: "pl-model-rows" }, series !== undefined ? this.#seriesInUse(plugin, inChat) : this.#modelTable(chosen, this.#priced(plugin))))];
+    }
     return [
       !has && !this.context.unread && h("p", { class: "quiet" }, this.#say("pl.mt.install", { name: this.#name(plugin) })),
       !this.context.unread && this.#waitsForWay(plugin, series) && h("p", { class: "quiet" }, this.#idleLine(plugin)),
@@ -2017,6 +2069,8 @@ export class ItemPage {
     };
     const nameOf = (door: Door): string => (door.place === "way-account" ? signInName(plugin, this.context.language) : PROVIDERS[door.provider!]?.name ?? door.provider!);
     const holds = (way: Way, provider: string): boolean => states.some((one) => one.way === way && one.provider === provider && one.on);
+    // A member is told the ways that pay, their presses gone, and is offered no way to choose the chat's vendors: those are the admin's.
+    const member = this.#member;
     const control = (door: Door): readonly Child[] => {
       const { way, on, place } = door;
       const provider = door.provider!;
@@ -2066,7 +2120,7 @@ export class ItemPage {
       const signingIn = account !== undefined && this.#signIn?.account === account.id ? this.#signIn : undefined;
       return h("li", { id: place }, h("div", { class: "pl-row pl-way-row" },
         h("span", { class: "pl-row-text" }, h("strong", {}, this.#doorLabel(plugin, door)), h("span", { class: "quiet" }, ...this.#doorBill(plugin, door)), goes(door) !== undefined && h("span", { class: "quiet" }, goes(door))),
-        h("span", { class: "pl-way-act" }, on && h("span", { class: "quiet", ...(way === "platform" ? {} : { tabindex: "-1", "data-focus": place }) }, this.#say(way === "key" ? "pl.ms.keySaved" : way === "account" ? "pl.ms.signedIn" : "pl.ms.connected")), ...control(door))),
+        h("span", { class: "pl-way-act" }, on && h("span", { class: "quiet", ...(way === "platform" ? {} : { tabindex: "-1", "data-focus": place }) }, this.#say(way === "key" ? "pl.ms.keySaved" : way === "account" ? "pl.ms.signedIn" : "pl.ms.connected")), ...(member ? [] : control(door)))),
         stepped(signingIn) && this.#card(signingIn),
         account !== undefined && !on && signingIn === undefined && this.#lastLine(account, nameOf(door)));
     };
@@ -2076,14 +2130,14 @@ export class ItemPage {
     const up = (n: number): Promise<boolean> => { const next = [...paying]; [next[n - 1], next[n]] = [next[n]!, next[n - 1]!]; return setWays([...next, ...resting]); };
     const order = stored && paying.length > 1 && h("section", { class: "pl-setting" }, h("h2", {}, this.#say("pl.ms.order")), h("ol", { class: "pl-list pl-order" }, ...paying.map((way, n) => h("li", {}, h("div", { class: "pl-row" },
       h("span", { class: "pl-order-n" }, String(n + 1)), h("span", { class: "pl-row-text" }, h("strong", {}, label(way))),
-      n > 0 && this.#waits.ring(`order ${plugin.id} ${n}`, h("button", { type: "button", class: "pl-up", "data-focus": `up-${n}`, "aria-label": `${this.#say("pl.ms.up")}: ${label(way)}`, title: this.#say("pl.ms.up"), onclick: this.#waits.press(`order ${plugin.id} ${n}`, () => up(n)) }, "↑")))))));
+      n > 0 && !member && this.#waits.ring(`order ${plugin.id} ${n}`, h("button", { type: "button", class: "pl-up", "data-focus": `up-${n}`, "aria-label": `${this.#say("pl.ms.up")}: ${label(way)}`, title: this.#say("pl.ms.up"), onclick: this.#waits.press(`order ${plugin.id} ${n}`, () => up(n)) }, "↑")))))));
     // With one way set up its row already says it is the one, 已登录 or 已连接; the sentence stays where two or more are, the one line
     // naming which cx uses first, and for a vendor turned off, which no row says.
     const sentence = stored && has && paying.length > 0 && (paying.length > 1 || !model.enabled) ? this.#order(plugin) : "";
     return [
-      h("section", { class: "pl-setting" }, h("h2", {}, this.#say("pl.ms.connect")), sentence !== "" && h("p", {}, sentence), h("ul", { class: "pl-list pl-way-list" }, ...states.map(row))),
+      h("section", { class: "pl-setting" }, h("h2", {}, this.#say("pl.ms.connect")), sentence !== "" && h("p", {}, sentence), h("ul", { class: "pl-list pl-way-list" }, ...(member ? states.filter((door) => door.on) : states).map(row))),
       order,
-      h("section", { class: "pl-setting" }, this.#chooseVendors()),
+      !member && h("section", { class: "pl-setting" }, this.#chooseVendors()),
     ];
   }
 

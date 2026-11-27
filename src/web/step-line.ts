@@ -72,6 +72,12 @@ const installs = (installing: NonNullable<LineInput["installing"]>): Line =>
  */
 export const atWork = (line: Pick<Line, "key">): boolean => line.key !== "line.asking";
 
+/** The steps of the turn's latest message still waiting on their result: a step of an earlier message has ended. */
+export function stepsUnderWay(stream: StreamState): ReadonlySet<string> {
+  const last = stream.items.slice(stream.items.findLastIndex(isUser) + 1).findLast((item): item is Extract<Item, { kind: "assistant" }> => item.kind === "assistant");
+  return new Set(last === undefined ? [] : answer(last).tools.filter((card) => card.state === "pending").map((card) => card.key));
+}
+
 export function lineOf(input: LineInput): LineNow {
   const said = lineNow(input);
   // A skill is named as the Plugins page names the plugin whose package the read lies in; one outside a listed plugin keeps its own name.
@@ -146,10 +152,10 @@ export class LineClock {
   /**
    * The line to draw now and when its time began: `keep` holds the last one, a start counts from `startedAt` where the page knows it,
    * and a command reads its card's own clock. A wait whose question is answered is not kept: the line goes back to the work it held
-   * before the wait, its time with it, or says 正在处理 where it held none. A line is kept only within the seller message it was said for
+   * before the wait, its time with it, or says 正在处理 where it held none. A step kept or gone back to whose result came in (`running`) is not kept either. A line is kept only within the seller message it was said for
    * (`sent`, from `sentOf`): across a new one it says 正在处理 until cx's first step for it.
    */
-  at(now: LineNow, time: number, ports: { readonly startedAt?: number | undefined; readonly cardFrom?: ((key: string) => number | undefined) | undefined; readonly sent?: string | undefined }): { readonly line: Line; readonly since: number } | undefined {
+  at(now: LineNow, time: number, ports: { readonly startedAt?: number | undefined; readonly cardFrom?: ((key: string) => number | undefined) | undefined; readonly sent?: string | undefined; readonly running?: ReadonlySet<string> | undefined }): { readonly line: Line; readonly since: number } | undefined {
     let line = now === "keep" ? this.#last : now;
     if (now === "keep" && line !== undefined && ports.sent !== undefined && this.#sent !== undefined && ports.sent !== this.#sent) line = words(ports.sent, "line.sent", { timed: true });
     this.#sent = ports.sent;
@@ -159,6 +165,8 @@ export class LineClock {
       line = work.line;
       if (line.id !== this.#id) { this.#id = line.id; this.#since = work.since; }
     }
+    // A step kept, or gone back to after a wait, is kept while it runs: its result in, the line says 正在处理 from then.
+    if (now === "keep" && line?.target?.startsWith("tool:") === true && ports.running !== undefined && !ports.running.has(line.target)) line = words(ports.sent ?? "asked", "line.sent", { timed: true });
     if (line === undefined) { this.#id = undefined; this.#last = undefined; this.#work = undefined; return undefined; }
     if (line.id !== this.#id) { this.#id = line.id; this.#since = time; }
     this.#last = line;

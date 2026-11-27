@@ -22,7 +22,7 @@ type Pi = { running: boolean; readonly queued: { readonly text: string; readonly
 type Connection = { readonly since: string | undefined; readonly hear: (event: StreamEvent) => void; readonly broken: () => void; closed: boolean };
 
 /** The page's world, with the platform, the clock and the tab in the test's hands: every request the page makes is written down in order. */
-function world(options: { readonly me?: Me; readonly kept?: string; readonly opens?: readonly Opened[]; readonly openAnswered?: Promise<void>; readonly closing?: () => Promise<void>; /** How the box answers a close; unset, it closes. */ readonly closeAnswer?: "closed" | "busy"; /** How the platform answers a restart; unset, it restarts. */ readonly restartAnswer?: "restarted" | "busy" | "fails"; readonly beforeSend?: () => Promise<void>; readonly hold?: (type: string) => Promise<void> | undefined; readonly glance?: () => void; readonly board?: () => void; readonly history?: (epoch: string, before: number) => Promise<EarlierPart>; readonly handles?: string; /** Messages an installed package takes as its commands once pi rests after a stop, whichever command brings them. */ readonly handledAtRest?: readonly string[]; readonly pi?: Pi; readonly droppedLine?: (model: string) => string } = {}) {
+function world(options: { readonly me?: Me; readonly kept?: string; readonly opens?: readonly Opened[]; readonly openAnswered?: Promise<void>; readonly closing?: () => Promise<void>; /** How the box answers a close; unset, it closes. */ readonly closeAnswer?: "closed" | "busy" | "unanswered"; /** How the platform answers a restart; unset, it restarts. */ readonly restartAnswer?: "restarted" | "busy" | "fails"; readonly beforeSend?: () => Promise<void>; readonly hold?: (type: string) => Promise<void> | undefined; readonly glance?: () => void; readonly board?: () => void; readonly history?: (epoch: string, before: number) => Promise<EarlierPart>; readonly handles?: string; /** Messages an installed package takes as its commands once pi rests after a stop, whichever command brings them. */ readonly handledAtRest?: readonly string[]; readonly pi?: Pi; readonly droppedLine?: (model: string) => string } = {}) {
   const asked: string[] = [];
   const connections: Connection[] = [];
   const timers: { at: number; then: () => void; cancelled: boolean }[] = [];
@@ -744,10 +744,33 @@ describe("what cx's cards ask of the computer", () => {
     expect([page.asked.includes("close"), page.visit.failed, page.visit.box]).toEqual([true, "close", "awake"]);
   });
 
-  it("draws a switch-off that did not finish as the platform reads the computer, on, and the line about it goes with the next state drawn", async () => {
+  it("keeps a switch-off whose request ended unanswered going while the platform reads the computer on, and ends it off when the box sleeps", async () => {
     let page!: Awaited<ReturnType<typeof openedAwake>>;
-    // The box began its close and said so, then the platform's request for it ended without the box's answer.
-    page = await openedAwake({ closing: async () => { await page.hear("sleep", { kind: "sleep", dueInMs: 0 }); throw new Error("close answered 502"); } });
+    // The platform stopped waiting for the box's answer (its fetch ends at 300 s) while the box went on closing.
+    page = await openedAwake({ closeAnswer: "unanswered" });
+    page.setMe({ ...ME, machine: "on" } as Me);
+    let over = false;
+    const off = page.visit.sleep().then(() => { over = true; });
+    await page.settle();
+    expect([over, page.visit.asked, page.visit.failed, page.visit.box]).toEqual([false, "close", undefined, "awake"]);
+    await page.hear("sleep", { kind: "sleep", dueInMs: 0 });
+    page.setMe({ ...ME, machine: "off" } as Me);
+    await page.end("box_ended", 200);
+    await off;
+    expect([page.visit.box, page.visit.closing, page.visit.failed, page.visit.closesWaiting]).toEqual(["asleep", false, undefined, 0]);
+  });
+
+  it("ends a switch-off whose request ended unanswered at once where the platform already reads the computer off", async () => {
+    const page = await openedAwake({ closeAnswer: "unanswered" });
+    page.setMe({ ...ME, machine: "off" } as Me);
+    await page.visit.sleep();
+    expect([page.visit.box, page.visit.failed]).toEqual(["asleep", undefined]);
+  });
+
+  it("draws a switch-off the platform refused as not done where it reads the computer on, and the line about it goes with the next state drawn", async () => {
+    let page!: Awaited<ReturnType<typeof openedAwake>>;
+    // The box began its close and said so, then the platform answered that no close was made.
+    page = await openedAwake({ closing: async () => { await page.hear("sleep", { kind: "sleep", dueInMs: 0 }); throw new Error("close answered 500"); } });
     page.setMe({ ...ME, machine: "on" } as Me);
     await page.visit.sleep();
     const drawn = (): string => kindOf({ pending: false, box: page.visit.box, closing: page.visit.closing, atWork: page.visit.atWork, refusal: page.visit.blocked, floor: false, unreachable: page.visit.unreachable });
@@ -783,7 +806,7 @@ describe("what cx's cards ask of the computer", () => {
 
   it.each(["busy", "fails"] as const)("lets go of what a switch-off waits on once the box answers it %s, as one it closes does", async (outcome) => {
     let fails = outcome === "fails";
-    const options: { closeAnswer: "closed" | "busy"; closing: () => Promise<void> } = { closeAnswer: outcome === "busy" ? "busy" : "closed", closing: async () => { if (fails) throw new Error("close failed"); } };
+    const options: { closeAnswer: "closed" | "busy" | "unanswered"; closing: () => Promise<void> } = { closeAnswer: outcome === "busy" ? "busy" : "closed", closing: async () => { if (fails) throw new Error("close failed"); } };
     const page = await openedAwake(options);
     for (let press = 0; press < 10; press++) await page.visit.sleep();
     const kept = page.visit.closesWaiting;
@@ -3066,5 +3089,16 @@ describe("an option card holds nothing of cx's", () => {
     expect(await answering).toBe(true);
     expect(answers(page)).toEqual([["o-2", VALUE]]);
     expect(page.visit.stream.items.at(-1)).toMatchObject({ kind: "asked", key: "asked-o-2", answer: { value: VALUE } });
+  });
+});
+
+describe("a line cx says for the tutorial", () => {
+  it("is drawn in the conversation without a word to the platform or the box, and says nothing of the connection", () => {
+    const page = world();
+    page.visit.receive({ event: "cx_says", data: { key: "t1", line: "T1", values: { name: "Ana" }, shown: 3 } });
+    expect([page.asked, page.posted, page.visit.answered, page.whats.at(-1)]).toEqual([[], [], false, "stream"]);
+    expect(page.visit.stream.items).toEqual([{ kind: "guide", key: "guide:t1", line: "T1", values: { name: "Ana" }, shown: 3 }]);
+    page.visit.receive({ event: "cx_says", data: { key: "t1", line: "T10" } });
+    expect(page.visit.stream.items).toHaveLength(1);
   });
 });

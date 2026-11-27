@@ -10,6 +10,8 @@ export type QuotePickPorts = {
   readonly words: () => { readonly quote: string; readonly selection: string };
   readonly quote: (picked: Picked) => void;
   readonly soon: (then: () => void) => void;
+  /** Where words may be quoted from, where it is not an answer's: the text an element stands in, and its key (`answerText`'s otherwise). */
+  readonly locate?: Locate;
 };
 
 /**
@@ -18,18 +20,29 @@ export type QuotePickPorts = {
  */
 const ANSWER_TEXT = ".item.assistant:not(.draft) > .markdown";
 
+/** The quotable text an element stands in, and the key a quote of it carries; none where it stands in none. */
+export type Locate = (at: Element) => { readonly text: HTMLElement; readonly key: string } | undefined;
+
+/** An answer's written text, keyed by its item. */
+export const answerText: Locate = (at) => {
+  const text = at.closest<HTMLElement>(ANSWER_TEXT) ?? undefined;
+  const key = text?.closest<HTMLElement>(".item")?.dataset["key"];
+  return text === undefined || key === undefined ? undefined : { text, key };
+};
+
 /**
  * The selection in the conversation, cut to the one answer's text it begins in: the item's key and the words as the reader sees them,
  * runs of white space as one. Where it began is its anchor, whichever way it was drawn; one begun outside an answer's text — in a
  * message of the seller's, a step, another part of the page — holds nothing to quote.
  */
-export function selected(scroller: HTMLElement, selection: Selection | null): (Picked & { readonly range: Range }) | undefined {
+export function selected(scroller: HTMLElement, selection: Selection | null, locate: Locate = answerText): (Picked & { readonly range: Range }) | undefined {
   if (selection === null || selection.isCollapsed || selection.rangeCount === 0) return undefined;
   const range = selection.getRangeAt(0);
   const anchor = selection.anchorNode;
-  const text = (anchor instanceof Element ? anchor : anchor?.parentElement)?.closest<HTMLElement>(ANSWER_TEXT) ?? undefined;
-  const key = text?.closest<HTMLElement>(".item")?.dataset["key"];
-  if (text === undefined || key === undefined || !scroller.contains(text)) return undefined;
+  const at = anchor instanceof Element ? anchor : anchor?.parentElement;
+  const found = at === null || at === undefined ? undefined : locate(at);
+  if (found === undefined || !scroller.contains(found.text)) return undefined;
+  const { text, key } = found;
   const cut = range.cloneRange();
   if (!text.contains(range.startContainer)) cut.setStart(text, 0);
   if (!text.contains(range.endContainer)) cut.setEnd(text, text.childNodes.length);
@@ -53,7 +66,7 @@ export class QuotePick {
     // The press takes neither the selection it acts on nor the focus.
     this.element.addEventListener("mousedown", (event) => event.preventDefault());
     this.element.addEventListener("click", () => {
-      const picked = selected(ports.scroller, getSelection());
+      const picked = this.#selected();
       this.hide();
       if (picked === undefined) return;
       getSelection()?.removeAllRanges();
@@ -66,12 +79,14 @@ export class QuotePick {
 
   hide(): void { this.element.hidden = true; }
 
+  #selected(): (Picked & { readonly range: Range }) | undefined { return selected(this.ports.scroller, getSelection(), this.ports.locate); }
+
   /** Whether this press of Escape hid the control: the key is then spent on it, and the page does nothing else with it. */
   took(event: Event): boolean { return this.#spent.has(event); }
 
   place(): void {
     const { main, scroller } = this.ports;
-    const picked = selected(scroller, getSelection());
+    const picked = this.#selected();
     if (picked === undefined || this.#dismissed) { this.hide(); return; }
     const first = picked.range.getClientRects()[0] ?? picked.range.getBoundingClientRect();
     const view = scroller.getBoundingClientRect();

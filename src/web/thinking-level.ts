@@ -54,8 +54,15 @@ export class ThinkingCard {
   /** The row's name, where the control is a row whole: it stands at the press's left, the level at its right. */
   #lead: HTMLElement | undefined;
   readonly #outside = (event: Event): void => { if (!(event.target instanceof Node && this.element.contains(event.target))) this.close(); };
+  /** Escape closes the open menu wherever the keyboard is, before anything under it hears it, and hands the keyboard back to its trigger. */
+  readonly #escape = (event: KeyboardEvent): void => {
+    if (event.key !== "Escape" || !this.#opened) return;
+    event.preventDefault();
+    event.stopPropagation();
+    this.close();
+    giveBack(this.#trigger);
+  };
   readonly #keys = (event: KeyboardEvent): void => {
-    if (event.key === "Escape") { event.preventDefault(); this.close(); return; }
     if (event.key !== "ArrowDown" && event.key !== "ArrowUp" && event.key !== "Home" && event.key !== "End") return;
     event.preventDefault();
     const items = [...this.#rows.querySelectorAll<HTMLElement>("button.mp-row")];
@@ -65,7 +72,8 @@ export class ThinkingCard {
     items[next]?.focus();
   };
 
-  constructor(readonly ports: { readonly say: Say; readonly choose: (level: string) => void }) {
+  /** `opens`: it opens, and the one menu open beside it closes, its owner says which. */
+  constructor(readonly ports: { readonly say: Say; readonly choose: (level: string) => void; readonly opens?: () => void }) {
     this.#trigger = tip(h("button", { type: "button", class: "mp-trigger tl-trigger", "aria-haspopup": "menu", "aria-expanded": "false", onclick: () => (this.#opened ? this.close() : this.open()) }), () => [this.#opened ? "" : this.ports.say("thinking.choose")]);
     this.#card.inert = true;
     this.element.hidden = true;
@@ -125,12 +133,14 @@ export class ThinkingCard {
   open(): void {
     hideTip(this.#trigger);
     if (this.#opened || this.element.hidden) return;
+    this.ports.opens?.();
     this.#opened = true;
     this.element.classList.add("open");
     this.#card.setAttribute("aria-hidden", "false");
     this.#card.inert = false;
     this.#trigger.setAttribute("aria-expanded", "true");
     document.addEventListener("pointerdown", this.#outside);
+    document.addEventListener("keydown", this.#escape, true);
     this.#card.addEventListener("keydown", this.#keys);
     (this.#rows.querySelector<HTMLElement>("button.mp-row.mp-in-use") ?? this.#rows.querySelector<HTMLElement>("button.mp-row"))?.focus({ preventScroll: true });
   }
@@ -143,6 +153,7 @@ export class ThinkingCard {
     this.#card.inert = true;
     this.#trigger.setAttribute("aria-expanded", "false");
     document.removeEventListener("pointerdown", this.#outside);
+    document.removeEventListener("keydown", this.#escape, true);
     this.#card.removeEventListener("keydown", this.#keys);
     // Focus never stays in the closed card, whichever way it closed.
     if (this.#card.contains(document.activeElement)) giveBack(this.#trigger);

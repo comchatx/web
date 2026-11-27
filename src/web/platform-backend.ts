@@ -1,14 +1,14 @@
 import { CARD_PLACES, PICK_HEADER, RULE_SEEN, readCardChoices, readPendingPick, readPickOutcome, type CardChoices, type PendingPick, type PickOutcome, type Way } from "../shared/card-choices.js";
 import type { SurveyAnswers } from "../shared/survey.js";
 import { inWayOrder, waysOf } from "../shared/next-ways.js";
-import { type Spaces, type Size, type Offered, type Usage, type UsageBar, type UsageSpan, USAGE_SPANS, ComputerPending, FIRST_RELEASE, HELP, IDLE_MINUTES, readCatalogued, readMachine, readModels, Refused, SignInEnded, type SignInPorts, type Words, type HeldBundle, type BundleState, type ConnectionCheck, type FieldsCheck, type GrantAccount, type Account, type Backend, type BoardViewer, type OpenedFrom, type OpenRead, type Balance, type RowThinking, type Carried, type CheckoutAsk, type Coupon, type Invitations, type EarlierPart, type FoundRow, type HistoryRow, type ListPart, type Stretch, type Features, type Left, type Me, type Model, type Models, type OnImage, type Opened, type Parts, type Package, type PackageList, type Awake, type AwakeRow, type Click, type ClickEnd, type Written, type Provider, type Readme, type Source, type SourceMonth, type Spending, type ModelPlugin, type AccountMoney, type ByKind, type LotKind, type MoneyLot, type RecordEntry, type SpanId, type SpanSpending, type Subscription, type SavedCard, type Payment, type Payments, type Terms, type PayForm, type PayWay, SPANS_CALENDAR, SPANS_NOW, type SeriesByVendor, type Returned, type Series, type Version, type ChatOffer, NPM_KINDS, type NpmKind, type NpmOrder, type NpmList, type NpmListed, type NpmPackage, type NpmSection, NotRunning, Unopened, type HeldMessage, type BoardRead, type BoardPageRead, type BoardTabAsk, BoardRefused, type Device, type Organization, type Seats, SEATS_STATES } from "./backend.js";
+import { type Spaces, type SeatsBuy, type InvitedTo, type Member, type MemberRole, type Members, type WaitingInvitation, type InviteAnswer, InvitationsLimited, type Size, type Offered, type Usage, type UsageBar, type UsageSpan, USAGE_SPANS, ComputerPending, FIRST_RELEASE, HELP, IDLE_MINUTES, readCatalogued, readMachine, readModels, Refused, SignInEnded, type SignInPorts, type Words, type HeldBundle, type BundleState, type ConnectionCheck, type FieldsCheck, type GrantAccount, type Account, type Backend, type BoardViewer, type OpenedFrom, type OpenRead, type Balance, type RowThinking, type Carried, type CheckoutAsk, type Coupon, type Invitations, type EarlierPart, type FoundRow, type HistoryRow, type ListPart, type Stretch, type Features, type Left, type Me, type Model, type Models, type OnImage, type Opened, type Parts, type Package, type PackageList, type Awake, type AwakeRow, type Click, type ClickEnd, type Written, type Provider, type Readme, type Source, type SourceMonth, type Spending, type ModelPlugin, type AccountMoney, type ByKind, type LotKind, type MoneyLot, type RecordEntry, type SpanId, type SpanSpending, type Subscription, type SavedCard, type Payment, type Payments, type Terms, type PayForm, type PayWay, SPANS_CALENDAR, SPANS_NOW, type SeriesByVendor, type Returned, type Series, type Version, type ChatOffer, NPM_KINDS, type NpmKind, type NpmOrder, type NpmList, type NpmListed, type NpmPackage, type NpmSection, NotRunning, Unopened, type HeldMessage, type BoardRead, type BoardPageRead, type BoardTabAsk, BoardRefused, type Device, type Organization, type Seats, SEATS_STATES, type SeatsPrice, type SeatsSet, SeatsRefused } from "./backend.js";
 import { dollars } from "../shared/money.js";
 import { makerOf, PROVIDERS } from "../shared/model-makers.js";
 import { keyProvidersOf, platformPaysFor } from "../shared/provider-packages.js";
 import { cardSeries, plainName, modelName } from "../shared/model-series.js";
 import { chatCard, isTicked, pinGone, pinOf, withoutVendor, withPin, withTick, withTicks, type ChatSeries, type TickRefused } from "./chat-card.js";
 import type { StreamEvent } from "./stream-model.js";
-import { DOOR_KEY, DOOR_PATH, type DoorReason } from "../shared/door.js";
+import { DOOR_KEY, DOOR_PATH, WORK_PARAM, type DoorReason, type DoorWork } from "../shared/door.js";
 import { OFFICIAL_BUNDLES, type OfficialBundle } from "../shared/bundles.js";
 import { readDrawnMark } from "../shared/drawn-mark.js";
 import { catalogueWith, sourceWords, type Catalogue } from "./catalogue.js";
@@ -55,6 +55,8 @@ export type PlatformPorts = {
   /** The accounts the sign-in holds, and the switch between them, asked of the identity SDK through the page's ports. */
   readonly spaces?: () => Promise<Spaces | undefined>;
   readonly use?: (organization: string | null) => Promise<unknown>;
+  /** 接受邀请, by the identity SDK's own call, through the page's port. */
+  readonly accept?: (invitation: string) => Promise<"accepted" | "full" | "gone">;
   /** The mark a switch of account leaves for the next load: set before the pages start again, taken when they are back. */
   readonly switching?: { readonly set: () => void; readonly take: () => boolean };
   readonly now?: () => number;
@@ -148,8 +150,8 @@ async function answerBody(answer: Response): Promise<Record<string, unknown>> {
 }
 
 function readBalance(value: unknown): Balance | undefined {
-  if (!record(value) || !count(value["available"]) || !count(value["open_floor"]) || typeof value["can_open"] !== "boolean") return undefined;
-  return { available: value["available"], open_floor: value["open_floor"], can_open: value["can_open"] };
+  if (!record(value) || (value["available"] !== undefined && !count(value["available"])) || !count(value["open_floor"]) || typeof value["can_open"] !== "boolean") return undefined;
+  return { ...(count(value["available"]) ? { available: value["available"] } : {}), open_floor: value["open_floor"], can_open: value["can_open"] };
 }
 
 /** A message the platform keeps for the box, as `/me` lists it; one that breaks the shape is left out. */
@@ -173,9 +175,12 @@ function unopened(status: number, body: Record<string, unknown>): Unopened["open
 }
 
 function readMonth(value: unknown): Spending | undefined {
-  if (!record(value) || !count(value["credited"]) || !record(value["spent"])) return undefined;
+  // An organization's member is given their own model and source spending alone, with no credit, hours or storage.
+  const given = (one: unknown): boolean => one === undefined || count(one);
+  if (!record(value) || !given(value["credited"]) || !record(value["spent"])) return undefined;
   const { model, sources, box_time: boxTime, box_storage: boxStorage } = value["spent"];
-  return count(model) && count(sources) && count(boxTime) && count(boxStorage) ? { credited: value["credited"], spent: { model, sources, boxTime, boxStorage } } : undefined;
+  return count(model) && count(sources) && given(boxTime) && given(boxStorage)
+    ? { ...(count(value["credited"]) ? { credited: value["credited"] } : {}), spent: { model, sources, ...(count(boxTime) ? { boxTime } : {}), ...(count(boxStorage) ? { boxStorage } : {}) } } : undefined;
 }
 
 const day = (value: unknown): value is string => typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
@@ -198,6 +203,34 @@ function readMoneyLot(value: unknown): MoneyLot | undefined {
 }
 
 /** `/account/sessions`, a device refused where its id or a day is missing: a row with no id could not be signed out. */
+/** `/me`'s invitations waiting on the person and the carried link's own state; an invitation that does not read as one is left out. */
+export function invitedOf(invited: unknown, link: unknown): { readonly invited?: readonly InvitedTo[]; readonly invitationLink?: "elsewhere" | "gone" } {
+  const list = Array.isArray(invited) ? invited.flatMap((one: unknown): InvitedTo[] => {
+    if (!record(one) || word(one["id"]) === undefined || !record(one["organization"]) || word(one["organization"]["id"]) === undefined || typeof one["organization"]["name"] !== "string") return [];
+    if (one["role"] !== "admin" && one["role"] !== "member") return [];
+    const inviter = word(one["inviter"]);
+    return [{ id: one["id"] as string, organization: { id: one["organization"]["id"] as string, name: one["organization"]["name"] }, role: one["role"], ...(inviter === undefined ? {} : { inviter }) }];
+  }) : undefined;
+  return { ...(list === undefined ? {} : { invited: list }), ...(link === "elsewhere" || link === "gone" ? { invitationLink: link } : {}) };
+}
+/** `/organization/members`: the members and the invitations not yet answered, each as the platform passes the identity provider's on. */
+export function readMembers(value: unknown): Members {
+  const fail = (): never => { throw unreadable("/organization/members"); };
+  if (!record(value) || !Array.isArray(value["members"]) || !Array.isArray(value["invitations"])) return fail();
+  const role = (one: unknown): MemberRole => (one === "admin" || one === "member" ? one : fail());
+  return {
+    members: value["members"].map((one: unknown): Member => {
+      if (!record(one)) return fail();
+      const name = word(one["name"]), email = word(one["email"]);
+      return { ...(name === undefined ? {} : { name }), ...(email === undefined ? {} : { email }), role: role(one["role"]) };
+    }),
+    invitations: value["invitations"].map((one: unknown): WaitingInvitation => {
+      if (!record(one) || word(one["id"]) === undefined || word(one["email"]) === undefined || !count(one["expires"])) return fail();
+      const inviter = word(one["inviter"]), url = typeof one["url"] === "string" && one["url"].startsWith("https://") ? one["url"] : undefined;
+      return { id: one["id"] as string, email: one["email"] as string, role: role(one["role"]), ...(inviter === undefined ? {} : { inviter }), expires: one["expires"], ...(url === undefined ? {} : { url }) };
+    }),
+  };
+}
 export function readDevices(value: unknown): readonly Device[] {
   const fail = (): never => { throw unreadable("/account/sessions"); };
   if (!record(value) || !Array.isArray(value["sessions"])) return fail();
@@ -285,6 +318,12 @@ export function readReturned(value: unknown): Returned {
   const state = record(value) ? (["paid", "unpaid"] as const).find((one) => one === value["state"]) : undefined;
   const credited = record(value) ? value["credited"] : undefined;
   if (state === undefined) throw unreadable("/billing/return");
+  // A seats payment that makes an organisation names it, or that it is still being made, and no credit of its: its money is the organisation's.
+  const organization = record(value) ? value["organization"] : undefined;
+  if (organization !== undefined) {
+    if (state !== "paid" || typeof organization !== "string" || organization === "") throw unreadable("/billing/return");
+    return { state, organization };
+  }
   if (credited === undefined) return { state };
   const kind = record(credited) ? (["membership", "top_up", "seats"] as const).find((one) => one === credited["kind"]) : undefined;
   if (state !== "paid" || !record(credited) || kind === undefined || !count(credited["amount"]) || !count(credited["debt_repaid"]) || credited["debt_repaid"] > credited["amount"]) throw unreadable("/billing/return");
@@ -293,12 +332,12 @@ export function readReturned(value: unknown): Returned {
 export function readTerms(value: unknown): Terms {
   const fail = unreadable("/terms");
   if (!record(value) || !record(value["trial"])) throw fail;
-  const { units_per_dollar: perDollar, price, top_up_from: from, paid_months: months, trial, friends, reward, reward_window_days: window, promotion_last_day: last } = value as Record<string, unknown> & { trial: Record<string, unknown> };
-  if (![perDollar, price, from, months, trial["direct"], trial["invited"], trial["days"], friends, reward, window].every(count) || (last !== undefined && !day(last))) throw fail;
+  const { units_per_dollar: perDollar, price, top_up_from: from, paid_months: months, trial, friends, reward, reward_window_days: window, promotion_last_day: last, seat_price: seat } = value as Record<string, unknown> & { trial: Record<string, unknown> };
+  if (![perDollar, price, from, months, trial["direct"], trial["invited"], trial["days"], friends, reward, window].every(count) || (last !== undefined && !day(last)) || (seat !== undefined && !count(seat))) throw fail;
   return {
     units_per_dollar: perDollar as number, price: price as number, top_up_from: from as number, paid_months: months as number,
     trial: { direct: trial["direct"] as number, invited: trial["invited"] as number, days: trial["days"] as number },
-    friends: friends as number, reward: reward as number, reward_window_days: window as number, ...(last === undefined ? {} : { promotion_last_day: last as string }),
+    friends: friends as number, reward: reward as number, reward_window_days: window as number, ...(last === undefined ? {} : { promotion_last_day: last as string }), ...(seat === undefined ? {} : { seat_price: seat as number }),
   };
 }
 
@@ -762,12 +801,13 @@ export class PlatformBackend implements Backend {
     const account = record(body["account"]) ? body["account"] : {};
     this.#billing = body["billing"] === true;
     return {
-      kind: "signed_in", account: word(account["id"]) ?? "", email: word(account["email"]), name: word(account["name"]), ...(typeof account["terms"] === "boolean" ? { terms: account["terms"] } : {}),
+      kind: "signed_in", account: word(account["id"]) ?? "", email: word(account["email"]), name: word(account["name"]), ...(account["public_mailbox"] === true ? { publicMailbox: true as const } : {}), ...(typeof account["terms"] === "boolean" ? { terms: account["terms"] } : {}), ...(account["guide_closed"] === true ? { guideClosed: true as const } : {}),
       box: state === "provisioned" ? "provisioned" : "pending", machine: readMachine(body["box"]["machine"]), ...(body["box"]["newer"] === true ? { newer: true } : {}), ...onSinceOf(body["box"]["on_since"]), ...partsOf(body["box"]["parts"]),
       ...(typeof body["box_hour_units"] === "number" && Number.isFinite(body["box_hour_units"]) && body["box_hour_units"] >= 0 ? { hourUnits: body["box_hour_units"] } : {}), balance: readBalance(body["balance"]),
       money: dollars(body["units_per_dollar"]), spending: readMonth(body["month"]), ...sizesOf(body),
       ...(Array.isArray(body["held_messages"]) ? { held: body["held_messages"].flatMap((one) => readHeld(one) ?? []) } : {}),
       ...organizationOf(body["organization"]),
+      ...invitedOf(body["invited"], body["invitation_link"]),
     };
   }
 
@@ -827,10 +867,12 @@ export class PlatformBackend implements Backend {
     return "restarted";
   }
 
-  async close(): Promise<"closed" | "busy"> {
-    const answer = await this.#post({ box: "close" });
+  async close(): Promise<"closed" | "busy" | "unanswered"> {
+    const answer = await this.#post({ box: "close" }).catch(() => undefined);
+    if (answer === undefined) return "unanswered";
     const body = answer.ok ? (await drop(answer), {}) : await answerBody(answer);
     if (answer.status === 409 && body["error"] === "busy") return "busy";
+    if (answer.status === 502 && body["error"] === "box_unreachable") return "unanswered";
     if (!answer.ok) throw new Error(`close answered ${answer.status}`);
     return "closed";
   }
@@ -1144,22 +1186,26 @@ export class PlatformBackend implements Backend {
 
   async spaces(): Promise<Spaces | undefined> { return await this.ports.spaces?.(); }
 
-  async use(organization: string | null): Promise<void> {
+  async use(organization: string | null, landing?: string): Promise<void> {
     await this.ports.use?.(organization);
     this.ports.switching?.set();
-    this.again();
+    if (landing === undefined) this.again(); else this.ports.go(landing);
   }
 
   switched(): boolean { return this.ports.switching?.take() === true; }
 
-  async leave(everywhere = false, landing?: DoorReason): Promise<Left> {
+  async leave(everywhere = false, landing?: DoorReason | DoorWork): Promise<Left> {
     const renewed = this.#renewed;
     this.#renewed = false;
     const all = everywhere || renewed === "everywhere";
     const answer = await this.#call("/sign-out", { method: "POST", redirect: "follow", ...(all ? { headers: { "content-type": "application/json" }, body: JSON.stringify({ everywhere: true }) } : {}) }, false);
     await drop(answer);
     // Only the reason is taken from where the answer was sent; the page goes to its own door whatever origin the address named.
-    if (answer.redirected) { this.ports.go(`${this.links.signIn}${landing === undefined ? new URL(answer.url).search : `?${DOOR_KEY}=${landing}`}`); return "ended"; }
+    if (answer.redirected) {
+      const asked = landing === undefined ? new URL(answer.url).search : typeof landing === "string" ? `?${DOOR_KEY}=${landing}` : `?${new URLSearchParams({ [WORK_PARAM]: landing.work })}`;
+      this.ports.go(`${this.links.signIn}${asked}`);
+      return "ended";
+    }
     if (answer.status === 409 && renewed === false) { this.ports.leaving.set(...(all ? [true as const] : [])); this.ports.go("/refresh"); return "renewing"; }
     throw new Error(`sign-out answered ${answer.status}`);
   }
@@ -1643,10 +1689,51 @@ export class PlatformBackend implements Backend {
     if (!answer.ok || !record(body) || word(body["name"]) === undefined) throw new Error(`/organization/name answered ${answer.status}`);
     return body["name"] as string;
   }
+  async seatsPrice(seats: number): Promise<SeatsPrice> {
+    const answer = await this.#call(`/billing/seats/price?seats=${seats}`);
+    const body: unknown = await answer.json().catch(() => undefined);
+    if (answer.status === 409 && record(body) && word(body["error"]) !== undefined) throw new SeatsRefused(body["error"] as string);
+    if (!answer.ok || !record(body) || !count(body["due"]) || (body["next"] !== undefined && !count(body["next"])) || !count(body["at"])) throw new Error(`/billing/seats/price answered ${answer.status}`);
+    return body["next"] === undefined ? { due: body["due"], at: body["at"] } : { due: body["due"], next: body["next"] as number, at: body["at"] };
+  }
+  async setSeats(seats: number, at?: number): Promise<SeatsSet> {
+    const answer = await this.#call("/billing/seats", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify(at === undefined ? { seats } : { seats, at }) });
+    const body: unknown = await answer.json().catch(() => undefined);
+    if (answer.status === 409 && record(body) && word(body["error"]) !== undefined) throw new SeatsRefused(body["error"] as string);
+    if (!answer.ok || !record(body) || !count(body["seats"]) || (body["next"] !== undefined && !count(body["next"]))) throw new Error(`/billing/seats answered ${answer.status}`);
+    return body["next"] === undefined ? { seats: body["seats"] } : { seats: body["seats"], next: body["next"] as number };
+  }
+  members(): Promise<Members> { return this.#read("/organization/members", readMembers); }
+  membersFile(): string { return "/organization/members.csv"; }
+  async invite(emails: readonly string[], role: MemberRole, buy?: SeatsBuy): Promise<InviteAnswer> {
+    const answer = await this.#call("/organization/invitations", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(buy === undefined ? { emails, role } : { emails, role, seats: buy.seats, at: buy.at }) });
+    const body: unknown = await answer.json().catch(() => undefined);
+    if (answer.status === 409 && record(body) && word(body["error"]) !== undefined) throw new SeatsRefused(body["error"] as string);
+    if (answer.status === 429) throw new InvitationsLimited();
+    const list = (key: string): readonly string[] | undefined => (record(body) && Array.isArray(body[key]) && body[key].every((one) => typeof one === "string") ? body[key] as string[] : undefined);
+    const [sent, refused, full, known] = [list("sent"), list("refused"), list("full"), list("known")];
+    if (!answer.ok || sent === undefined || refused === undefined || full === undefined || known === undefined) throw new Error(`/organization/invitations answered ${answer.status}`);
+    const seats = record(body) && record(body["seats"]) && count(body["seats"]["seats"]) ? { seats: body["seats"]["seats"] as number } : undefined;
+    return { sent, refused, full, known, ...(seats === undefined ? {} : { seats }) };
+  }
+  async acceptInvitation(id: string): Promise<"accepted" | "full" | "gone"> {
+    if (this.ports.accept === undefined) throw new Error("no identity script");
+    return await this.ports.accept(id);
+  }
+  declineInvitation(id: string): Promise<void> { return this.#write("/invitation/decline", { id }); }
+  /** True where the provider sent the address again; refused or past the bound, the old one is already taken off and nothing was sent. */
+  async resendInvitation(id: string): Promise<boolean> {
+    const answer = await this.#call("/organization/invitations/resend", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id }) });
+    const body: unknown = await answer.json().catch(() => undefined);
+    if (!answer.ok || !record(body) || !Array.isArray(body["sent"])) throw new Error(`/organization/invitations/resend answered ${answer.status}`);
+    return body["sent"].length > 0;
+  }
+  revokeInvitation(id: string): Promise<void> { return this.#write("/organization/invitations/revoke", { id }); }
   /** The road's 创建账户: the terms agreed to, and whether the person takes the promotional email. */
   acceptTerms(news: boolean): Promise<void> { return this.#write("/account/terms", { news }); }
   /** What the person asked to be called, which the identity provider keeps as their name. */
   setName(name: string): Promise<void> { return this.#write("/account/name", { name }); }
+  closeGuide(): Promise<void> { return this.#write("/account/guide", {}); }
   devices(): Promise<readonly Device[]> { return this.#read("/account/sessions", readDevices); }
   endDevice(id: string): Promise<void> { return this.#write("/account/sessions/end", { id }); }
   photo(): string | undefined { return this.ports.photo?.(); }

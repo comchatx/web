@@ -2,7 +2,7 @@ import type { Backend, Written } from "./backend.js";
 import { nameIn, vendorIn, type Bundle, type Plugin } from "./catalogue.js";
 import type { Language } from "./strings.js";
 import { h, placed, type Child } from "./dom.js";
-import { switchButton, tip } from "./forms.js";
+import { dialog as modal, switchButton, tip } from "./forms.js";
 import { cardRow, rowIcon, rowMark, type TipAt } from "./plugins-row.js";
 import type { RowHead } from "./plugins-queue.js";
 import { thirdMark } from "./plugins-npm.js";
@@ -422,7 +422,7 @@ function open(context: CardContext, item: Plugin | Bundle, title: StringKey, act
   body: () => readonly Child[], about: About | undefined, name: string | undefined, actWords?: string, named: string = nameIn(item, context.language), idle = false): Promise<boolean> {
   const before = globalThis.document?.activeElement as HTMLElement | null | undefined;
   return new Promise((resolve) => {
-    const dialog = h("dialog", { class: "confirm pl-card-dialog", "aria-labelledby": "pl-card-title", tabindex: "-1", "data-card": name });
+    const dialog = h("dialog", { class: "f-dialog pl-card-dialog", "aria-labelledby": "pl-card-title", tabindex: "-1", "data-card": name });
     let settled = false;
     // An address that names the card no longer, by Back or a link, is Cancel: a card never outlives the address it stands over.
     const left = (): void => { if (name === undefined || cardOf(globalThis.location?.hash ?? "") !== name) close(false); };
@@ -440,19 +440,17 @@ function open(context: CardContext, item: Plugin | Bundle, title: StringKey, act
       if (!done) (before?.isConnected === false ? context.returnTo?.() ?? (place === undefined ? undefined : placed(globalThis.document, place)) ?? before : before)?.focus?.();
       resolve(done);
     };
-    dialog.addEventListener("cancel", (event) => { event.preventDefault(); close(false); });
-    dialog.addEventListener("click", (event) => {
-      if (event.target === dialog) close(false);
-      // A link in the card goes to its own page from the card's address, so Back from there finds the card again.
-      else if ((event.target as Element | null)?.closest?.("[data-close]")) close(false, false);
-    });
-    const cancel = h("button", { type: "button", onclick: () => close(false) }, context.say("pl.c.cancel"));
+    // Escape and a press on the dimmed page close the box; the card's own Cancel follows.
+    dialog.addEventListener("close", () => close(false));
+    // A link in the card goes to its own page from the card's address, so Back from there finds the card again.
+    dialog.addEventListener("click", (event) => { if ((event.target as Element | null)?.closest?.("[data-close]")) close(false, false); });
+    const cancel = h("button", { type: "button", class: "f-btn", onclick: () => close(false) }, context.say("pl.c.cancel"));
     const body0 = h("div", { class: "pl-card-body", tabindex: "-1" }, ...body());
-    const go = h("button", { type: "button", class: "primary", onclick: async () => {
+    const go = h("button", { type: "button", class: "f-btn primary", onclick: async () => {
       go.setAttribute("disabled", "");
+      settled = true;
       dialog.close?.();
       dialog.remove();
-      settled = true;
       globalThis.removeEventListener?.("hashchange", left);
       await cardShut(name);
       resolve(await context.run(work, typeof told === "string" ? told : told(), failed, about));
@@ -465,12 +463,12 @@ function open(context: CardContext, item: Plugin | Bundle, title: StringKey, act
         // A bundle is installed on its maker's name too.
         about?.act === "install" && isBundle(item) && item.author !== "" && h("p", { class: "quiet pl-card-by" }, context.say("pl.by", { name: item.author })))),
       body0,
-      h("p", { class: "row pl-card-acts" }, cancel, !idle && go),
+      h("div", { class: "f-acts pl-card-acts" }, cancel, !idle && go),
     );
     context.host().append(dialog);
-    if (typeof dialog.showModal === "function") dialog.showModal();
-    cardShown(name);
     // The keyboard is on the card's middle, the part that scrolls, so its keys scroll it and neither button is one key away from a press nobody read.
+    modal(dialog, body0)(before ?? body0);
+    cardShown(name);
     body0.focus?.({ preventScroll: true });
     body0.scrollTop = 0;
     markCut(body0);

@@ -1,4 +1,5 @@
 import cardFile from "./maker-cards.json" with { type: "json" };
+import pinFile from "./maker-pins.json" with { type: "json" };
 import { NPM_SCOPE } from "./package-names.js";
 import { balanceReaches, CARDS, makerOf, PROVIDERS } from "./model-makers.js";
 
@@ -19,21 +20,31 @@ export const NO_PACKAGE: Readonly<Record<string, string>> = Object.freeze({
 export const PLUGIN_PROVIDERS: Readonly<Record<string, string>> = Object.freeze({ typesafe: "jev" });
 
 /**
- * The package that brings a provider into cx's computer, as an account's list names it: `npm:@comchatx/<provider id>`, with no version.
- * None for a provider pi does not register, one the proxy cannot carry (`LEFT_OUT`) but those `PLUGIN_PROVIDERS` names, or one
- * `NO_PACKAGE` names.
+ * The version of each provider's package an account's computer holds, by provider id, as the platform names pi's own: written here when
+ * the providers repository publishes one, and nowhere read from it. A provider `providerPackage` serves with no version here fails
+ * `provider-packages.test.ts`.
+ */
+export const MAKER_PINS: Readonly<Record<string, string>> = Object.freeze({ ...(pinFile as Record<string, string>) });
+
+/** Whether a provider has a package of its own: one pi registers, the proxy carries or `PLUGIN_PROVIDERS` names, and `NO_PACKAGE` does not. */
+const packaged = (provider: string): boolean =>
+  Object.hasOwn(PROVIDERS, provider) && !Object.hasOwn(NO_PACKAGE, provider) && (PROVIDERS[provider]!.carried || Object.hasOwn(PLUGIN_PROVIDERS, provider));
+
+/**
+ * The package that brings a provider into cx's computer, as an account's list names it: `npm:@comchatx/<provider id>@<version>`, at the
+ * version `MAKER_PINS` names. None for a provider pi does not register, one the proxy cannot carry (`LEFT_OUT`) but those
+ * `PLUGIN_PROVIDERS` names, one `NO_PACKAGE` names, or one with no pin.
  */
 export function providerPackage(provider: string): string | undefined {
-  if (!Object.hasOwn(PROVIDERS, provider) || Object.hasOwn(NO_PACKAGE, provider)) return undefined;
-  if (!PROVIDERS[provider]!.carried && !Object.hasOwn(PLUGIN_PROVIDERS, provider)) return undefined;
-  return `npm:${NPM_SCOPE}/${provider}`;
+  const version = packaged(provider) && Object.hasOwn(MAKER_PINS, provider) ? MAKER_PINS[provider] : undefined;
+  return version === undefined ? undefined : `npm:${NPM_SCOPE}/${provider}@${version}`;
 }
 
-/** The provider a listed package brings, where it is one `providerPackage` names; a version after the name is read past. */
+/** The provider a listed package brings, where it is one `providerPackage` names, at any version or none. */
 export function packageProvider(source: string): string | undefined {
   const match = /^npm:@comchatx\/([a-z0-9][a-z0-9-]*)(?:@[^/]*)?$/.exec(source);
   const provider = match?.[1];
-  return provider !== undefined && providerPackage(provider) === `npm:${NPM_SCOPE}/${provider}` ? provider : undefined;
+  return provider !== undefined && providerPackage(provider) !== undefined ? provider : undefined;
 }
 
 /**
@@ -83,20 +94,24 @@ export type ListedRow = {
   readonly waiting: readonly { readonly op: string; readonly source?: string }[];
 };
 
-/** The maker's package a source names, without a version, or none for a source that is not one. */
-const makerSource = (source: unknown): string | undefined => {
-  const provider = typeof source === "string" ? packageProvider(source) : undefined;
-  return provider === undefined ? undefined : providerPackage(provider);
+/** A source that names a maker's package, as written, version and all, or none for a source that is not one. */
+const makerSource = (source: unknown): string | undefined => (typeof source === "string" && packageProvider(source) !== undefined ? source : undefined);
+
+/** A set of makers' sources holding at most one per provider: `source` in the place of any other spelling of its provider's package. */
+const held = (sources: Set<string>, source: string): void => {
+  const provider = packageProvider(source);
+  for (const one of sources) if (packageProvider(one) === provider) sources.delete(one);
+  sources.add(source);
 };
 
-/** The makers' packages a list the box spoke holds as the seller's: the box's own word, and nothing of the row. */
+/** The makers' packages a list the box spoke holds as the seller's, each as the box wrote it: the box's own word, and nothing of the row. */
 export function spokenMakers(packages: readonly unknown[]): ReadonlySet<string> {
-  const held = new Set<string>();
+  const sources = new Set<string>();
   for (const one of packages) {
     const listed = typeof one === "object" && one !== null && (one as Record<string, unknown>)["origin"] === "seller" ? makerSource((one as Record<string, unknown>)["source"]) : undefined;
-    if (listed !== undefined) held.add(listed);
+    if (listed !== undefined) held(sources, listed);
   }
-  return held;
+  return sources;
 }
 
 /**
@@ -104,21 +119,27 @@ export function spokenMakers(packages: readonly unknown[]): ReadonlySet<string> 
  * each entry still waiting, in order. Nothing the row kept of how an entry ended is read: the box's list is the one truth of what it holds.
  */
 export function listedMakers(row: ListedRow): ReadonlySet<string> {
-  const held = new Set(spokenMakers(row.packages));
+  const sources = new Set(spokenMakers(row.packages));
   for (const move of row.waiting) {
     const source = makerSource(move.source);
     if (source === undefined || (move.op !== "install" && move.op !== "remove")) continue;
-    if (move.op === "install") held.add(source);
-    else held.delete(source);
+    if (move.op === "install") held(sources, source);
+    else for (const one of sources) if (packageProvider(one) === packageProvider(source)) sources.delete(one);
   }
-  return held;
+  return sources;
 }
 
-/** The entries that bring a list from the makers' packages it holds to those it should: an install for each missing, a removal for each extra. */
+/**
+ * The entries that bring a list from the makers' packages it holds to those it should: an install for each missing or at another
+ * version, and a removal for each provider it should not hold. A version alone is one install and no removal: pi's install replaces the
+ * entry its package's name holds, where a removal, by that name, written before it would take the new one away.
+ */
 export function packageDiff(desired: ReadonlySet<string>, listed: ReadonlySet<string>): { readonly install: readonly string[]; readonly remove: readonly string[] } {
+  const wanted = new Set([...desired].map((source) => packageProvider(source)));
+  const byProvider = (one: string, other: string): number => (packageProvider(one) ?? one).localeCompare(packageProvider(other) ?? other, "en");
   return {
-    install: [...desired].filter((source) => !listed.has(source)).sort(),
-    remove: [...listed].filter((source) => !desired.has(source)).sort(),
+    install: [...desired].filter((source) => !listed.has(source)).sort(byProvider),
+    remove: [...listed].filter((source) => !wanted.has(packageProvider(source))).sort(byProvider),
   };
 }
 

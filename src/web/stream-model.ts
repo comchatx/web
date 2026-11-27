@@ -1,6 +1,7 @@
 import { DIALOG_ENDED, isOptionCard, readDialogAnswer, readUiRequest, type Dialog, type DialogAnswer, type Notice } from "../shared/dialog.js";
 import { readOptionRecord, type AskForm } from "../shared/option-form.js";
 import { readWayUsedUp } from "../shared/way-moves.js";
+import { isGuideLine, type GuideLine } from "./guide-lines.js";
 
 /** One event of `GET /stream` as the platform sends it: the event's name, its parsed data, and an entry's id, `<epoch>:<seq>`. */
 export type StreamEvent = { readonly event: string; readonly data: unknown; readonly id?: string };
@@ -97,7 +98,13 @@ export type Item =
    */
   | { readonly kind: "asked"; readonly key: string; readonly title: string; readonly method: Dialog["method"]; readonly answer: DialogAnswer; readonly form?: AskForm }
   /** Where a question pi still waits on stands, in the order asked: its card is drawn there, and folds there. */
-  | { readonly kind: "asking"; readonly key: string; readonly id: string };
+  | { readonly kind: "asking"; readonly key: string; readonly id: string }
+  /**
+   * A line cx says for the tutorial: the page's own, which pi never sees, the box never keeps and no model writes. It lives for the
+   * visit, across another life, and a reload draws it no more. Its words are the line's in the page's language, with its values; while
+   * it grows, `shown` is how many of its characters are drawn, and once it has ended there is none.
+   */
+  | { readonly kind: "guide"; readonly key: string; readonly line: GuideLine; readonly values: Readonly<Record<string, string>>; readonly shown: number | undefined };
 
 export type StreamState = {
   readonly items: readonly Item[];
@@ -206,7 +213,8 @@ export function recordForView(form: string, body: Readonly<Record<string, unknow
   if (form === "compaction" || form === "branch_summary") return { summary: word(body["summary"]) };
   if (form === "custom_message" && body["display"] === true) {
     const options = readOptionRecord(body["details"]);
-    return { display: true, content: contentText(body["content"], "\n"), ...(options === undefined ? {} : { options }) };
+    const type = typeof body["customType"] === "string" ? { customType: body["customType"] } : {};
+    return { display: true, content: contentText(body["content"], "\n"), ...type, ...(options === undefined ? {} : { options }) };
   }
   if (form === "bash_execution") return { command: word(body["command"]), output: word(body["output"]), cancelled: body["cancelled"] === true, exitCode: typeof body["exitCode"] === "number" ? body["exitCode"] : undefined };
   if (form === "custom_message") return undefined;
@@ -322,11 +330,21 @@ export const beforeQueued = (items: readonly Item[]): number => {
   return at;
 };
 
+/**
+ * Whether an item is one of the stream's messages: what the person and pi said, and the records pi keeps between them. A tutorial line
+ * is a row the page draws, never a message. A reader that means a message (the draft a delta goes on, what stands next to what, the
+ * latest message) reads through `message` or `messages`; a reader that means a row on the page reads every item.
+ */
+export const message = (item: Item): boolean => item.kind !== "guide";
+
+/** The stream's messages, in order, without the rows that are not messages. */
+export const messages = (items: readonly Item[]): readonly Item[] => items.filter(message);
+
 /** A question's place, open or folded: the page's own, which says nothing of what pi wrote. */
 export const askedHere = (item: Item): boolean => item.kind === "asked" || item.kind === "asking";
 
 /** The last thing said where pi writes, above what waits for a turn's end: a question's place is the page's own and says nothing of the turn. */
-export const lastSaid = (items: readonly Item[]): Item | undefined => items.slice(0, beforeQueued(items)).findLast((item) => !askedHere(item));
+export const lastSaid = (items: readonly Item[]): Item | undefined => messages(items.slice(0, beforeQueued(items))).findLast((item) => !askedHere(item));
 
 /** A draft's key, never one an item holds: a withdrawn echo or a draft kept across a reconnect leaves the count behind a key in use. */
 const freshKey = (items: readonly Item[]): string => {
@@ -347,11 +365,11 @@ function messageDelta(state: StreamState, body: Record<string, unknown>): Stream
   const event = word(body["event"]);
   const index = typeof body["contentIndex"] === "number" ? body["contentIndex"] : 0;
   const queuedAt = beforeQueued(state.items);
-  // A question asked after the draft that asked it is the page's own: the draft goes on above it, and a new message goes below it.
-  let end = queuedAt;
-  while (end > 0 && askedHere(state.items[end - 1]!)) end--;
-  const last = state.items[end - 1];
+  // A question asked after the draft that asked it is the page's own, and so is a tutorial line: the draft goes on in its place above
+  // them, and a new message goes below them.
+  const last = messages(state.items.slice(0, queuedAt)).findLast((item) => !askedHere(item));
   const current = last !== undefined && last.kind === "assistant" && last.draft ? last : undefined;
+  const at = current === undefined ? -1 : state.items.indexOf(current);
   // pi sends no frame for a message's beginning: a block that starts at a position the draft already holds is the next message's.
   const fresh = current === undefined || (event.endsWith("_start") && index < current.blocks.length);
   const draft = fresh ? { kind: "assistant" as const, key: freshKey(state.items), blocks: [] as readonly Block[], draft: true, stopReason: undefined, errorMessage: undefined } : current;
@@ -378,17 +396,17 @@ function messageDelta(state: StreamState, body: Record<string, unknown>): Stream
     blocks[index] = ended && typeof body["content"] === "string" ? { ...whole(held), text: body["content"] } : held.cut ? held : { ...held, text: held.text + delta };
   }
   const item: Item = { ...draft, blocks };
-  return { ...state, items: fresh ? [...state.items.slice(0, queuedAt), item, ...state.items.slice(queuedAt)] : [...state.items.slice(0, end - 1), item, ...state.items.slice(end)] };
+  return { ...state, items: fresh ? [...state.items.slice(0, queuedAt), item, ...state.items.slice(queuedAt)] : [...state.items.slice(0, at), item, ...state.items.slice(at + 1)] };
 }
 
 /**
  * The view in the life named. Another life is another session: what the view held belongs to none of it, and the new life is served from
- * its start. The person's messages still waiting for their entries are theirs whichever life takes them, so they go on into the new one;
- * whether pi is at work is the box's, not the life's.
+ * its start. The person's messages still waiting for their entries are theirs whichever life takes them, so they go on into the new one,
+ * and so do the tutorial's lines, which are the visit's; whether pi is at work is the box's, not the life's.
  */
 function inLife(state: StreamState, epoch: string): StreamState {
   if (epoch === state.epoch) return state;
-  const waiting = state.items.filter((item) => item.kind === "user" && item.pending);
+  const waiting = state.items.filter((item) => (item.kind === "user" && item.pending) || item.kind === "guide");
   // The page's word that the box dropped a default is said of the start that brings the new life.
   const told = state.notices.filter((one) => one.id === DROPPED_NOTICE);
   return { ...EMPTY, sent: state.sent, turn: state.turn, epoch, cursor: `${epoch}:0`, items: waiting, notices: told };
@@ -776,4 +794,34 @@ export function lastModelRecord(items: readonly Item[]): { readonly provider: st
     if (typeof provider === "string" && typeof id === "string" && provider !== "" && id !== "") return { provider, id };
   }
   return undefined;
+}
+
+/**
+ * The page's word that cx says a tutorial line, grows it or ends it: never a frame of the platform's, so nothing the box sends draws one.
+ * `key` names the line in the visit, `line` which it is, `values` what it says, and `shown` how many characters are drawn while it grows;
+ * without `shown` it has ended.
+ */
+export const CX_SAYS = "cx_says";
+
+export type CxSays = { readonly key: string; readonly line: GuideLine; readonly values?: Readonly<Record<string, string>>; readonly shown?: number };
+
+/** A `cx_says` word as the page gave it, or nothing where it is not one. */
+export function readCxSays(data: unknown): CxSays | undefined {
+  if (!record(data) || typeof data["key"] !== "string" || data["key"] === "" || !isGuideLine(data["line"])) return undefined;
+  const given = record(data["values"]) ? data["values"] : {};
+  const values = Object.fromEntries(Object.entries(given).filter((pair): pair is [string, string] => typeof pair[1] === "string"));
+  const shown = data["shown"];
+  return { key: data["key"], line: data["line"], values, ...(typeof shown === "number" && Number.isSafeInteger(shown) && shown >= 0 ? { shown } : {}) };
+}
+
+/**
+ * A tutorial line said, grown or ended: one the view holds takes its place, and a new one stands where pi writes next, above what waits
+ * for a turn's end.
+ */
+export function cxSays(state: StreamState, said: CxSays): StreamState {
+  const item: Item = { kind: "guide", key: `guide:${said.key}`, line: said.line, values: said.values ?? {}, shown: said.shown };
+  const at = state.items.findIndex((one) => one.key === item.key);
+  if (at >= 0) return { ...state, items: [...state.items.slice(0, at), item, ...state.items.slice(at + 1)] };
+  const end = beforeQueued(state.items);
+  return { ...state, items: [...state.items.slice(0, end), item, ...state.items.slice(end)] };
 }

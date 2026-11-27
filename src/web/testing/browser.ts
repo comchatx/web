@@ -20,7 +20,7 @@ export function chromePath(): string {
  * A headless Chrome driven over its DevTools pipe, so a page's real layout can be read: the stand-in DOM the unit tests use lays nothing
  * out. One page, sized as asked, opened from a file or from an `http` address; `close` ends the browser and removes its profile.
  */
-export async function browser(options: { /** Takes any certificate, for a test's own `https` servers on loopback. */ readonly anyCertificate?: true } = {}): Promise<{ /** A file path, or an http address the test serves. */ readonly open: (file: string, width: number, height: number) => Promise<void>; /** The window given another size, the page kept as it is. */ readonly size: (width: number, height: number) => Promise<void>; /** The media the page reads, as the system would set it: `{ "prefers-reduced-motion": "reduce" }`; `{}` gives the page the system's own again. */ readonly media: (features: Readonly<Record<string, string>>) => Promise<void>; readonly evaluate: <T>(expression: string) => Promise<T>; readonly shot: (file: string) => Promise<void>; readonly press: (x: number, y: number) => Promise<void>; /** A real press that goes down at one point and up at another. */ readonly drag: (from: readonly [number, number], to: readonly [number, number]) => Promise<void>; /** The pointer moved to a point of the window, nothing pressed. */ readonly point: (x: number, y: number) => Promise<void>; /** The wheel turned at a point of the window, `dy` pixels down. */ readonly wheel: (x: number, y: number, dy: number) => Promise<void>; /** `held` is Shift, or CDP's modifiers: Alt 1, Ctrl 2, ⌘ 4, Shift 8. */ readonly key: (name: Key | (string & {}), held?: boolean | number) => Promise<void>; /** An input method's choosing of `text`, then its Enter that takes the choice (key code 229, as the system hands it on), then the words it put in. */ compose: (text: string) => Promise<void>; /** An expression run in each frame of the page, its own and those inside it, cross-site ones among them: the first answer that is not null. */ readonly inFrames: <T>(expression: string) => Promise<T | null>; /** Downloads saved into `dir` from now on, and each one begun since, by its address and the name it is saved under. */ /** The addresses of the browser's tabs, the test's own and any a page opened. */ readonly tabs: () => Promise<readonly string[]>; /** Every tab a page opened closed, the test's own brought to the front. */ readonly closeOthers: () => Promise<void>; readonly downloads: (dir: string) => Promise<readonly { readonly url: string; readonly name: string }[]>; readonly close: () => Promise<void> }> {
+export async function browser(options: { /** Takes any certificate, for a test's own `https` servers on loopback. */ readonly anyCertificate?: true } = {}): Promise<{ /** A file path, or an http address the test serves. */ readonly open: (file: string, width: number, height: number) => Promise<void>; /** The window given another size, the page kept as it is. */ readonly size: (width: number, height: number) => Promise<void>; /** The media the page reads, as the system would set it: `{ "prefers-reduced-motion": "reduce" }`; `{}` gives the page the system's own again. */ readonly media: (features: Readonly<Record<string, string>>) => Promise<void>; readonly evaluate: <T>(expression: string) => Promise<T>; readonly shot: (file: string) => Promise<void>; readonly press: (x: number, y: number) => Promise<void>; /** Presses the left button down at a point and keeps it down, as a press held: `:active` matches what is under it. */ readonly hold: (x: number, y: number) => Promise<void>; /** The pointer moved to a point with the left button held, as a drag goes on. */ readonly move: (x: number, y: number) => Promise<void>; /** The left button let go at a point. */ readonly release: (x: number, y: number) => Promise<void>; /** A real press that goes down at one point and up at another. */ readonly drag: (from: readonly [number, number], to: readonly [number, number]) => Promise<void>; /** The pointer moved to a point of the window, nothing pressed. */ readonly point: (x: number, y: number) => Promise<void>; /** The wheel turned at a point of the window, `dy` pixels down. */ readonly wheel: (x: number, y: number, dy: number) => Promise<void>; /** `held` is Shift, or CDP's modifiers: Alt 1, Ctrl 2, ⌘ 4, Shift 8. */ readonly key: (name: Key | (string & {}), held?: boolean | number) => Promise<void>; /** An input method's choosing of `text`, then its Enter that takes the choice (key code 229, as the system hands it on), then the words it put in. */ compose: (text: string) => Promise<void>; /** An expression run in each frame of the page, its own and those inside it, cross-site ones among them: the first answer that is not null. */ readonly inFrames: <T>(expression: string) => Promise<T | null>; /** Downloads saved into `dir` from now on, and each one begun since, by its address and the name it is saved under. */ /** The addresses of the browser's tabs, the test's own and any a page opened. */ readonly tabs: () => Promise<readonly string[]>; /** An expression run in another tab of the browser, the first whose address holds `part`, as a window a page opened. */ readonly inTab: <T>(part: string, expression: string) => Promise<T>; /** Every tab a page opened closed, the test's own brought to the front. */ readonly closeOthers: () => Promise<void>; /** What the pages wrote to the console as an error or a warning, or threw, since the last call. */ readonly console: () => readonly string[]; /** The words on the system's clipboard, read by the open page with the permission granted to its origin. */ readonly clipboard: () => Promise<string>; readonly downloads: (dir: string) => Promise<readonly { readonly url: string; readonly name: string }[]>; readonly close: () => Promise<void> }> {
   const profile = mkdtempSync(join(tmpdir(), "cmx-layout-"));
   const chrome: ChildProcess = spawn(chromePath(), ["--headless=new", "--remote-debugging-pipe", `--user-data-dir=${profile}`, "--no-first-run", "--disable-extensions", "--hide-scrollbars", ...(options.anyCertificate ? ["--ignore-certificate-errors"] : []), "about:blank"], { stdio: ["ignore", "ignore", "ignore", "pipe", "pipe"] });
   const toChrome = chrome.stdio[3] as Writable;
@@ -40,8 +40,11 @@ export async function browser(options: { /** Takes any certificate, for a test's
   // Every frame's own script world, by the session that holds it: a frame of another site is a target of its own, attached as it comes.
   const worlds = new Map<string, Set<number>>();
   const begun: { readonly url: string; readonly name: string }[] = [];
+  const logged: string[] = [];
   const heard = (method: string, params: Record<string, unknown>, from?: string): void => {
     if (method === "Browser.downloadWillBegin") { begun.push({ url: String(params["url"]), name: String(params["suggestedFilename"]) }); return; }
+    if (method === "Runtime.consoleAPICalled" && (params["type"] === "error" || params["type"] === "warning")) logged.push(`${String(params["type"])}: ${(params["args"] as readonly { value?: unknown; description?: string }[]).map((one) => String(one.value ?? one.description ?? "")).join(" ")}`);
+    if (method === "Runtime.exceptionThrown") logged.push(`thrown: ${String((params["exceptionDetails"] as { exception?: { description?: string }; text?: string }).exception?.description ?? (params["exceptionDetails"] as { text?: string }).text)}`);
     if (method === "Target.attachedToTarget") { const child = (params["sessionId"] as string); worlds.set(child, new Set()); void watch(child); return; }
     if (from === undefined) return;
     const held = worlds.get(from) ?? new Set<number>();
@@ -64,6 +67,7 @@ export async function browser(options: { /** Takes any certificate, for a test's
   const { sessionId } = (await send("Target.attachToTarget", { targetId: page.targetId, flatten: true })) as { sessionId: string };
   await send("Page.enable", {}, sessionId);
   await watch(sessionId);
+  const tabs = new Map<string, string>();
   const evaluate = async <T>(expression: string): Promise<T> =>
     ((await send("Runtime.evaluate", { expression, returnByValue: true, awaitPromise: true }, sessionId)) as { result: { value: T } }).result.value;
   return {
@@ -79,6 +83,12 @@ export async function browser(options: { /** Takes any certificate, for a test's
     point: async (x, y) => { await send("Input.dispatchMouseEvent", { type: "mouseMoved", x, y }, sessionId); },
     wheel: async (x, y, dy) => { await send("Input.dispatchMouseEvent", { type: "mouseWheel", x, y, deltaX: 0, deltaY: dy }, sessionId); },
     /** A real mouse press at a point of the window: the move, the button down and up, as a person's press comes; it gives the frame under it activation. */
+    hold: async (x, y) => {
+      await send("Input.dispatchMouseEvent", { type: "mouseMoved", x, y }, sessionId);
+      await send("Input.dispatchMouseEvent", { type: "mousePressed", x, y, button: "left", buttons: 1, clickCount: 1 }, sessionId);
+    },
+    move: async (x, y) => { await send("Input.dispatchMouseEvent", { type: "mouseMoved", x, y, button: "left", buttons: 1 }, sessionId); },
+    release: async (x, y) => { await send("Input.dispatchMouseEvent", { type: "mouseReleased", x, y, button: "left", buttons: 0, clickCount: 1 }, sessionId); },
     press: async (x, y) => {
       await send("Input.dispatchMouseEvent", { type: "mouseMoved", x, y }, sessionId);
       await send("Input.dispatchMouseEvent", { type: "mousePressed", x, y, button: "left", buttons: 1, clickCount: 1 }, sessionId);
@@ -123,13 +133,28 @@ export async function browser(options: { /** Takes any certificate, for a test's
     closeOthers: async () => {
       const all = ((await send("Target.getTargets")) as { targetInfos: readonly { type: string; targetId: string }[] }).targetInfos;
       for (const one of all) if (one.type === "page" && one.targetId !== page.targetId) await send("Target.closeTarget", { targetId: one.targetId });
+      tabs.clear();
       await send("Page.bringToFront", {}, sessionId);
     },
+    inTab: async <T>(part: string, expression: string): Promise<T> => {
+      const all = ((await send("Target.getTargets")) as { targetInfos: readonly { type: string; targetId: string; url: string }[] }).targetInfos;
+      const tab = all.find((one) => one.type === "page" && one.targetId !== page.targetId && one.url.includes(part));
+      if (tab === undefined) throw new Error(`no tab at ${part}`);
+      let session = tabs.get(tab.targetId);
+      if (session === undefined) { session = ((await send("Target.attachToTarget", { targetId: tab.targetId, flatten: true })) as { sessionId: string }).sessionId; tabs.set(tab.targetId, session); }
+      return ((await send("Runtime.evaluate", { expression, returnByValue: true, awaitPromise: true }, session)) as { result: { value: T } }).result.value;
+    },
     tabs: async () => ((await send("Target.getTargets")) as { targetInfos: readonly { type: string; url: string }[] }).targetInfos.filter((one) => one.type === "page").map((one) => one.url),
+    clipboard: async () => {
+      const origin = await evaluate<string>("location.origin");
+      await send("Browser.grantPermissions", { origin, permissions: ["clipboardReadWrite", "clipboardSanitizedWrite"] });
+      return evaluate<string>("navigator.clipboard.readText()");
+    },
     downloads: async (dir) => {
       await send("Browser.setDownloadBehavior", { behavior: "allowAndName", downloadPath: dir, eventsEnabled: true });
       return begun;
     },
+    console: () => logged.splice(0),
     close: async () => {
       const ended = new Promise((done) => chrome.once("exit", done));
       chrome.kill();

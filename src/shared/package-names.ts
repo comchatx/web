@@ -13,11 +13,10 @@ const PUBLISHED_BARE: readonly string[] = Object.freeze(["cx-sources", "cx-keepa
 export const isOurs = (name: string): boolean => name.startsWith(`${NPM_SCOPE}/`) || PUBLISHED_BARE.includes(name);
 
 /**
- * cx Core Bundle, what a new account starts with, in the order its first open installs them, each by its npm name: who cx is, then
- * Topics, then the board's base and its to-do and question module, then pi-web-access, which searches and reads the web with no key, then
- * billion-context, which keeps a long conversation inside a small context by compressing what came before. The platform writes one
- * install of each, `npm:` and its name with no version, into the account's waiting list when it makes the account's row, and never
- * again, so a seller who removes one keeps it removed.
+ * cx Core Bundle's members, in the order a press of the bundle installs them, each by its npm name: who cx is, then Topics, then the
+ * board's base and its to-do and question module, then pi-web-access, which searches and reads the web with no key, then billion-context,
+ * which keeps a long conversation inside a small context by compressing what came before. A new account starts with none; the seller's
+ * press of the bundle writes one install of each, `npm:` and its name with no version.
  */
 export const DEFAULT_PACKAGES: readonly string[] = Object.freeze(["@comchatx/cx-assistant", "@comchatx/cx-topics", "@comchatx/cx-board", "@comchatx/cx-board-tasks", "pi-web-access", "billion-context"]);
 

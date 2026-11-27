@@ -1,28 +1,37 @@
-import { BoardRefused, ComputerPending, MONEY_AS, type Account, type Awake, type AccountMoney, type Backend, type ChatOffer, type Me, type OpenedFrom, type Models, type Parts, type Provider, type RowThinking, type Source, type Spaces, type Subscription } from "./backend.js";
+import { BoardRefused, ComputerPending, MONEY_AS, isMember, type Account, type Awake, type AccountMoney, type Backend, type ChatOffer, type Me, type OpenedFrom, type Models, type Parts, type Provider, type RowThinking, type Source, type Spaces, type Subscription } from "./backend.js";
 import { formatMoney } from "../shared/money.js";
-import type { DoorReason } from "../shared/door.js";
+import type { DoorReason, InvitationLink } from "../shared/door.js";
 import type { PickOutcome } from "../shared/card-choices.js";
 import { readCard, TASKS_TAB, type CardRow } from "../shared/board.js";
-import { fileName } from "./board-files.js";
+import { fileName, isFileKey } from "./board-files.js";
+import { FileNames, type BoardName } from "./paths.js";
 import { THINKING_REFUSED } from "../shared/package-request.js";
 import { lineTone } from "./box-state.js";
 import { balanceLine, closedLine, linked, type BoxLine } from "./box-words.js";
 // cx is a classic script that sets one global; imported here so the bundle carries it (`cx.d.ts`).
 import "./cx.js";
+import type { CxScene } from "./cx.js";
+import { fit, standAt, tabBeside, teach, type Teach } from "./guide-bubble.js";
+import { ESSENTIALS_ID } from "../shared/bundles.js";
+import { begins as roadBegins, heldOfPartTwo, KEEPA_ID, questionFor, SELLER_ID, skipFrom, stepFor, STORE_ID, WAKE_MS, type At, type Seen, type Step } from "./guide-road.js";
+import { giveWay, union, wordsUnder, type Band } from "./guide-band.js";
+import { box as placeBox, deskOf, EDGE, obstacles, placeBeside, type Avoid, type Placed } from "./guide-place.js";
+import { fillParts, fillPlace } from "./guide-fill.js";
+import { ripple } from "./ripple.js";
 import { ACT_WORDS, begins, kindOf, MINUTE_MS, scene, type Act, type Said as Word, type Scene, type Stay } from "./cx-scene.js";
 import { fill, h, keep, keepAttribute, svg, type Child } from "./dom.js";
-import { chevron, giveBack, hideTipWithin, menu, tip, toast } from "./forms.js";
+import { chevron, giveBack, hideTipWithin, menu, tip, tipWouldStand, toast } from "./forms.js";
 import { accountGroup, inUseName, switchable } from "./account-switch.js";
 
 /** A control named by its `aria-label`, whose drawn tip says that name as it stands when shown (`forms.ts`); it carries no `title`. */
 const named = <T extends HTMLElement>(control: T): T => tip(control, () => [control.getAttribute("aria-label") ?? ""]);
 import { perFrame } from "./frame.js";
 import { pickLine, ModelCard, NO_VIEW, Picks, afterPick, afterRead, cardView, drawnPick, droppedName, shownModels, within, type Choice, type Level, type PickAnswer, type SeriesPick, type Shown } from "./model-card.js";
-import { cardOf, href, othersHref, route as catalogueRoute, withoutCard } from "./plugins-model.js";
+import { cardOf, connected, holds, href, installed, othersHref, pressOf, route as catalogueRoute, withoutCard } from "./plugins-model.js";
 import { packageNamed } from "./catalogue.js";
-import type { CardWords } from "../shared/maker-words.js";
+import type { CardWords, NoticeHeadings } from "../shared/maker-words.js";
 import { HOME, PENDING_AGAIN_MS, PluginsPage } from "./plugins-page.js";
-import { FeatureCard, featureDue, pagesOf, putAway } from "./feature-card.js";
+import { FeatureCard, featureDue, keepShown, lastShown, pagesOf, putAway } from "./feature-card.js";
 import { failedUnder, failureUnder, noteWaited, rowKey, type QueueRow } from "./plugins-queue.js";
 import { ignoreHeld, twice } from "./press.js";
 import { organizationAddress, SettingsWindow, sectionOf, underOf, windowAddress, type WindowPorts } from "./settings-window.js";
@@ -36,23 +45,24 @@ import { ComputerWindow, type WindowAct, type WindowView } from "./computer-wind
 import { BoardColumn } from "./board-column.js";
 import { fromBoard, readFromBoard, unmarked } from "./board-message.js";
 import { BoardDoor } from "./board-door.js";
-import type { FrameAsks } from "./board-frame.js";
+import type { FrameAsks, Quoted } from "./board-frame.js";
 import { saveFile } from "./page-save.js";
-import { BoardView } from "./board-view.js";
+import { BoardView, type FileOwner } from "./board-view.js";
 import { offOf } from "./board-off.js";
 import { FileUploads, type FileCard, type UploadWhy } from "./file-uploads.js";
 import { addIcon, MessageRows, sendIcon, stopIcon, type Said } from "./message-rows.js";
-import { sentWith, unquoted, type Quote } from "./quote.js";
+import { boardSource, sentWith, unquoted, type Quote, type QuoteFrom } from "./quote.js";
 import { fileSaid, QuoteBox } from "./quote-box.js";
 import { SlashList } from "./slash-list.js";
 import { clamped, lastThinkingRecord, PI_DEFAULT, ThinkingCard, type Thinking } from "./thinking-level.js";
 import { markWords, QuotePick, wordsIn } from "./quote-pick.js";
 import { HistoryView } from "./history-view.js";
-import { earlier, EMPTY, joined, lastSeq, later, stretch, TurnEnds, type Item, type StreamEvent, type StreamState } from "./stream-model.js";
+import { CX_SAYS, earlier, EMPTY, failureWords, joined, lastSaid, lastSeq, later, stretch, TurnEnds, type Item, type StreamEvent, type StreamState } from "./stream-model.js";
+import { GUIDE_LINES, guideLength, guidePieces, type GuideLine } from "./guide-lines.js";
 import { StreamView, type Say } from "./stream-view.js";
-import { LineClock, atWork, lineOf, sentOf, type Line } from "./step-line.js";
+import { LineClock, atWork, lineOf, sentOf, stepsUnderWay, type Line } from "./step-line.js";
 import { stepTime, type BoardCard } from "./chat-model.js";
-import { preferredLanguage, sayAround, text, type Language, type StringKey } from "./strings.js";
+import { preferredLanguage, sayAround, STRINGS as STRINGS_BY_KEY, text, type Language, type StringKey } from "./strings.js";
 import { Visit, type Asked, type Connection } from "./visit.js";
 import { avatar, inviting, type ReadyPort } from "./account-pages.js";
 import { ownModel } from "./usage-page.js";
@@ -86,6 +96,20 @@ const TYPING_MS = 1200;
 const READY_WORD_MS = 4000;
 const ASKED_WORDS = { compact: "cx.compact", close: "cx.off" } as const satisfies Record<Asked, string>;
 const CX_TARGETS = ["computer", "cx"] as const;
+/** Each step of the tutorial's first part that has a bubble, by its words' number (sheet 9, W1–W8). */
+const ROAD_WORDS: Partial<Record<Step, number>> = { "1.2": 1, "1.3": 2, "1.4": 3, "1.5": 4, "1.6": 5, "1.7": 6, "1.8": 7, "1.9": 8, "1.11": 9, "1.13": 10, "1.11′": 10, "2.1": 11, "2.2": 12, "2.3": 13, "2.4": 5, "2.5": 14, "2.6": 15, "2.7": 16 };
+/** What cx says in the conversation as a step begins, before its bubble stands (sheet 9): the opening, the computer on, part two ahead. */
+const ROAD_SAYS: Partial<Record<Step, readonly GuideLine[]>> = { "1.2": ["T1n", "T2"], "1.11": ["T6"], "1.13": ["T7"], "1.11′": ["T7"], "2.8": ["T10"] };
+/** The status line while the tutorial's answer plays: an answer being written, timed, with no place in the stream to go to. */
+/** The tutorial lines sheet 9 has cx write beside: the opening (1.2) and the played answer (1.12). */
+const BESIDE: ReadonlySet<GuideLine> = new Set(["T1n", "T2", "A1", "A2"]);
+const PLAYED_LINE = { id: "road:answer", key: "line.answering", values: {}, timed: true, target: undefined, card: undefined } as const;
+/** How long a line takes to be written whole, as the prototype writes cx's message, and how often it grows. */
+const GROW_MS = 2_200;
+const GROW_TICK_MS = 50;
+/** cx Core Bundle's + on Discover, by the slot the keyboard is given back to after its press. */
+const ESSENTIALS_HREF = "#/plugins/b/comchatx-essentials";
+const PART_TWO_HREF = { keepa: `#/plugins/p/${KEEPA_ID}`, seller: `#/plugins/b/${SELLER_ID}`, store: `#/plugins/p/${STORE_ID}` } as const;
 type CxTarget = (typeof CX_TARGETS)[number];
 /** A card stands this far from the target it opened from, and from the window's edge. */
 const CARD_GAP = 6;
@@ -136,8 +160,14 @@ async function thumbnail(file: File): Promise<string | undefined> {
   bitmap.close();
   return canvas.toDataURL("image/png");
 }
+/**
+ * A step of the tutorial as cx leads it: its bubble's words, the key cx stands by, and what 跳过 does. `within` is the control a key
+ * that is only words stands in (the place to fill in, in the message box): the keyboard goes from it to 跳过, and nothing ripples.
+ */
+export type GuideStep = { readonly words: Teach; readonly key: () => Element | null; readonly skipped: () => void; readonly within?: () => Element | null };
 /** Where the pages send an account without a computer: the road, unless 跳过 on it left its word for this page load. */
-export type RoadTurn = { readonly skipped: boolean; go(checkout?: string): void };
+/** The road from the chat page: to its next step, the link's answer going with the move since `/me` gave it once and the road's own read no longer carries it; or, from 账单's 调整方案, to its plans page. */
+export type RoadTurn = { readonly skipped: boolean; go(checkout?: string, link?: InvitationLink): void; plans?(): void };
 
 /**
  * What a refusal of pi's says, as one line of at most `PI_WORDS` characters: pi's words are drawn as pi wrote them, in English — except
@@ -155,6 +185,16 @@ type HeldCard = { row: CardRow | undefined; modified?: number | undefined; state
 
 /** Where a deleted organization's name waits for the person's own page, across the switch's load. */
 const GONE_KEY = "cmx-organization-deleted";
+
+/** The whole board in a window of its own: `#/board`, or `#/board/<key>` for the tab it opens on. */
+const BOARD_WINDOW = "#/board";
+const BOARD_WINDOW_NAME = "cmx-board";
+/** The tab a window of the board is asked to open on, `""` for none; undefined where the address is no board's window. */
+export function boardWindowKey(hash: string): string | undefined {
+  if (hash === BOARD_WINDOW) return "";
+  if (!hash.startsWith(`${BOARD_WINDOW}/`)) return undefined;
+  try { return decodeURIComponent(hash.slice(BOARD_WINDOW.length + 1)); } catch { return ""; }
+}
 
 export class App {
   language: Language;
@@ -176,6 +216,7 @@ export class App {
   #glance: Glance | undefined;
   /** Each card's words as the catalogue's makers' packages give them, by which the model card and the stream name a maker; none until it answers. */
   #makers: CardWords = {};
+  #headings: NoticeHeadings = new Map();
   /**
    * pi's last word of its level and the levels its model takes, as the models answer or the box's end of a level brought them, with pi's
    * last record of a level the page had then, which a later record is drawn over. Kept while the box sleeps, as the model card keeps what it offered.
@@ -199,6 +240,11 @@ export class App {
   #accountTaken = 0;
   /** The account this page was drawn for: what it holds is theirs. */
   #person: string | undefined;
+  /** The files the board lists, by tab, once read; and the read out for them, read again at its end where the board changed meanwhile. */
+  #namesBy: ReadonlyMap<string, readonly BoardName[]> | undefined;
+  #names = new FileNames([]);
+  #namesReading: { again: boolean } | undefined;
+  #namesTabs = "";
   /** The platform said the page was asked with a session: its frame is drawn before the account answers. */
   readonly #presumed: boolean;
   /** The first place the view held when the page last looked whether the person is at the top. */
@@ -240,7 +286,7 @@ export class App {
   #jumps = 0;
   readonly #wide = window.matchMedia(WIDE);
   readonly #say: Say = (key, values) => text(this.language, key, values);
-  readonly #sidebar = h("aside", { class: "sidebar" });
+  readonly #sidebar = h("aside", { class: "sidebar", "data-zone": "pane" });
   readonly #backdrop = h("div", { class: "backdrop", onclick: () => this.#setSidebar(false) });
   readonly #opener = named(h("button", { type: "button", class: "sidebar-open", onclick: () => this.#setSidebar(true) }, "☰"));
   /** The sidebar's close, one for the page's life: a redraw of the sidebar keeps it, and the tip it shows. */
@@ -258,6 +304,12 @@ export class App {
   /** The board's names the stream was last drawn with. */
   #namesDrawn: ReadonlyMap<string, unknown> | undefined;
   readonly #column: BoardColumn;
+  /** The page is the whole board in a window of its own (`#/board`), opened by 在新窗口中打开. */
+  readonly #boardWindowed = boardWindowKey(location.hash) !== undefined;
+  /** The tab the window was asked to show, shown once the board is read for the account. */
+  #windowShows = boardWindowKey(location.hash) || undefined;
+  /** The tab the window's address asked for, until the window shows it or the seller chooses another: the address names it meanwhile. */
+  #windowAsked = this.#windowShows;
   /** The board cards the chat draws rows for, as last read: `fresh` until the board's files change, or a page writes the card. */
   /** The chat's board cards by tab, then by file: each as last read, at the file's time its tab's list gave, and how often it was told since. */
   readonly #cardRows = new Map<string, Map<string, HeldCard>>();
@@ -328,6 +380,34 @@ export class App {
   #offered: string | undefined;
   /** What cx is saying, how it goes, and when a word that goes by itself does. */
   #said: { readonly key: StringKey; readonly stays: Stay; readonly until: number } | undefined;
+  #teaching: { readonly step: GuideStep; readonly end: () => void } | undefined;
+  /** The tutorial's first part on this page (guide-road.ts): its step, whether 1.1's sleep has passed, and the account's packages at the start. */
+  #road: At;
+  #roadAwake = false;
+  #roadSome: boolean | undefined;
+  #roadAsked = false;
+  #roadSoon = false;
+  /** The steps whose lines cx has said; the played answer's start while it plays (1.12); a 1.11′ that waits for the seller's own turn. */
+  readonly #roadSaid = new Set<Step>();
+  #played: number | undefined;
+  #roadHeld = false;
+  /** The first question as the page put it in the box at 1.11 on this visit, in the language it was put in. */
+  #roadOffer: string | undefined;
+  /** The tutorial line cx stands beside while it writes it (`BESIDE`). */
+  #writing: string | undefined;
+  /** The road's read after each press, while it leads; taken off the page when the road ends or is closed. */
+  readonly #roadPressed = (): void => { setTimeout(() => { if (this.#road?.includes(".") === true) this.#followRoad(); }); };
+  #keyless = false;
+  /**
+   * The last scene (2.8): the question the page put in the message box in this visit and its place to fill in, as placed; and where cx
+   * stands, by the place while it is still in the box, at 发送 once it is typed over, nowhere off the chat or while cx's line is written.
+   */
+  #placed: { readonly words: string; readonly fill: string } | undefined;
+  #lastAt: "fill" | "send" | "none" | "saying" | undefined;
+  readonly #fill = fillParts();
+  #fillBox = "";
+  readonly #keyWatch = new MutationObserver(() => this.#roadLater());
+  readonly #ripple = ripple(document);
   #typing: ReturnType<typeof setTimeout> | undefined;
   #wasOut = false;
   #following = 0;
@@ -424,7 +504,7 @@ export class App {
     saidFar: async (quote) => this.#saidBy(await this.#quotedFar(quote.at)),
     grew: () => this.#streamView.resized(),
     quote: (quote) => this.#quoteBox.add(quote),
-    jump: (quote) => { void this.#jumpToQuote(quote); },
+    jump: (quote) => { if (quote.from !== undefined) this.#toQuoted(quote.from); else void this.#jumpToQuote(quote); },
     copy: (words) => { void navigator.clipboard?.writeText(words).catch(() => undefined); },
     cancel: (key) => { void this.#visit.withdraw(key); },
     // The control goes with pi's record of the message, so the focus moves now to where the next thing is written.
@@ -432,17 +512,20 @@ export class App {
     announce: (words) => { this.#announce.textContent = words; },
     later: (ms, then) => { setTimeout(then, ms); },
   });
-  readonly #composer = h("form", { class: "composer" }, this.#slash.element, this.#quoteBox.element, this.#draft, this.#dropSaid, h("div", { class: "composer-row" }, this.#add, this.#picker, this.#control));
+  readonly #composer = h("form", { class: "composer", "data-zone": "" }, this.#slash.element, this.#quoteBox.element, this.#draft, this.#dropSaid, h("div", { class: "composer-row" }, this.#add, this.#picker, this.#control));
   /** The model card under the composer's right edge: the plugins page is where its vendors are set, so `others` goes there — to the vendors' page from the vendors, to the vendor's own models from its models. */
   readonly #card = new ModelCard({
     say: this.#say,
     choose: (provider, modelId, platform, series) => this.#choose(provider, modelId, platform, series),
     others: (vendor) => { location.hash = othersHref(vendor, vendor === undefined ? undefined : this.#catalogue.hrefFor("vendor", vendor)); },
+    member: () => isMember(this.#me?.kind === "signed_in" ? this.#me : undefined),
+    // cx's card holds one menu open at a time: the model's opening closes the level's, and the level's the model's.
+    opens: () => this.#thinkingCard.close(),
   });
   // A refused pick is said here, under the line it corrects, whatever the status line says.
   readonly #pickSaid = h("p", { class: "pick-said", role: "status" });
   /** The thinking level beside the model: a press goes to the account's list for the box, as a pick does, and the button says the level drawn. */
-  readonly #thinkingCard = new ThinkingCard({ say: this.#say, choose: (level) => this.#chooseThinking(level) });
+  readonly #thinkingCard: ThinkingCard = new ThinkingCard({ say: this.#say, choose: (level) => this.#chooseThinking(level), opens: () => this.#card.close() });
   readonly #thinkingSaid = h("p", { class: "pick-said", role: "status" });
   readonly #aiNote = h("p", { class: "cc-note" });
   /**
@@ -470,7 +553,7 @@ export class App {
   readonly #ccLevelSaid = h("li", { class: "cc-row cc-said" }, this.#thinkingSaid);
   readonly #ccRows = h("ul", { class: "cc-rows" });
   readonly #ccHead = h("div", { class: "cc-head" }, this.#ccHeadActs, this.#ccTitle, this.#ccFace);
-  readonly #ccCard = h("div", { class: "cc-card", id: "cc-card", role: "dialog", tabindex: "-1", "aria-labelledby": "cc-title", hidden: true });
+  readonly #ccCard = h("div", { class: "cc-card", "data-zone": "", id: "cc-card", role: "dialog", tabindex: "-1", "aria-labelledby": "cc-title", hidden: true });
   /** How cx's card was last laid out, so it is moved only when that changes. */
   #ccArranged: string | undefined;
   /** How full the context is, as pi last answered while cx's card was open; `undefined` until it answers with a figure. */
@@ -488,6 +571,7 @@ export class App {
   readonly #pick: QuotePick;
   readonly #scroller = h("div", { class: "scroller" });
   readonly #bottom = h("footer", { class: "bottom" }, this.#status, this.#composer);
+  readonly #afieldFoot = h("footer", { class: "bottom afield" });
   readonly #window: SettingsWindow;
   /** 组织设置, the person's window's peer, which the admin of the organization in use opens. */
   readonly #organizationWindow: SettingsWindow;
@@ -511,16 +595,18 @@ export class App {
       say: this.#say,
       language: () => this.language,
       account: () => (this.#me?.kind === "signed_in" ? this.#me.account : undefined),
+      member: () => isMember(this.#me?.kind === "signed_in" ? this.#me : undefined),
       card: (card) => this.#cardRow(card),
       openCard: (card) => this.#openBoardCard(card),
       beneath: {
         stamp: (said) => this.#under(said).map((row) => `${rowKey(row)}:${row.stands}`).join(","),
-        draw: (said) => this.#under(said).map((row) => failureUnder(this.#say, this.language, row, () => { void this.#catalogue.retry(row); })),
+        draw: (said) => this.#under(said).map((row) => failureUnder(this.#say, this.language, row, isMember(this.#me?.kind === "signed_in" ? this.#me : undefined) ? undefined : () => { void this.#catalogue.retry(row); })),
       },
       modelName: ({ provider, id }) => droppedName(`${provider}/${id}`, this.#glance?.models.available ?? []),
       makers: () => this.#makers,
+      headings: () => this.#headings,
       chooseModel: () => this.#chooseModel(),
-      ...(backend.boardOpen === undefined ? {} : { openFile: (path: string) => this.#openFile(path, "chat") }),
+      ...(backend.boardOpen === undefined ? {} : { openFile: (path: string) => this.#openFile(path, "chat"), names: () => this.#names }),
       now: () => Date.now(),
       // The line's seconds are the card's: it is drawn again each time the card's are, from what the card drew.
       ticked: () => { if (this.#lineNow !== undefined) this.#fillLine(Date.now()); },
@@ -560,9 +646,11 @@ export class App {
         read: (key) => localStorage.getItem(key), write: (key, value) => localStorage.setItem(key, value), remove: (key) => localStorage.removeItem(key),
       },
       account: () => me()?.account,
-      ...(backend.boardOpen === undefined ? {} : { openFile: (path: string, from: OpenedFrom) => this.#openFile(path, from) }),
-      ...(backend.pagesOrigin === undefined || backend.boardPage === undefined ? {} : { frame: { origin: backend.pagesOrigin, read: (tab: string) => backend.boardPage!(tab), asks: this.#pageAsks(), plugin: (npm: string) => this.#catalogue.packageName(npm) } }),
-      chose: (tab) => this.#door.chose(tab),
+      ...(backend.boardOpen === undefined ? {} : { openFile: (path: string, from: OpenedFrom) => this.#openFile(path, from), names: () => this.#names }),
+      ...(this.#boardWindowed ? {} : { quote: (words: string, from: QuoteFrom) => this.quoteFromBoard(words, from) }),
+      ...(backend.pagesOrigin === undefined || backend.boardPage === undefined ? {} : { frame: { origin: backend.pagesOrigin, read: (tab: string) => backend.boardPage!(tab), asks: this.#pageAsks(), plugin: (npm: string) => this.#catalogue.packageName(npm), names: () => this.#names } }),
+      // In a board's window the seller's own choice is what it shows: a tab asked at its opening and not yet shown is asked no more.
+      chose: (tab) => { if (!isFileKey(tab)) this.#door.chose(tab); if (this.#boardWindowed) { this.#windowShows = undefined; this.#windowAsked = undefined; queueMicrotask(() => this.#titleWindow()); } },
       pressed: (tab) => { if (this.#column.open) this.#door.pressed(tab); },
       inSight: () => this.#column.open,
       computer: {
@@ -581,9 +669,10 @@ export class App {
       store: { read: (key) => localStorage.getItem(key), write: (key, value) => localStorage.setItem(key, value) },
       moved: (open) => {
         // The seller's own opening gives the board shown its door back; their closing shuts the door of a board an ask showed unpressed.
-        if (!this.#doorOpening) { if (open) this.#door.opened(this.#board.tab); else this.#door.closed(); }
+        if (!this.#doorOpening) { if (open) this.#door.opened(this.#board.visible); else this.#door.closed(); }
       },
       landing: () => this.#board.landing,
+      ...(this.#boardWindowed ? { windowed: true } : { openWindow: () => this.#openBoardWindow() }),
     }, this.#board.head, this.#board.page);
     // Words already in the message box are the person's: they stay, and only the cursor moves there.
     const ask = (words: string, select?: readonly [number, number]): void => {
@@ -591,10 +680,15 @@ export class App {
       this.#intoBox(empty ? words : this.#draft.value, empty ? select : undefined);
     };
     // A change to the account's packages can change whether History shows titles, so History is read again with it.
-    this.#catalogue = new PluginsPage({ say: this.#say, language: () => this.language, backend, me, changed: (updated) => { void this.#history.reread(); void this.#board.read(); if (updated !== undefined) this.#board.updated(updated); return this.refresh(false); }, ask, announce: (words) => { this.#announce.textContent = words; }, glanced: () => this.#drawSidebar(),
+    this.#catalogue = new PluginsPage({ say: this.#say, language: () => this.language, backend, me, changed: (updated, installed) => { void this.#history.reread(); void this.#board.read(); if (updated !== undefined) this.#board.updated(updated); if (installed !== undefined) this.#installed(installed); return this.refresh(false); }, ask, announce: (words) => { this.#announce.textContent = words; }, glanced: () => this.#drawSidebar(),
       starting: () => this.#me?.kind === "signed_in" && this.#me.box !== "pending" && this.#visit.box === "waking",
       answering: () => this.#visit.running, power: () => (this.#visit.box === "asleep" || (this.#visit.box === "awake" && this.#visit.closing) ? "off" : this.#visit.box === "waking" ? "starting" : "on"), listRead: () => { this.#drawLine(this.#lineStarting, Date.now()); if (this.route === "stream") this.#updateStream(); } });
-    void backend.catalogue().then((catalogue) => { this.#makers = catalogue.words; this.#drawComposer(); }, () => undefined);
+    void backend.catalogue().then((catalogue) => {
+      this.#makers = catalogue.words;
+      this.#drawComposer();
+      // A notice drawn before its package's heading was read takes it in place.
+      if (catalogue.headings !== undefined && catalogue.headings.size > 0) { this.#headings = catalogue.headings; this.#streamView.retitle(); }
+    }, () => undefined);
     // The identity provider's script says when it has loaded, and when what it holds of the person changes: the corner draws its photo.
     backend.watchPhoto(() => { if (this.#me?.kind === "signed_in") this.draw(); });
     const windowPorts: WindowPorts = {
@@ -615,7 +709,7 @@ export class App {
       credited: () => void this.refresh(false),
       returnTo: () => (this.#sidebarOpen ? this.#foot.querySelector<HTMLElement>(".account-button") ?? undefined : this.#opener),
     };
-    this.#window = new SettingsWindow(windowPorts);
+    this.#window = new SettingsWindow({ ...windowPorts, ...(road?.plans === undefined ? {} : { plans: () => road.plans?.() }) });
     // A deleted organization is left for the person's own account, by the switch's own road, and the chat says which one went.
     this.#organizationWindow = new SettingsWindow({ ...windowPorts, kind: "organization", paying: this.#window.paying,
       organizationDeleted: (name) => { try { sessionStorage.setItem(GONE_KEY, name); } catch { /* the notice is lost, nothing else */ } void this.backend.use(null).catch(() => undefined); } });
@@ -636,7 +730,7 @@ export class App {
       board: (said) => {
         // Every page that lives hears that the board's files changed, as the board reads them again, and the chat's rows read their cards again.
         if (said === "board") { this.#board.filesChanged(); this.#staleCards(); }
-        void this.#board.read();
+        void this.#board.read().then(() => { if (said === "board") this.#readNames(); });
       },
       later: (ms, then) => { const timer = setTimeout(then, ms); return () => clearTimeout(timer); },
       place: { read: () => localStorage.getItem(PLACE_KEY), write: (word) => localStorage.setItem(PLACE_KEY, word) },
@@ -690,6 +784,8 @@ export class App {
     this.#thinkingCard.lead(this.#ccLevelName);
     this.#arrangeCard();
     this.#wireCx();
+    this.#draft.addEventListener("input", (event) => { if (!(event as InputEvent).isComposing) this.#lastTyped(); });
+    this.#draft.addEventListener("compositionend", () => this.#lastTyped());
     this.#draft.addEventListener("input", () => { this.#slash.read(); this.#typed(); this.#drawControl(); this.#noticeWaits(); if (this.#hushNewer()) this.#drawCx(); });
     this.#scroller.addEventListener("scroll", () => {
       // A scroll the page made — a reveal, a first draw, a fill — reads nothing on; only the reader's own does.
@@ -714,7 +810,7 @@ export class App {
     // The second press of a double-click on a message taken back falls on whatever moved under the pointer: it selects no word there
     // and takes no focus from the message box.
     this.#scroller.addEventListener("mousedown", (event) => { if (this.#rows.takenBack) event.preventDefault(); });
-    window.addEventListener("resize", () => { this.#placeBack(); this.#placeSoon(); }, { passive: true });
+    window.addEventListener("resize", () => { this.#placeBack(); this.#placeSoon(); this.#placeStep(); }, { passive: true });
     this.#scroller.append(this.#streamView.element);
     // One watch for every change of the stream's box — its own content, or the room the frame leaves it — so the latest stays in view.
     // Quote on a selection follows the view as it follows the selection: a view made smaller or larger places it again.
@@ -748,7 +844,7 @@ export class App {
       // selection that takes it leaves cx at work. What took it on its own element says so by preventing the default; the rest is read
       // here before it is closed. cx's card and its computer's are read with them: they open while cx works too.
       const over = !this.#wide.matches && this.#sidebarOpen;
-      const quoted = this.#pick.took(event);
+      const quoted = this.#pick.took(event) || this.#board.pickTook(event);
       const modelOpen = this.#card.opened || this.#thinkingCard.opened;
       // History's search box holding words is open wherever the focus is: this Escape clears it as its own does, and the focus stays.
       const searched = !event.defaultPrevented && !quoted && !this.#menuOpen && !modelOpen && this.#sidebarOpen && this.#history.clearWords();
@@ -796,7 +892,11 @@ export class App {
   get connection(): Connection { return this.#visit.connection; }
   set connection(connection: Connection) { this.#visit.connection = connection; }
 
-  #moved(): void { this.#pick.hide(); if (this.route !== "plugins") this.#catalogue.leave(); this.draw(); this.#showPage(); }
+  #moved(): void {
+    // A second 在新窗口中打开 brings the window it opened to the tab shown at that press.
+    const asked = this.#boardWindowed ? boardWindowKey(location.hash) : undefined;
+    if (asked !== undefined && asked !== "") { this.#windowShows = asked; this.#windowAsked = asked; this.#boardChanged(); }
+    this.#pick.hide(); if (this.route !== "plugins") this.#catalogue.leave(); this.draw(); this.#showPage(); }
   /** Settings is a window over the page: its address holds the window, and its entry the page under it. */
   get #windowed(): boolean { return windowAddress(location.hash) || organizationAddress(location.hash); }
   /** The address of the page drawn in the main area: under the settings window, the page the window was opened over. */
@@ -904,8 +1004,12 @@ export class App {
       // Another person signed in on this browser, as in another tab: all the page holds is the last one's, so it starts again as them.
       if (me.kind === "signed_in" && (this.#person ??= me.account) !== me.account) { this.backend.again(); return await new Promise<never>(() => {}); }
       this.#me = me;
+      // The open window's parts are the account's at each read of it, as storage grows under installs.
+      if (this.#opened === "computer" && me.kind === "signed_in") this.#partsFrom(Promise.resolve(me));
       // An account without a computer is on the road to it, unless the person skipped it for this page load (`road.ts`).
-      if (me.kind === "signed_in" && me.box === "pending" && this.road?.skipped === false && !this.#leavingVisit) this.road.go(this.#cameBack);
+      if (me.kind === "signed_in" && me.box === "pending" && this.road?.skipped === false && !this.#leavingVisit) this.road.go(this.#cameBack, me.invitationLink);
+      // An invitation's link followed by a person with a computer of their own is answered on the road's card, which brings them back.
+      else if (me.kind === "signed_in" && me.box === "provisioned" && (me.invited?.[0] !== undefined || me.invitationLink !== undefined) && this.road !== undefined && !this.#leavingVisit) this.road.go(this.#cameBack, me.invitationLink);
       this.#visit.me = me;
       this.#money = money;
       void spaces.then((held) => {
@@ -1015,7 +1119,7 @@ export class App {
   #thinkingDrawn(levels: readonly string[] | undefined, named: { readonly provider: string; readonly id: string } | undefined): { readonly thinking: Thinking; readonly kept: boolean } | undefined {
     // pi's word is of the model it runs; while the card names another, a pick waiting, the levels are that model's record's.
     const live = this.#thinkingWord;
-    const word = live !== undefined && (live.on === undefined || named === undefined || (live.on.provider === named.provider && live.on.id === named.id)) ? live : this.#thinkingGuess(levels) ?? live;
+    const word = live !== undefined && (live.on === undefined || named === undefined || (live.on.provider === named.provider && live.on.id === named.id)) ? live : this.#thinkingGuess(levels, live?.level) ?? live;
     if (word === undefined) return undefined;
     const waiting = this.#thinkingPress?.level ?? this.#thinkingRow.waiting?.level;
     const record = lastThinkingRecord(this.#visit.stream.items);
@@ -1025,15 +1129,15 @@ export class App {
   }
 
   /**
-   * Before any box has said its level on this page, asleep or not yet answering, the level pi would start on: the one the box last wrote
-   * as the account's default (the settings file, which a sleeping box cannot be asked, holds the level of the last entry it ended ok),
-   * else pi's own default, clamped to the model in use, among pi's levels on that model from the box's catalogue. The box's own level
-   * takes its place when it comes, with or without a set.
+   * The level pi will run where it has not said one for the model the card names: asleep, not yet answering, or a pick not yet run. It is
+   * the one the box last wrote as the account's default (the settings file, which a sleeping box cannot be asked, holds the level of the
+   * last entry it ended ok), else the level pi runs now, which the box keeps across a change of model, else pi's own default; clamped to
+   * that model's levels from the box's catalogue. The box's own level takes its place when it comes, with or without a set.
    */
-  #thinkingGuess(levels: readonly string[] | undefined): { readonly level: string; readonly levels: readonly string[]; readonly seen: undefined } | undefined {
+  #thinkingGuess(levels: readonly string[] | undefined, running: string | undefined): { readonly level: string; readonly levels: readonly string[]; readonly seen: undefined } | undefined {
     if (levels === undefined) return undefined;
     const end = this.#thinkingRow.end;
-    const level = clamped(end?.ok === true ? end.level : PI_DEFAULT, levels);
+    const level = clamped(end?.ok === true ? end.level : running ?? PI_DEFAULT, levels);
     return level === undefined ? undefined : { level, levels, seen: undefined };
   }
 
@@ -1194,16 +1298,10 @@ export class App {
     const held = this.#computerRead.parts ?? me?.parts;
     this.#computerRead = { ...this.#computerRead, ...(held === undefined ? {} : { parts: this.#asRuns(held) }), opened: ask, reading: true };
     this.#restartComing = false;
-    const took = (part: ComputerRead): void => {
-      if (this.#computerRead.opened !== ask || (part.awake !== undefined && ask !== this.#computerAsk)) return;
-      const read = { ...this.#computerRead, ...part };
-      if (JSON.stringify(read) === JSON.stringify(this.#computerRead)) return;
-      this.#computerRead = read;
-      this.#drawCard();
-      this.#placeOver();
-    };
+    const took = (part: ComputerRead): void => this.#tookComputer(ask, part);
     void this.backend.keptAwake().then((awake) => took(awake === undefined ? {} : { awake }), () => undefined);
-    void this.backend.spending("month").then((spent) => took({ month: spent.kinds.box_time + spent.kinds.box_storage }), () => undefined);
+    // An organization's member is charged for no hours of the computer: their month draws nothing, never a $0.
+    if (me?.organization?.role !== "member") void this.backend.spending("month").then((spent) => took({ month: spent.kinds.box_time + spent.kinds.box_storage }), () => undefined);
     // A computer up before its tree is the model user's answers that it is not yet, and is asked again as the Plugins page asks it, for
     // as long as this opening is shown.
     const plugins = (): void => {
@@ -1215,6 +1313,22 @@ export class App {
     plugins();
     // The parts as Fly says them now: the page's own account read may be from before the computer was switched on.
     this.#partsFrom(this.backend.me());
+  }
+
+  #tookComputer(ask: number, part: ComputerRead): void {
+    if (this.#computerRead.opened !== ask || (part.awake !== undefined && ask !== this.#computerAsk)) return;
+    const read = { ...this.#computerRead, ...part };
+    if (JSON.stringify(read) === JSON.stringify(this.#computerRead)) return;
+    this.#computerRead = read;
+    this.#drawCard();
+    this.#placeOver();
+  }
+
+  /** The open window's count of plugins from the list the Plugins queue took as an entry left it: the window reads it once, at its opening. */
+  #installed(count: number): void {
+    const ask = this.#computerRead.opened;
+    if (this.#opened !== "computer" || ask === undefined) return;
+    this.#tookComputer(ask, { plugins: count });
   }
 
   /** The computer's state as the open window last saw it; none while the window is shut. */
@@ -1296,7 +1410,9 @@ export class App {
     const due = this.#visit.sleepDueAt;
     return {
       kind: this.#restarting ? "restarting" : this.#switchingOff ? "closing" : drawn.kind, left: due === undefined ? undefined : due - Date.now(), asking: this.#visit.asked !== undefined,
-      awake: this.#computerRead.awake, newer: me?.newer === true, hour: money(this.#computerRead.rate?.units), month: money(this.#computerRead.month),
+      awake: this.#computerRead.awake, newer: me?.newer === true, hour: money(this.#computerRead.rate?.units),
+      // A member's month is never drawn, though the card still holds one read while the account was its admin.
+      month: me?.organization?.role === "member" ? undefined : money(this.#computerRead.month),
       // The day and the time with a space between them in both languages, as the window's signed line reads: "Today 14:02".
       since: me?.onSince === undefined ? undefined : `${dayName(me.onSince, now, this.language, this.#dayWords())} ${clockTime(me.onSince)}`,
       plugins: this.#computerRead.plugins, parts: this.#computerRead.parts, size: me?.size, larger: me?.size !== undefined && me.sizes?.some((one) => one.cpus > me.size!.cpus || one.memoryMb > me.size!.memoryMb) === true, reading: this.#computerRead.reading === true, state: drawn.state, dot: drawn.signals.dot, reason: drawn.signals.reason, lang: this.language,
@@ -1440,18 +1556,23 @@ export class App {
   }
 
   #drawCx(): void {
+    this.#roadLater();
     const visit = this.#visit;
     const me = this.#me?.kind === "signed_in" ? this.#me : undefined;
     const balance = me?.balance;
     const now = Date.now();
-    const low = balance !== undefined && me !== undefined && balance.available < 100 * me.money.unitsPerMinor;
+    const low = balance?.available !== undefined && me !== undefined && balance.available < 100 * me.money.unitsPerMinor;
     const was = this.#scene;
-    const drawn = scene({
+    const read = scene({
       pending: me?.box === "pending", box: visit.box, closing: visit.closing, stream: visit.stream, atWork: visit.atWork, refusal: visit.blocked,
       floor: balance?.can_open === false, unreachable: visit.unreachable || visit.connection === "reconnecting", asking: visit.asked !== undefined,
       low, typing: this.#typing !== undefined, draft: this.#draft.value.length, sleepDueAt: visit.sleepDueAt, now, restarting: this.#restarting, switchingOff: this.#switchingOff,
       newer: this.#newerWaits(me),
     });
+    // While the tutorial's answer plays, cx writes beside it as beside an answer being written; the computer is free, so nothing is
+    // offered to stop.
+    const played = this.#played !== undefined && read.kind === "on" ? { ...read, state: "writing" as const, out: true, signals: { ...read.signals, dot: "working" as const } } : read;
+    const drawn = this.#writing !== undefined ? { ...played, out: true } : played;
     this.#scene = drawn;
     // The board's place follows the computer: drawn again as it goes off or changes how it is off, and read again as it comes on. The
     // visit can speak before the board is made.
@@ -1464,7 +1585,7 @@ export class App {
     // Nothing is said in the computer's last minute before its own sleep: a word already up ends as the minute begins. Nor while the
     // line beside cx says why the box takes no message: it is said there once.
     const last = drawn.kind === "on" && visit.sleepDueAt !== undefined && visit.sleepDueAt - now <= MINUTE_MS;
-    if (this.#said !== undefined && (now >= this.#said.until || last || this.#boxLine() !== undefined)) this.#said = undefined;
+    if (this.#said !== undefined && (now >= this.#said.until || last || this.#boxLine() !== undefined || this.#stoppedLine() !== undefined)) this.#said = undefined;
     // The computer's card closes when what it offers changes, the focus back on its target. cx's card is a dialog the seller reads: it
     // stays, its rows changed in place, and an action that went from under the focus leaves the focus on the card.
     const opened = this.#opened;
@@ -1485,16 +1606,22 @@ export class App {
     const said = this.#said;
     // What cx says as a kind begins comes first; at rest at its desk with nothing else to say, cx says a new version waits, as a way to
     // the computer's window. Not while the box takes no message, whose reason stands beside cx: the saying is not spent then.
-    const newer = said === undefined && !drawn.out && drawn.kind === "on" && this.#boxLine() === undefined && this.#saysNewer(me, now);
+    const newer = said === undefined && !drawn.out && drawn.kind === "on" && this.#boxLine() === undefined && this.#stoppedLine() === undefined && this.#saysNewer(me, now);
     const words = newer ? `newer:${this.#say("cx.say.newer")}` : said === undefined ? "" : this.#say(said.key);
-    if (words !== this.#bubbleSaid) {
+    if (this.#teaching !== undefined) {
+      // A guided step's bubble holds its own words while the step stands; what cx would say at its desk waits for it to end.
+      this.#bubbleSaid = undefined;
+      this.#cxBubble.classList.remove("go", "quiet");
+    } else if (words !== this.#bubbleSaid) {
       this.#bubbleSaid = words;
       if (newer) fill(this.#cxBubble, h("button", { type: "button", "data-key": "newer", onclick: () => this.#openCard("computer") },
         h("span", {}, this.#say("cx.say.newer")), h("span", { class: "step-go", "aria-hidden": "true" }, "›")));
       else fill(this.#cxBubble, words);
     }
-    this.#cxBubble.classList.toggle("go", newer);
-    this.#cxBubble.classList.toggle("quiet", !newer && (said === undefined || drawn.out));
+    if (this.#teaching === undefined) {
+      this.#cxBubble.classList.toggle("go", newer);
+      this.#cxBubble.classList.toggle("quiet", !newer && (said === undefined || drawn.out));
+    }
     keep(this.#cxMark, "hidden", !drawn.mark);
     for (const name of CX_TARGETS) {
       const target = this.#cxTarget(name);
@@ -1664,7 +1791,7 @@ export class App {
   #drawTip(): void {
     const name = this.#tipped;
     // While cx's word is a press it keeps its place: no label over either target (the signed prototype's `showTip`).
-    const shown = name !== undefined && this.#opened === undefined && this.#scene !== undefined && !this.#cxBubble.classList.contains("go");
+    const shown = name !== undefined && this.#opened === undefined && this.#scene !== undefined && !this.#cxBubble.classList.contains("go") && this.#teaching === undefined;
     this.#cxTip.hidden = !shown;
     this.#cxPlace.classList.toggle("tipped", shown);
     const said = shown && this.#said?.stays === "act" ? this.#said : undefined;
@@ -1672,6 +1799,407 @@ export class App {
     this.#cxPlace.classList.toggle("said", said !== undefined);
     if (shown) this.#cxTip.textContent = said !== undefined ? this.#say(said.key) : this.#words(this.#scene!.cards[name].title);
   }
+
+  /**
+   * A guided step at the key `key` finds (read each time, as a draw may draw the key anew): cx stands beside it where the placement
+   * finds room (guide-place.ts), hops there, and once landed points at it, the key ripples and cx's bubble says `words` with 跳过
+   * pressing `skipped`, 跳过 next after the key in the order, the bubble inside the modal dialog that holds the key, if one does.
+   * `null` ends it: cx goes home and its bubble is what it says at its desk again. The window's size changing places it again.
+   */
+  guide(step: GuideStep | null): void {
+    this.#teaching?.end();
+    this.#teaching = undefined;
+    this.#keyless = false;
+    this.#keyWatch.disconnect();
+    this.#ripple.show(null);
+    const scene = this.#cx.scene!;
+    scene.point(null);
+    if (step === null) {
+      this.#streamView.giveWay(null);
+      this.#catalogue.giveWay(null);
+      this.#cxBubble.classList.remove("teach", "left", "under", "side");
+      this.#cxBubble.replaceChildren();
+      standAt(this.#cxBubble, this.#cxPlace, null, null);
+      this.#bubbleSaid = undefined;
+      scene.goTo(null);
+      this.draw();
+      return;
+    }
+    teach(this.#cxBubble, step.words, step.skipped);
+    // On the Plugins page the draw does not reach cx's own, which is what shows a step's bubble: it is shown here.
+    this.#cxBubble.classList.remove("go", "quiet");
+    this.#teaching = { step, end: tabBeside(document, this.#cxBubble, step.within ?? step.key) };
+    this.draw();
+    this.#placeStep(true);
+  }
+
+  /**
+   * cx and the bubble of the step standing, placed beside its key again: at the step's start and at each resize. The bubble is not built
+   * again, so the keyboard stays where it was in it; a new step's (`fresh`) is held unseen until cx lands.
+   */
+  #placeStep(fresh = false): void {
+    const teaching = this.#teaching;
+    if (teaching === undefined) return;
+    const step = teaching.step;
+    const scene = this.#cx.scene!;
+    // Read after the draw, which may draw the key anew.
+    const key = step.key();
+    // A key that is not on the page (the Plugins page's list still being read, a card just closed, another page opened in the middle of
+    // a step) holds the bubble unseen and gives the page's band back; the page's next change reads the road again, which places the
+    // step once the key is there.
+    this.#keyless = key === null;
+    this.#keyWatch.disconnect();
+    if (key === null) { this.#giveBack(); this.#cxBubble.classList.add("hold"); this.#keyWatch.observe(this.#catalogue.element, { childList: true, subtree: true }); return; }
+    // At its desk (the key is its own computer, or cx itself) cx stays in its seat, points at its computer's screen or at itself, and
+    // only its bubble is placed; else it goes out beside the key and points at it from outside its edge.
+    const desk = this.#cxPlace.contains(key);
+    const home = key.closest("dialog:modal") ?? this.#cxPlace;
+    if (this.#cxBubble.parentElement !== home) home.append(this.#cxBubble);
+    this.#cxBubble.classList.add("fixed");
+    if (fresh) this.#cxBubble.classList.add("hold");
+    const mine = (el: Element): boolean => this.#cxPlace.contains(el) || this.#cxBubble.contains(el) || el === this.#ripple.element;
+    const measure = (width: number | null): { readonly w: number; readonly h: number } => {
+      if (width === null) fit(this.#cxBubble);
+      else this.#cxBubble.style.width = `${width}px`;
+      return { w: this.#cxBubble.offsetWidth, h: this.#cxBubble.offsetHeight };
+    };
+    let avoid: Avoid = { hard: [], surfaces: [] };
+    const place = (): Placed | null => {
+      avoid = obstacles(document, key, mine);
+      const svg = this.#cxSlot.querySelector("svg")!.getBoundingClientRect();
+      const k = svg.width / CxCharacter.SCENE_BOX.w;
+      const paper = this.#cxSlot.querySelector("svg .cx-paper")?.getBoundingClientRect();
+      const placed = placeBeside({
+        key: key.getBoundingClientRect(),
+        fig: { w: CxCharacter.BODY_BOX.w * k, h: CxCharacter.BODY_BOX.h * k },
+        measure,
+        avoid,
+        view: placeBox(EDGE, EDGE, innerWidth - 2 * EDGE, innerHeight - 2 * EDGE),
+        tip: key instanceof HTMLElement ? tipWouldStand(key) : null,
+        // At its desk the bubble stands round cx and the key together, so it keeps off both.
+        ...(desk && paper !== undefined ? { at: deskOf(paper, key.getBoundingClientRect()) } : {}),
+      });
+      if (placed !== null) {
+        measure(placed.width);
+        // Where no place was clear, cx stands where it covers least, and says so on its bubble.
+        this.#cxBubble.dataset["squeezed"] = String(placed.cover > 0);
+      }
+      return placed;
+    };
+    const landed = (placed: Placed | null): void => {
+      if (this.#teaching !== teaching) return;
+      const how = !desk ? "key" : step.key()?.getAttribute("data-target") === "cx" ? "self" : "screen";
+      // The arm keeps off what cx keeps off, and off the key's tooltip where cx stands clear of it, as they stand when cx lands.
+      const at = step.key();
+      const tip = at instanceof HTMLElement ? tipWouldStand(at) : null;
+      const clear = at === null || how !== "key" ? [] : [...obstacles(document, at, mine).hard, ...(tip !== null && (placed === null || placed.figure.right <= tip.left || tip.right <= placed.figure.left || placed.figure.bottom <= tip.top || tip.bottom <= placed.figure.top) ? [tip] : [])];
+      scene.point(() => step.key()?.getBoundingClientRect() ?? null, how, () => clear);
+      this.#ripple.show(step.within === undefined ? step.key : null);
+      standAt(this.#cxBubble, home, placed, placed?.bubble ?? null);
+      this.#cxBubble.classList.remove("hold");
+    };
+    // Where cx still covers the page's words, the page it stands over gives way by one band, worked out from none each time.
+    const room = (): Placed | null => {
+      const plugins = this.#catalogue.element.parentElement === this.#main;
+      const give = (band: Band | null): void => { if (plugins) this.#catalogue.giveWay(band); else this.#streamView.giveWay(band?.px ?? null); };
+      give(null);
+      // At the step's start a key not wholly in view is brought in by the least, once: a seller's own scroll after it is not undone.
+      if (fresh) key.scrollIntoView({ block: "nearest" });
+      const host = (plugins ? this.#main : this.#scroller).getBoundingClientRect();
+      give(giveWay(host, plugins ? ["top", "foot"] : ["foot"], (trial) => {
+        give(trial);
+        const at = place();
+        if (at === null) return null;
+        const parts = at.bubble === null ? [at.figure] : [at.figure, at.bubble];
+        return { key: key.getBoundingClientRect(), cx: union(parts)!, cover: at.cover, pose: parts, under: wordsUnder(avoid.hard.filter((one) => one.word), host, parts) };
+      }));
+      return place();
+    };
+    if (desk) {
+      scene.goTo(null, () => { if (this.#teaching === teaching) landed(room()); });
+      return;
+    }
+    const placed = room();
+    if (placed === null) return;
+    scene.goTo(placed.figure, () => landed(placed));
+  }
+
+  /**
+   * The tutorial's first part, for an account it is due to: it begins only where 1.1 stands (the chat, the computer off, nothing
+   * installed), and each draw moves it to the step what the page shows is at. Its end on this page closes nothing: an account that has
+   * pressed cx Core Bundle or switched its computer on does not stand at 1.1 again.
+   */
+  #followRoad(): void {
+    const me = this.#me;
+    const at = this.#road;
+    if (me?.kind !== "signed_in" || me.guideClosed === true || at === "closed" || at === "ended" || this.#scene?.kind === "unknown") return;
+    if (!this.#roadAsked) {
+      this.#roadAsked = true;
+      void this.backend.packages().then((list) => { this.#roadSome = list.packages.length > 0; this.draw(); }, () => { this.#roadSome = true; });
+      return;
+    }
+    if (this.#roadSome === undefined) return;
+    const seen = this.#seen();
+    if (at === undefined) {
+      if (!roadBegins(seen)) { if (seen.some || seen.power !== "off") this.#road = "ended"; return; }
+      this.#road = "1.1";
+      // The Plugins page opens and closes its cards with no draw of the page's: the road is read again after each press.
+      document.addEventListener("click", this.#roadPressed);
+      setTimeout(() => { this.#roadAwake = true; this.draw(); }, WAKE_MS);
+      return;
+    }
+    // A changed first question went as the seller's own turn: part two's line waits for its answer.
+    if (this.#roadHeld) {
+      const last = lastSaid(this.#visit.stream.items);
+      if (this.#visit.atWork || last === undefined || last.kind === "user") return;
+      this.#roadHeld = false;
+      this.#lead(at);
+      return;
+    }
+    const next = stepFor(at, seen, this.#roadAwake);
+    if (next !== at) this.#lead(next);
+    else if (at === "2.8") this.#lastRead();
+    else if (this.#teaching !== undefined && (this.#keyless || this.#teaching.step.key() === null)) this.#placeStep(true);
+  }
+
+  /** The host the main area shows gives back its band, so the next placement starts from none. */
+  #giveBack(): void {
+    if (this.#catalogue.element.parentElement === this.#main) this.#catalogue.giveWay(null);
+    else this.#streamView.giveWay(null);
+  }
+
+  /**
+   * Part two begins: the road stands at the step the Plugins page shows now (guide-road.ts `partTwo`), 2.1 for a seller who holds
+   * none of its three plugins. 插件 pressed at part one's end is what tells it so.
+   */
+  leadPartTwo(): void {
+    document.addEventListener("click", this.#roadPressed);
+    this.#roadAsked = true;
+    this.#roadSome = true;
+    this.#roadSaid.add("1.13");
+    this.#lead(stepFor("1.13", this.#seen(), true));
+  }
+
+  /**
+   * cx's place on the Plugins page while a step leads there: the status row it sits in, under the page, its words unshown, so cx can
+   * walk out to a key there; back in the chat's own footer otherwise.
+   */
+  #afield(on: boolean): void {
+    if (on) {
+      if (this.#status.parentElement !== this.#afieldFoot) this.#afieldFoot.append(this.#status);
+      if (this.#afieldFoot.parentElement !== this.#main) this.#main.append(this.#afieldFoot);
+      return;
+    }
+    this.#afieldFoot.remove();
+    if (this.#status.parentElement !== this.#bottom) this.#bottom.prepend(this.#status);
+  }
+
+  #seen(): Seen {
+    const kind = this.#scene?.kind;
+    const held = this.#catalogue.held;
+    const named = catalogueRoute(this.#pageHash);
+    const [act, ...card] = (cardOf(this.#pageHash) ?? "").split(":");
+    const plugin = (id: string) => held.catalogue.plugins.find((one) => one.id === id);
+    const has = (id: string): boolean => { const one = plugin(id); return (one !== undefined && installed(held, one)) || this.#catalogue.queue().some((row) => row.act === "install" && row.stands !== "failed" && row.plugin.id === id); };
+    const seller = held.catalogue.bundles.find((one) => one.id === SELLER_ID);
+    const store = plugin(STORE_ID);
+    return {
+      card: act === "install" ? card.join(":") : undefined,
+      item: named?.kind === "plugin" ? named.id : undefined,
+      settings: named?.kind === "plugin" && named.tab === "settings",
+      keepa: has(KEEPA_ID),
+      seller: seller !== undefined && (holds(held, seller) || pressOf(held, seller) !== undefined),
+      store: store !== undefined && connected(held, store),
+      page: this.route === "plugins" ? "plugins" : "chat",
+      view: this.#pageHash.startsWith("#/plugins/yours") ? "yours" : "other",
+      installCard: new URLSearchParams(this.#pageHash.split("?")[1] ?? "").get("card") === `install:b:${ESSENTIALS_ID}`,
+      opened: this.#opened,
+      power: kind === "starting" ? "starting" : kind === "on" || kind === "working" ? "on" : "off",
+      some: this.#roadSome === true || this.#catalogue.queue().length > 0 || this.#catalogue.held.packages.length > 0,
+    };
+  }
+
+  /**
+   * A step drawn: what cx says in the conversation as it begins, said once, then its bubble at its key; or no bubble (1.1, cx asleep;
+   * 1.10, cx's card or the wait for the computer; 1.12, the answer playing), or the part's end on this page.
+   */
+  #lead(step: Step | "ended"): void {
+    // Back in the chat with nothing of part two held, part one's end stands as it was left: its line is not said again.
+    if (step === "1.13" && this.#roadSaid.has("1.11′")) step = "1.11′";
+    this.#road = step;
+    this.#lastAt = undefined;
+    this.#fill.mark.hidden = true;
+    // The last scene is the chat's: a store connected, or 跳过 pressed, on the Plugins page goes there.
+    if (step === "2.8" && this.route === "plugins") location.hash = "#/";
+    if (step === "ended") document.removeEventListener("click", this.#roadPressed);
+    if (step === "1.11′" && this.#draft.value.trim() === this.#roadOffer) { this.#draft.value = ""; this.#drawControl(); }
+    const says = step === "ended" ? undefined : ROAD_SAYS[step];
+    if (says === undefined || this.#roadSaid.has(step as Step)) {
+      if (step === "2.8") { this.#offer(); this.#lastRead(); } else this.#bubble(step);
+      return;
+    }
+    this.#roadSaid.add(step as Step);
+    if (step === "2.8") this.#lastAt = "saying";
+    if (this.#teaching !== undefined) this.guide(null);
+    void this.#speak(says).then(() => {
+      if (this.#road !== step) return;
+      // The first question is offered only into an empty box at the chat: words, a file or a quote the seller has there are theirs, and stay.
+      if (step === "1.11" && this.route === "stream" && !this.#boxHolds()) { this.#roadOffer = this.#say("guide.s1"); this.#intoBox(this.#roadOffer); }
+      if (step === "2.8") { this.#lastAt = undefined; this.#offer(); this.#lastRead(); return; }
+      this.#bubble(step);
+    });
+  }
+
+  /**
+   * The last scene's question goes into the message box, the one for what the account holds now, its place to fill in selected: into
+   * an empty box, or over the question the page itself placed there in this visit, as it placed it. Words of the seller's own stay.
+   */
+  #offer(): void {
+    const held = this.#draft.value;
+    if (held !== this.#placed?.words && this.#boxHolds()) return;
+    const fill = this.#say("guide.f1");
+    const words = this.#say(`guide.${questionFor(this.#seen()).toLowerCase() as "q1" | "q1n" | "q1k"}`, { fill });
+    this.#placed = { words, fill };
+    const at = words.indexOf(fill);
+    this.#intoBox(words, [at, at + fill.length]);
+  }
+
+  /**
+   * Where cx stands at the last scene, read at each draw and at each change of the box: above the place to fill in while the placed one
+   * is still in the box, saying W17; at 发送 with W9 once it is typed over, or over words of the seller's own; nowhere off the chat.
+   */
+  #lastRead(): void {
+    if (this.#road !== "2.8" || this.#lastAt === "saying") return;
+    const placed = this.#placed;
+    const from = placed === undefined ? -1 : this.#draft.value.indexOf(placed.fill);
+    const box = this.route === "stream" && from >= 0 ? fillPlace(this.#draft, this.#fillMirror(), from, placed!.fill.length) : null;
+    const at = this.route !== "stream" ? "none" : from >= 0 ? "fill" : "send";
+    const mark = this.#fill.mark;
+    const drawn = JSON.stringify(box);
+    const moved = drawn !== this.#fillBox;
+    this.#fillBox = drawn;
+    mark.hidden = box === null;
+    if (box !== null) Object.assign(mark.style, { left: `${box.left}px`, top: `${box.top}px`, width: `${box.width}px`, height: `${box.height}px` });
+    if (at === this.#lastAt) { if (moved && at === "fill") this.#placeStep(); return; }
+    this.#lastAt = at;
+    if (at === "none") this.guide(null);
+    else this.#bubble("2.8");
+  }
+
+  #fillMirror(): HTMLElement {
+    if (!this.#fill.mirror.isConnected) document.body.append(this.#fill.mirror, this.#fill.mark);
+    return this.#fill.mirror;
+  }
+
+  /** The box changed at the last scene: emptied, the lead is over on this page; else cx stands by what the box holds now. */
+  #lastTyped(): void {
+    if (this.#road !== "2.8" || this.#lastAt === "saying") return;
+    if (this.#draft.value.trim() === "") { this.#lead("ended"); return; }
+    this.#lastRead();
+  }
+
+  /** The tutorial closed for the account, as 跳过 at its opening closes it: nothing leads again, on this page or after a reload. */
+  #closeRoad(): void {
+    this.#road = "closed";
+    this.#lastAt = undefined;
+    this.#fill.mark.hidden = true;
+    document.removeEventListener("click", this.#roadPressed);
+    this.guide(null);
+    void this.backend.closeGuide().catch(() => undefined);
+  }
+
+  #bubble(step: Step | "ended"): void {
+    const fill = step === "2.8" && this.#lastAt === "fill";
+    const n = step === "ended" ? undefined : step === "2.8" ? (fill ? 17 : 9) : ROAD_WORDS[step];
+    if (n === undefined) { if (this.#teaching !== undefined) this.guide(null); return; }
+    const say = this.#say;
+    const lines = (["line1", "line2"] as const).map((line) => `guide.w${n}.${line}`).filter((key): key is StringKey => key in STRINGS_BY_KEY);
+    this.guide({
+      words: { title: say(`guide.w${n}.title` as StringKey), lines: lines.map((key) => say(key)), press: say(`guide.w${n}.press` as StringKey), skip: say("dialog.skip") },
+      key: () => this.#roadKey(step as Step),
+      skipped: () => this.#skipRoad(step as Step),
+      ...(fill ? { within: () => this.#draft } : {}),
+    });
+  }
+
+  /** cx says lines in the conversation one after another, each written as it grows (`cx_says`), the person called by their name. */
+  async #speak(lines: readonly GuideLine[]): Promise<void> {
+    const me = this.#me;
+    const values = { name: me?.kind === "signed_in" ? me.name ?? "" : "" };
+    for (const line of lines) {
+      const length = guideLength(guidePieces(this.#say(GUIDE_LINES[line]), values));
+      const by = Math.max(1, Math.ceil(length / (GROW_MS / GROW_TICK_MS)));
+      this.#writing = BESIDE.has(line) ? `road:${line}` : undefined;
+      for (let shown = by; shown < length; shown += by) {
+        this.receive({ event: CX_SAYS, data: { key: `road:${line}`, line, values, shown } });
+        await new Promise((done) => setTimeout(done, GROW_TICK_MS));
+      }
+      this.receive({ event: CX_SAYS, data: { key: `road:${line}`, line, values } });
+    }
+    if (this.#writing !== undefined) { this.#writing = undefined; this.draw(); }
+  }
+
+  /**
+   * 发送 at 1.11 with the first question unchanged: the question drawn as the seller's message and the written answer played, all on this
+   * page — nothing goes to pi, no model writes and nothing is charged. The status line and cx say what they say for an answer being
+   * written; once it has played, 1.13.
+   */
+  #playAnswer(): void {
+    this.#draft.value = "";
+    this.#drawControl();
+    this.#road = "1.12";
+    this.guide(null);
+    this.receive({ event: CX_SAYS, data: { key: "road:S1", line: "S1" } });
+    this.#played = Date.now();
+    this.draw();
+    void this.#speak(["A1", "A2"]).then(() => {
+      this.#played = undefined;
+      this.draw();
+      if (this.#road === "1.12") this.#lead("1.13");
+    });
+  }
+
+  #skipRoad(step: Step): void {
+    const to = skipFrom(step, heldOfPartTwo(this.#seen()));
+    // At the last scene the question stays in the box, the keyboard in it.
+    if (to === "closed") { this.#closeRoad(); if (step === "2.8") this.#draft.focus({ preventScroll: true }); return; }
+    if (to === "ended") { this.#lead("ended"); return; }
+    if (to === "1.10") { this.#road = to; this.guide(null); return; }
+    if (this.route === "plugins") location.hash = "#/";
+    // The computer's window the road opened at 1.3 is shut with it, so cx's lines from here stand clear.
+    if (this.#opened === "computer") this.#shutCard(false);
+    this.#lead(to);
+  }
+
+  /** The key of a step, read each time; where the sidebar is shut, its entries' key is the button that opens it. */
+  #roadKey(step: Step): Element | null {
+    const shown = (el: Element | null): Element | null => (el instanceof HTMLElement && el.getClientRects().length > 0 && this.#sidebarOpen ? el : el === null ? null : this.#opener);
+    switch (step) {
+      case "1.2": return this.#cxSlot.querySelector("[data-target='computer']");
+      case "1.3": return this.#computer.element.querySelector("[data-act='on']");
+      case "1.4": return shown(this.#sidebar.querySelector("a.entry[href='#/plugins']"));
+      case "1.5": return this.#catalogue.element.querySelector(`[data-focus='act ${ESSENTIALS_HREF}']`);
+      case "1.6": return document.querySelector("dialog[open] .pl-card-acts button.primary");
+      case "1.7": return this.#catalogue.element.querySelector("a.pl-view[href^='#/plugins/yours']");
+      case "1.8": return shown(this.#sidebar.querySelector("a.entry[data-key='chat']"));
+      case "1.9": return this.#cxSlot.querySelector("[data-target='cx']");
+      case "1.11": return this.#control;
+      case "1.13":
+      case "1.11′": return shown(this.#sidebar.querySelector("a.entry[href='#/plugins']"));
+      case "2.1": return this.#catalogue.element.querySelector(`[data-focus='act ${PART_TWO_HREF.keepa}']`);
+      case "2.3": return this.#catalogue.element.querySelector(`[data-focus='act ${PART_TWO_HREF.seller}']`);
+      case "2.2":
+      case "2.4": return document.querySelector("dialog[open] .pl-card-acts button.primary");
+      case "2.5": return this.#catalogue.element.querySelector(`a.pl-card-name[href='${PART_TWO_HREF.store}']`);
+      case "2.6": return this.#catalogue.element.querySelector("a.pl-tab[data-focus='tab settings']");
+      case "2.7": return this.#catalogue.element.querySelector("[data-focus='sp-connect']");
+      case "2.8": return this.route !== "stream" ? null : this.#lastAt === "fill" ? (this.#fill.mark.hidden ? null : this.#fill.mark) : this.#control;
+      default: return null;
+    }
+  }
+
+  /** cx's scene on the page: what a guided step moves cx and its hand by. */
+  get cxScene(): CxScene { return this.#cx.scene!; }
 
   get #cxOut(): boolean { return this.#cx.element.getAttribute("data-away") === "true"; }
 
@@ -1767,7 +2295,7 @@ export class App {
     // back by a hop drawn whole in the view, never through the view's foot or behind the message box. Once home, it goes back out only when
     // the line has come in by twice that room, so a scroll that stops at the edge does not send it back and forth.
     const view = this.#scroller.getBoundingClientRect();
-    const line = !drawn.out || this.route !== "stream" || !this.#toLatest.hidden ? undefined : this.#streamView.lastLine();
+    const line = !drawn.out || this.route !== "stream" || !this.#toLatest.hidden ? undefined : this.#writing !== undefined ? this.#streamView.guideLine(this.#writing) : this.#streamView.lastLine();
     const scene = this.#cx.scene!;
     const beside = line !== undefined && line.top >= view.top && line.y <= view.bottom - scene.reach(line.start, view.left) * (this.#placedBy === undefined ? 2 : 1);
     const out = beside ? scene.away({ y: line.y, start: line.start, left: view.left, top: view.top, bottom: view.bottom, shift: this.#scrolledBy(line.y) }) : scene.away(null);
@@ -1827,9 +2355,10 @@ export class App {
     if (starting) this.#startSeen = true;
     else if (this.#startSeen) { this.#startSeen = false; this.#catalogue.settled(); }
     this.#noteWaited();
-    const said = lineOf({ stream: visit.stream, atWork: visit.atWork, starting, untimed: visit.startUntimed, closing: this.#switchingOff, installing: this.#catalogue.installing(), on: visit.box === "awake" && !visit.closing,
+    // The tutorial's played answer says what an answer being written says, its time from its start; no step of a turn is under way.
+    const said = this.#played !== undefined ? PLAYED_LINE : lineOf({ stream: visit.stream, atWork: visit.atWork, starting, untimed: visit.startUntimed, closing: this.#switchingOff, installing: this.#catalogue.installing(), on: visit.box === "awake" && !visit.closing,
       skillPlugin: (pkg) => packageNamed(this.#catalogue.held.catalogue.plugins, pkg, this.language) });
-    this.#lineNow = this.#lineClock.at(said, now, { startedAt: this.#startedAt, cardFrom: (key) => this.#streamView.cardFrom(key), sent: sentOf(visit.stream) });
+    this.#lineNow = this.#lineClock.at(said, now, { startedAt: this.#startedAt, cardFrom: (key) => this.#streamView.cardFrom(key), sent: sentOf(visit.stream), running: stepsUnderWay(visit.stream) });
     this.#fillLine(now);
     // A line reading a card's clock turns on the card's tick; any other time, on its own.
     const card = this.#lineNow?.line.card;
@@ -1955,6 +2484,7 @@ export class App {
 
   /** A quote of a message that came back takes its card again: whose words and when from the entry the page holds, otherwise from one read of where it is stored. */
   #returned(quote: Quote): void {
+    if (quote.from !== undefined) { this.#quoteBox.add({ ...quote, who: undefined, time: undefined }); return; }
     const held = this.#itemAt(quote.at);
     this.#quoteBox.add({ ...quote, who: held === undefined ? undefined : held.kind === "user" ? "you" : "cx", time: held?.at });
     if (held === undefined) void this.#quotedFar(quote.at).then((far) => { if (far !== undefined) this.#quoteBox.know(quote, far.kind === "user" ? "you" : "cx", far.at); });
@@ -2143,8 +2673,20 @@ export class App {
     this.draw();
   }
 
+  /** Whether the box holds anything of the seller's: words, a quote or a file. */
+  #boxHolds(): boolean {
+    return this.#draft.value.trim() !== "" || this.#quoteBox.quotes.length > 0 || this.#uploads.cards.length > 0;
+  }
+
   /** Sends what the box holds, or a sample given whole, which leaves the box, its quotes and its files as they are. */
   #send(sample?: string): void {
+    // The tutorial's first question, unchanged, is played; changed, it is the seller's own, sent as any message, and the road goes past it.
+    if (sample === undefined && this.#road === "1.11" && this.#boxHolds()) {
+      if (this.#draft.value.trim() === this.#roadOffer && this.#quoteBox.quotes.length === 0 && this.#uploads.cards.length === 0) { this.#playAnswer(); return; }
+      this.#road = "1.11′";
+      this.#roadHeld = true;
+      this.guide(null);
+    }
     const quotes = sample === undefined ? this.#quoteBox.quotes : [];
     const files = this.#uploads;
     const cards = sample === undefined ? files.cards.length : 0;
@@ -2182,6 +2724,8 @@ export class App {
     }
     // A message sent from a far stretch brings the view back to the latest message, where it and its answer are.
     if (this.#away !== undefined || this.#jumping !== undefined || this.#jumpFailed !== undefined) { this.#leaveStretch(); this.#reading = undefined; this.#streamView.toLatest(); this.draw(); }
+    // The last scene's 发送 is the tutorial's end: the message goes as any does, and the tutorial is closed for the account.
+    if (sample === undefined && this.#road === "2.8") this.#closeRoad();
     // The chat's box is one of the two ways a question lets cx go: the message goes once each waiting question is let go unanswered.
     void this.#visit.send(message, true);
   }
@@ -2348,6 +2892,8 @@ export class App {
     const column = this.#column;
     const bare = this.root.classList.contains("bare");
     column.install(!bare && this.#me?.kind === "signed_in" && this.#board.shown === true);
+    // A board's window is the board only where there is a board to show; else the page says what it says anywhere, its way to sign in among it.
+    this.root.classList.toggle("board-window", this.#boardWindowed && column.installed);
     // The column is shown before the board in it is drawn, so what the board hands the keyboard to can take it: the page's draw
     // clears the root's classes first.
     this.root.classList.toggle("board-shown", column.installed && column.open);
@@ -2374,13 +2920,41 @@ export class App {
     this.#sidebar.inert = column.over;
   }
 
+  /**
+   * A board's window is named by the tab it shows, and its address says that tab, in place: a second 在新窗口中打开 on the tab the window
+   * left then names another address, which brings the window back to it.
+   */
+  #titleWindow(): void {
+    document.title = this.#say("board.windowTitle", { name: this.#board.shownName ?? this.#say("board.board") });
+    const key = this.#board.shownKey;
+    if (key === this.#windowAsked) this.#windowAsked = undefined;
+    if (key === undefined || this.#windowShows !== undefined || this.#windowAsked !== undefined) return;
+    const address = `${BOARD_WINDOW}/${encodeURIComponent(key)}`;
+    if (location.hash !== address) history.replaceState(history.state, "", `${location.pathname}${location.search}${address}`);
+  }
+
   /** The board or its column changed: the frame is drawn again. */
   #boardChanged(): void {
+    if (this.#boardWindowed) {
+      const asked = this.#windowShows;
+      if (asked !== undefined && this.#me?.kind === "signed_in" && this.#board.shown === true) { this.#windowShows = undefined; this.#board.show(asked); }
+      this.#titleWindow();
+    }
     this.#noticeWaits();
     this.#drawBoard();
+    // A read that brought other tabs than the files were last read for reads the files again; a change to a tab's files is said apart.
+    if (this.#board.tabs.join("/") !== this.#namesTabs) { this.#namesTabs = this.#board.tabs.join("/"); this.#readNames(); }
     // A message a page sent names its board as the board does: the stream takes the names a read brought, each row drawn again only if its name changed.
     if (this.#board.names !== this.#namesDrawn) { this.#namesDrawn = this.#board.names; if (this.route === "stream") this.#updateStream(); }
     if (this.route === "stream" && this.#me?.kind === "signed_in") this.#drawComposer();
+  }
+
+  /**
+   * 在新窗口中打开: the whole board in a browser window of its own, on the tab shown now. One window: a second press brings it to that tab.
+   */
+  #openBoardWindow(): void {
+    const key = this.#board.shownKey;
+    window.open(`${location.pathname}${location.search}${BOARD_WINDOW}${key === undefined ? "" : `/${encodeURIComponent(key)}`}`, BOARD_WINDOW_NAME, "popup,width=960,height=720");
   }
 
   /** A page's ask that waited for an empty message box, or for room beside the chat, opens the column once it has either. */
@@ -2404,10 +2978,37 @@ export class App {
       write: (tab, file, text) => (backend.boardWrite?.(tab, file, text) ?? refused()).then((done) => { this.#wroteCard(tab, file, text, done.modified); return done; }),
       count: () => {},
       show: (tab, name) => this.#showAsked(tab, name),
-      open: (tab, path) => this.#openFile(path, tab === TASKS_TAB ? "card" : "page"),
+      open: (tab, path, file) => this.#openFile(path, tab === TASKS_TAB ? "card" : "page", file === undefined ? undefined : { tab, file }),
       save: (tab, name, from) => this.#saveFromPage(tab, name, from),
-      pressed: (tab) => { if (this.#column.open && this.#board.tab === tab) this.#door.pressed(tab); },
+      pressed: (tab) => { if (this.#column.open && this.#board.visible === tab) this.#door.pressed(tab); },
+      // A board in a window of its own has no chat beside it to quote into.
+      ...(this.#boardWindowed ? {} : { quote: (tab: string, given: Quoted) => this.#quoteFromPage(tab, given) }),
     };
+  }
+
+  /**
+   * Words a page shows, quoted at the seller's press over the message box with where they were, the keyboard there and nothing sent: full
+   * screen is left, and a sheet over the chat closes, as for a page's draft. With no press it is refused and nothing changes.
+   */
+  #quoteFromPage(tab: string, given: Quoted): void {
+    if (!this.#pressed()) throw new BoardRefused("no_press");
+    this.quoteFromBoard(given.text, quotedFrom(tab, given, (one) => this.#board.label(one)));
+  }
+
+  /** Words of the board, quoted over the message box: a page's, or a card's the board draws itself. */
+  quoteFromBoard(words: string, from: QuoteFrom): void {
+    this.#column.setFull(false);
+    if (this.#column.over) this.#column.set(false);
+    if (this.route !== "stream") { this.#focusDraft = true; location.hash = "#/"; }
+    this.#quoteBox.add({ entry: "", at: "", words, from, who: undefined, time: undefined });
+  }
+
+  /** A sent quote from the board pressed: the board opens where its words were, at the card, the file's tab, or the board. */
+  #toQuoted(from: QuoteFrom): void {
+    if (!this.#column.installed) return;
+    if (from.file !== undefined) this.#openFile(from.file, "page");
+    else if (from.card !== undefined) this.#openBoardCard({ tab: from.board, file: from.card });
+    else this.#openAsked(from.board);
   }
 
   /** A press reaches this page from inside a page's frame as from anywhere in it: a page's draft and send need one. */
@@ -2512,6 +3113,27 @@ export class App {
     })();
   }
 
+  /**
+   * The files the board lists, each tab's as its list last answered: a tab whose list is refused, the computer asleep among the reasons, keeps
+   * the files it last listed, and a tab the board no longer has goes. A change met while they are read reads them again once that read is done.
+   */
+  #readNames(): void {
+    const { boardFiles } = this.backend;
+    if (boardFiles === undefined) return;
+    if (this.#namesReading !== undefined) { this.#namesReading.again = true; return; }
+    const now = { again: false };
+    this.#namesReading = now;
+    const tabs = this.#board.tabs;
+    void Promise.all(tabs.map((tab) => boardFiles.call(this.backend, tab).then((rows) => rows.flatMap((row) => (row.tree === undefined ? [] : [{ path: `${tab}/${row.file}`, tree: row.tree, modified: row.modified }])), () => this.#namesBy?.get(tab) ?? []))).then((lists) => {
+      this.#namesReading = undefined;
+      this.#namesBy = new Map(tabs.map((tab, at) => [tab, lists[at]!] as const));
+      this.#names = new FileNames([...this.#namesBy.values()].flat());
+      this.#drawStream();
+      this.#board.draw();
+      if (now.again) this.#readNames();
+    });
+  }
+
   /** The board's files changed: every tab the chat holds a card of is read again by the one rule. */
   #staleCards(): void {
     for (const tab of this.#cardRows.keys()) this.#readCards(tab, true);
@@ -2530,13 +3152,18 @@ export class App {
     if (!this.#column.installed) return;
     this.#column.set(true);
     this.#board.focusCard(card.tab, card.file);
+    // A card whose board is gone: the strip falls back to another tab, and says which, as a board's own reference does.
+    if (this.#board.tab !== card.tab) this.#announce.textContent = this.#boardShown();
   }
+
+  /** The board the strip shows, said: the one asked for, or the tab it fell back to where that board is gone. */
+  #boardShown(): string { return this.#say("frame.boardShown", { name: this.#board.label(this.#board.tab) }); }
 
   /** A page's ask for its board to be shown, through the door. */
   #showAsked(tab: string, name: string): void {
     if (!this.#column.installed) return;
     const open = this.#column.open;
-    const answer = this.#door.ask(tab, name, { open, shown: open ? this.#board.tab : undefined, beside: !this.#column.covers, empty: this.#draft.value.trim() === "", keyboard: this.#column.element.contains(document.activeElement) });
+    const answer = this.#door.ask(tab, name, { open, shown: open ? this.#board.visible : undefined, beside: !this.#column.covers, empty: this.#draft.value.trim() === "", keyboard: this.#column.element.contains(document.activeElement) });
     if (answer === "open" || answer === "go") this.#openAsked(tab);
     // Kept waiting or refused, the asking board is marked until the seller opens it: its tab's dot, the icon's number or dot.
     else if (answer === "wait" || answer === "refused") this.#board.doorMarked(tab);
@@ -2547,24 +3174,25 @@ export class App {
    * keyboard stays where it was; under a sheet it goes to the board's icon, where the icon's own press would leave it. A screen reader is
    * told the board opened.
    */
-  #openAsked(tab: string): void { this.#columnTo(() => this.#board.showTab(tab), this.#say("frame.boardShown", { name: this.#board.label(tab) })); }
+  #openAsked(tab: string): void { this.#columnTo(() => this.#board.showTab(tab), () => this.#boardShown()); }
 
   /**
    * A file cx named, pressed in the chat, on a card or on a page: shown on its own tab of the board, the column opened as for a page's
    * ask, and said. Where the account's packages show no board there is no tab to make, and the press does nothing.
    */
-  #openFile(path: string, from: OpenedFrom): void {
+  #openFile(path: string, from: OpenedFrom, owner?: FileOwner): void {
     if (!this.#column.installed) return;
-    this.#columnTo(() => this.#board.openFile(path, from), this.#say("frame.fileShown", { name: fileName(path) }));
+    this.#columnTo(() => this.#board.openFile(path, from, owner), () => this.#say("frame.fileShown", { name: fileName(path) }));
   }
 
-  #columnTo(show: () => void, said: string): void {
+  /** `said` is read once `show` has run, so it names what the strip shows, which for a board gone is not the one asked for. */
+  #columnTo(show: () => void, said: () => string): void {
     const held = document.activeElement;
     show();
     if (!this.#column.open) { this.#doorOpening = true; try { this.#column.set(true); } finally { this.#doorOpening = false; } }
     if (this.#column.over) this.#column.icon.focus({ preventScroll: true });
     else if (held instanceof HTMLElement && held !== document.body && document.activeElement !== held) held.focus({ preventScroll: true });
-    this.#announce.textContent = said;
+    this.#announce.textContent = said();
   }
 
   /**
@@ -2586,7 +3214,13 @@ export class App {
     return true;
   }
 
+  /** The road read again once the present draw is done: each draw, and each of cx's, may have moved what a step stands on. */
+  #roadLater(): void {
+    if (!this.#roadSoon) { this.#roadSoon = true; queueMicrotask(() => { this.#roadSoon = false; this.#followRoad(); }); }
+  }
+
   draw(): void {
+    this.#roadLater();
     document.documentElement.lang = this.language === "zh" ? "zh-Hans" : "en";
     const say = this.#say;
     const me = this.#me;
@@ -2599,6 +3233,9 @@ export class App {
     this.#drawContents();
     this.#drawBar(true);
     this.#drawWindow();
+    // The page leaving the main area gives up its band while its setter still reaches the host: once drawn over, it no longer does.
+    if (this.route === "plugins" && this.#catalogue.element.parentElement !== this.#main) this.#streamView.giveWay(null);
+    if (this.route !== "plugins" && this.#catalogue.element.parentElement === this.#main) this.#catalogue.giveWay(null);
     // A first answer that never came — the platform unreachable, or its ledger out, which `/me` answers 503 — is said, not left blank.
     if (me === undefined && !framed) { this.#main.replaceChildren(...(this.#visit.unreachable ? [h("p", { class: "signed-out", role: "status" }, say("status.unreachable"))] : [])); return; }
     if (me === undefined) {
@@ -2615,8 +3252,10 @@ export class App {
       const page = this.#catalogue;
       if (page.element.parentElement !== this.#main || page.unasked) { this.#main.replaceChildren(page.element); void page.load().then(() => this.#showPlugins()); }
       page.draw();
+      this.#afield(this.#teaching !== undefined);
       return;
     }
+    this.#afield(false);
     this.#streamView.show(this.#main, this.#latestSlot, this.#bottom);
     this.#updateStream();
     this.#drawComposer();
@@ -2727,7 +3366,7 @@ export class App {
     const visit = this.#visit;
     const failed = visit.failed;
     const { reads, w } = this.#boxReads(me);
-    const line = closedLine(reads, w);
+    const line = closedLine(reads, w) ?? this.#stoppedLine();
     const closed = line?.key;
     // The line says only what neither card nor cx says: a conversation that stopped updating, a message not sent, and an action from a
     // card that did not finish. Why a start did not happen is cx's bubble and the cards'.
@@ -2784,6 +3423,17 @@ export class App {
     if (me?.kind !== "signed_in") return undefined;
     const { reads, w } = this.#boxReads(me);
     return closedLine(reads, w);
+  }
+
+  /**
+   * After a model call the balance could not cover, with the box still open: the sentence the closed box draws for this reader, until the
+   * person sends again, whose answer is the test of a top-up. The box still takes messages: a smaller call may yet be covered.
+   */
+  #stoppedLine(): BoxLine | undefined {
+    const me = this.#me;
+    if (me?.kind !== "signed_in" || me.balance?.can_open === false || !balanceStopped(this.#visit.stream.items)) return undefined;
+    const { reads, w } = this.#boxReads(me);
+    return closedLine({ ...reads, balance: { available: 0, open_floor: 0, ...me.balance, can_open: false } }, w);
   }
 
   /** Says words once to a screen reader and takes them away again, so a reader that walks the page meets the line where it stands and not a second time. */
@@ -2861,13 +3511,14 @@ export class App {
     const visit = this.#visit;
     if (this.#featureAsked || !(visit.box === "asleep" || (visit.box === "awake" && visit.stream.turn !== undefined))) return;
     this.#featureAsked = true;
-    if (visit.running || !featureDue(localStorage)) return;
+    // Each of the card's presses installs or updates, the organization admin's to make: a member is not shown it.
+    if (visit.running || !featureDue(localStorage) || isMember(this.#me?.kind === "signed_in" ? this.#me : undefined)) return;
     void this.#catalogue.load().then(() => {
       const world = this.#catalogue.feature();
       if (world === undefined || this.#visit.running || this.#feature !== undefined) return;
-      const pages = pagesOf(world);
+      const pages = pagesOf(world, lastShown(localStorage));
       if (pages.length === 0) return;
-      this.#feature = new FeatureCard({ say: this.#say, language: () => this.language, left: (focused) => { putAway(localStorage); if (focused) this.#toBox(); } }, world, pages);
+      this.#feature = new FeatureCard({ say: this.#say, language: () => this.language, left: (focused) => { putAway(localStorage); keepShown(localStorage, pages); if (focused) this.#toBox(); } }, world, pages);
       if (this.route === "stream") this.#streamView.feature(this.#feature.element);
     });
   }
@@ -2935,4 +3586,16 @@ export class App {
 export function current(entry: string, hash: string): "page" | undefined {
   const page = hash.split("?")[0]!;
   return page === entry || page.startsWith(`${entry}/`) ? "page" : undefined;
+}
+
+/** The conversation's last word is an answer that ended on a model call the balance could not cover, as the page words it. */
+function balanceStopped(items: readonly Item[]): boolean {
+  const last = items.findLast((item) => item.kind === "assistant" || item.kind === "user");
+  return last?.kind === "assistant" && last.stopReason === "error" && failureWords(last.errorMessage, false) === "cx.say.balance";
+}
+
+/** Where a page's quote was, as its card draws it: a file's tab by the file's name, a board's by `boardSource`'s rule. */
+export function quotedFrom(tab: string, given: Quoted, label: (tab: string) => string): QuoteFrom {
+  if (isFileKey(tab)) { const file = tab.slice(1); return { board: "", file, label: fileName(file) }; }
+  return { board: tab, ...(given.card === undefined ? {} : { card: given.card }), label: boardSource(label(tab), given) };
 }

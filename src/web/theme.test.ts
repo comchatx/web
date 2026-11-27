@@ -8,7 +8,7 @@ it("finds the theme current, every pair at its floor in both sets, and cx and th
   const { lines, problems } = check();
   expect(problems).toEqual([]);
   expect(lines).toEqual([expect.stringMatching(new RegExp(`^light: ${PAIRS.length} of ${PAIRS.length} pairs pass`)), expect.stringMatching(new RegExp(`^dark : ${PAIRS.length} of ${PAIRS.length} pairs pass`))]);
-  expect(PAIRS).toHaveLength(58);
+  expect(PAIRS).toHaveLength(63);
 });
 
 it("checks the theme alone where the style board is not, as in the page's public copy", () => {
@@ -25,7 +25,7 @@ it("cuts the ground of a row over the page under the pointer from the hover surf
   expect(read(light!, "float-hover")).toMatch(/^#E4E2DB \| ink 4\.5% into hover: /);
   expect(read(dark!, "frame-hover")).toMatch(/ \| light ink 6% into the frame: /);
   expect(read(dark!, "float-hover")).toMatch(/^#2F3832 \| light ink 6% into hover: /);
-  expect(PAIRS.filter(([, ground]) => ground === "float-hover").map(([text]) => text)).toEqual(["ink", "act-hover", "quiet"]);
+  expect(PAIRS.filter(([, ground]) => ground === "float-hover").map(([text]) => text)).toEqual(["ink", "act-hover", "quiet", "warn"]);
   // A step's block lies on the wash: the ground under the pointer there is cut from it as the page's is from the ground, two steps in.
   expect(read(light!, "step-hover")).toMatch(/^#[0-9A-F]{6} \| ink 4\.5% into wash, twice: /);
   expect(read(dark!, "step-hover")).toMatch(/^#[0-9A-F]{6} \| light ink 6% into wash, twice: /);

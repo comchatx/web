@@ -2,7 +2,7 @@
 
 The page code of [ComChatX](https://www.comchatx.com) and its site, under the MIT license.
 
-This repository is a copy. It is cut from ComChatX's private repository after each release train, and each sync is one commit. This copy is private commit `34467086b4ea8652250617f86cb3768bf473a94e`.
+This repository is a copy. It is cut from ComChatX's private repository after each release train, and each sync is one commit. This copy is private commit `5118b863f967e77db0e360982af5526a7e5dbdc8`.
 
 ## What is here
 

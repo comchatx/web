@@ -1,12 +1,13 @@
-import type { Backend, Organization, Seats } from "./backend.js";
+import type { Backend, Day, Organization, Seats } from "./backend.js";
 import { h, type Child } from "./dom.js";
 import { dialog } from "./forms.js";
+import { seatsStep } from "./seats-step.js";
 import type { Writer } from "./settings-words.js";
 import type { Say } from "./stream-view.js";
 import { Waits } from "./waiting.js";
 
 /** What 组织 asks of the platform. */
-export type OrgBackend = Pick<Backend, "renameOrganization" | "deleteAccount">;
+export type OrgBackend = Pick<Backend, "renameOrganization" | "deleteAccount" | "seatsPrice" | "setSeats">;
 export type OrgPorts = {
   readonly backend: OrgBackend; readonly say: Say;
   /** The organization as this opening's read of `/me` holds it, and the balance its 账单 reads. */
@@ -23,6 +24,14 @@ export type OrgPorts = {
   readonly deleted: (name: string) => void;
   /** Where a question over the window is put. */
   readonly home: () => HTMLElement;
+  /** A seat's monthly price as the platform serves it, and the period's last day; each unread where the platform gave none. */
+  readonly seatPrice: () => number | undefined; readonly lastDay: () => Day | undefined;
+  /** 购买席位's second step, 账单's card form: `back` is the count again, `paid` the sum the card paid, or none where it was not said paid. */
+  readonly buy: (seats: number, w: Writer, back: () => void, paid: (units: number | undefined) => void) => void;
+  /** The account read again, once the count has changed. */
+  readonly reread: () => Promise<void>;
+  /** Opens an address of the window: 账单, where a declined card is mended. */
+  readonly go: (hash: string) => void;
 };
 
 /** An organization's name: one to fifty characters once trimmed, as the platform takes it. */
@@ -40,7 +49,11 @@ export class OrgPage {
   /** The name's field is open, holding what is typed. */
   #naming: string | undefined;
   /** What the last press of the row answered: the name kept, or a move that did not go through. */
-  #said: { readonly what: "renamed" | "failed"; readonly at: string } | undefined;
+  #said: { readonly what: "renamed" | "updated" | "failed"; readonly at: string } | undefined;
+  /** The count 管理席位's answer says is held, drawn until the account's reread brings the count it holds now. */
+  #answered: number | undefined;
+  /** A purchase the provider confirmed paid in 购买席位's card form at this opening: its sum is said once at the head of the page it was paid from. */
+  #paid: number | undefined;
   /** A name kept at this opening, before its read of `/me` holds it. */
   #renamed: string | undefined;
   readonly #waits = new Waits(() => this.ports.home());
@@ -51,6 +64,37 @@ export class OrgPage {
     this.#naming = undefined;
     this.#said = undefined;
     this.#renamed = undefined;
+    this.#paid = undefined;
+  }
+
+  /** 已支付 at the head of the page the seats were paid from, said once. */
+  paidLead(w: Writer): readonly HTMLElement[] {
+    const paid = this.#paid;
+    if (paid === undefined) return [];
+    this.#paid = undefined;
+    return [h("div", { class: "sw-leads" }, h("p", { class: "sw-lead answer", role: "status" }, this.ports.say("seats.paid", { amount: w.money(paid) })))];
+  }
+
+  /**
+   * 管理席位, or 购买席位 for an organization with none, over the window; `at` is the control it was opened from, which the keyboard comes
+   * back to, and which a count set answers beside.
+   */
+  askSeats(w: Writer, at: string, from?: number): void {
+    const seats = this.ports.organization()?.seats;
+    if (seats === undefined) return;
+    const opener = this.ports.home().querySelector<HTMLElement>(`[data-key='${at}']`) ?? this.ports.home();
+    this.#said = undefined;
+    seatsStep({ backend: this.ports.backend, say: this.ports.say, w, home: this.ports.home(), seats, price: this.ports.seatPrice(), lastDay: this.ports.lastDay(), opener,
+      ...(from === undefined ? {} : { from }),
+      buy: (n) => this.ports.buy(n, w, () => this.askSeats(w, at, n), (units) => { this.#paid = units; this.ports.redraw(at); }),
+      done: (answer) => {
+        // The count is the platform's answer until the reread holds the account's own; whatever a raise charged is the invoice's, under
+        // 账单, never the preview's sum.
+        this.#said = { what: "updated", at };
+        this.#answered = answer.seats;
+        void this.ports.reread().then(() => { this.#answered = undefined; this.ports.redraw(at); });
+      },
+      toCard: () => this.ports.go(`${this.ports.base}/billing`) });
   }
 
   get #name(): string | undefined { return this.#renamed ?? this.ports.organization()?.name; }
@@ -58,8 +102,9 @@ export class OrgPage {
   draw(w: Writer): readonly Child[] {
     const say = this.ports.say;
     const seats = this.ports.organization()?.seats;
-    const held = seats?.state !== undefined && seats.state !== "none" ? seats.thisPeriod : undefined;
+    const held = seats?.state !== undefined && seats.state !== "none" ? this.#answered ?? seats.thisPeriod : undefined;
     return [
+      ...this.paidLead(w),
       this.#group("name", say("orgs.nameLabel"), [this.#nameRow()]),
       this.#group("seats", held === undefined ? say("seats.g") : `${say("seats.g")} ${say("seats.held", { n: String(held) })}`, [this.#seatsRow(seats, w)]),
       this.#group("delete", say("orgs.delete"), [this.#deleteRow(seats, w)]),
@@ -115,14 +160,17 @@ export class OrgPage {
   /** How many seats are in use, and what the seats are doing; a failed charge is mended with a card. */
   #seatsRow(seats: Seats | undefined, w: Writer): HTMLElement {
     const say = this.ports.say;
-    if (seats?.state === "none") return this.#row(say("orgs.noSeats"), [say("seats.noneHelp")], []);
+    // 管理 starts from the count held: with that unread there is nothing to change it from.
+    const manage = (): readonly Child[] => seats?.thisPeriod === undefined ? [] : [this.#answer("seats"), h("button", { type: "button", class: "f-btn sw-btn", "data-key": "seats", "aria-label": say("seats.manageName"), onclick: () => this.askSeats(w, "seats") }, say("seats.manage"))];
+    if (seats?.state === "none") return this.#row(say("orgs.noSeats"), [say("seats.noneHelp")], [h("button", { type: "button", class: "f-btn primary sw-btn", "data-key": "seats", onclick: () => this.askSeats(w, "seats") }, say("seats.buy"))]);
     const used = seats?.inUse === undefined || seats.state === undefined ? say("sw.unread") : say("seats.used", { n: String(seats.inUse) });
     const day = (on: string | undefined): string => (on === undefined ? "" : w.dayName(on));
     switch (seats?.state) {
-      case "cut_pending": return this.#row(used, seats.nextPeriod === undefined ? [] : [say("seats.pending", { day: day(seats.nextPeriod.from) })], []);
+      case "cut_pending": return this.#row(used, seats.nextPeriod === undefined ? [] : [say("seats.pending", { day: day(seats.nextPeriod.from) })], manage());
       case "cancelling": return this.#row(used, seats.on === undefined ? [] : [say("sw.plan.cancelled", { day: day(seats.on) })], [], { under: true });
       case "retrying": return this.#row(used, seats.on === undefined ? [] : [say("sw.retryLine", { day: day(seats.on) })],
         [this.ports.cardSaid("card"), h("button", { type: "button", class: "f-btn primary sw-btn", "data-key": "card", onclick: () => this.ports.updateCard("card") }, say("sw.updateCard"))], { under: true });
+      case "seats": return this.#row(used, [], manage());
       default: return this.#row(used, [], []);
     }
   }

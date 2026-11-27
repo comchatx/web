@@ -6,6 +6,7 @@ type SessionPorts = {
   readonly session?: () => boolean;
   readonly spaces?: () => Promise<Spaces | undefined>;
   readonly use?: (organization: string | null) => Promise<unknown>;
+  readonly accept?: (invitation: string) => Promise<unknown>;
   readonly photo?: () => unknown;
   readonly setPhoto?: (file: Blob | null) => Promise<unknown>;
 };
@@ -14,6 +15,8 @@ export type PagePorts = {
   readonly session: () => boolean;
   readonly spaces: () => Promise<Spaces | undefined>;
   readonly use: (organization: string | null) => Promise<unknown>;
+  /** Accepts an invitation waiting on the person, by the identity SDK's own call. */
+  readonly accept: (invitation: string) => Promise<"accepted" | "full" | "gone">;
   readonly photo: () => string | undefined;
   readonly setPhoto: (file: Blob | null) => Promise<void>;
   readonly watchPhoto: (changed: () => void) => void;
@@ -45,6 +48,13 @@ export function sessionPorts(scope: object = globalThis): PagePorts {
     session: () => ports()?.session?.() === true,
     spaces: async () => await (await published())?.spaces?.(),
     use: async (organization) => await (await published())?.use?.(organization),
+    accept: async (invitation) => {
+      const accept = (await published())?.accept;
+      if (accept === undefined) throw new Error("no identity script");
+      const answer = await accept(invitation);
+      if (answer === "accepted" || answer === "full" || answer === "gone") return answer;
+      throw new Error("unknown answer");
+    },
     photo: () => { const url = ports()?.photo?.(); return typeof url === "string" && url.startsWith("https://") ? url : undefined; },
     setPhoto: async (file) => { const set = ports()?.setPhoto; if (set === undefined) throw new Error("no identity script"); await set(file); },
     watchPhoto: (changed) => { (scope as Partial<EventTarget>).addEventListener?.(SESSION_CHANGED, () => changed()); },

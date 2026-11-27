@@ -23,6 +23,8 @@ const { Element } = vi.hoisted(() => {
     // A click listener stands as the press a test makes through `onclick`, as the set's controls add theirs.
     addEventListener(type: string, listener: unknown): void { if (type === "click" && this.props["onclick"] === undefined) this.props["onclick"] = listener; }
     focus(): void {}
+    // The set's dialog opens a card as the browser's own modal.
+    showModal(): void {}
     setAttribute(name: string, value: unknown): void { this.props[name] = value; }
     remove(): void { (globalThis as { removed?: Element[] }).removed?.push(this); }
     removeAttribute(name: string): void { delete this.props[name]; }
@@ -69,7 +71,7 @@ const me = { kind: "signed_in", money: { currency: "USD", unitsPerMinor: 10_000 
 // Essentials keeps the list a new account starts with.
 const pinned = withRecords(CATALOGUE, { bundles: [{ id: "pinned", name: "Pinned", author: "ComChatX", about: { en: "p", zh: "p" }, members: ["cx-sources", "cx-topics"] }] });
 
-function page(world: { series?: Record<string, unknown>; catalogue?: Catalogue; packages?: readonly Package[]; sources?: readonly Source[]; models?: readonly ModelPlugin[]; onImage?: readonly OnImage[]; hold?: boolean; unread?: boolean; refuse?: boolean | string; features?: Features; readme?: Readme; wait?: Promise<void>; accounts?: readonly unknown[]; served?: unknown; providers?: readonly unknown[]; pending?: boolean; spending?: Spending; npm?: NpmPackage | "unreachable"; others?: readonly NpmPackage[]; pressed?: readonly HeldBundle[] } = {}) {
+function page(world: { member?: boolean; series?: Record<string, unknown>; catalogue?: Catalogue; packages?: readonly Package[]; sources?: readonly Source[]; models?: readonly ModelPlugin[]; onImage?: readonly OnImage[]; hold?: boolean; unread?: boolean; refuse?: boolean | string; features?: Features; readme?: Readme; wait?: Promise<void>; accounts?: readonly unknown[]; served?: unknown; providers?: readonly unknown[]; pending?: boolean; spending?: Spending; npm?: NpmPackage | "unreachable"; others?: readonly NpmPackage[]; pressed?: readonly HeldBundle[] } = {}) {
   const calls: string[] = [];
   const record = (name: string) => vi.fn(async (...args: unknown[]) => { calls.push(`${name}(${args.map((arg) => JSON.stringify(arg)).join(",")})`); });
   const ask = vi.fn();
@@ -106,7 +108,7 @@ function page(world: { series?: Record<string, unknown>; catalogue?: Catalogue; 
     saveSourceKey: record("saveSourceKey"),
   } as unknown as Backend;
   const host = new Element("body");
-  const view = new PluginsPage({ power: box.power, say, language: () => "en", backend, me: () => (world.spending === undefined ? me : { ...me, spending: world.spending }), ask, announce: () => undefined, cards: () => host as unknown as HTMLElement, changed: async () => {} });
+  const view = new PluginsPage({ power: box.power, say, language: () => "en", backend, me: () => ({ ...me, ...(world.spending === undefined ? {} : { spending: world.spending }), ...(world.member === true ? { organization: { id: "org", role: "member" } } : {}) }), ask, announce: () => undefined, cards: () => host as unknown as HTMLElement, changed: async () => {} });
   return { view, backend, host: host as Node, root: view.element as unknown as Node, calls, ask, box };
 }
 const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
@@ -959,7 +961,7 @@ it("still draws a self-installed package that ships no README, one that says not
   expect([byClass(large.root, "pl-readme").map((one) => (one as unknown as { innerHTML: string }).innerHTML), byClass(large.root, "pl-main")[0]!.textContent]).toEqual([["<p>Longer words.</p>\n"], "pl.own.tooLong"]);
 });
 
-it("offers the switch and the Remove of a package a new account starts with, as of any other that is installed, whatever else the platform offers", async () => {
+it("offers the switch and the Remove of a package cx Core Bundle installs, as of any other that is installed, whatever else the platform offers", async () => {
   for (const features of [EVERYTHING, FIRST_RELEASE]) {
     const { view, root } = page({ features, packages: [pack("cx-sources"), pack("@comchatx/cx-topics")] });
     await view.load();
@@ -969,6 +971,71 @@ it("offers the switch and the Remove of a package a new account starts with, as 
     expect(nodes(head).filter((node) => node.props["role"] === "switch")).toHaveLength(1);
     expect(byClass(head, "pl-more")).toHaveLength(1);
   }
+});
+
+describe("a member of the organization", () => {
+  const head = (root: Node): Node => byClass(root, "pl-head")[0]!;
+  const presses = (root: Node): Node[] => nodes(root).filter((node) => node.tag === "button" || node.props["role"] === "switch");
+
+  it("is told under the name that the organization manages the plugin, and its head says only whether it is on", async () => {
+    const member = page({ member: true, packages: [pack("cx-sources"), pack("@comchatx/cx-topics")] });
+    await member.view.load();
+    member.view.show({ kind: "plugin", id: "cx-topics" });
+    await settle();
+    expect(byClass(head(member.root), "pl-head-off").map((line) => [line.props["data-key"], line.textContent])).toEqual([["org.pluginManaged", "org.pluginManaged"]]);
+    expect([nodes(head(member.root)).filter((node) => node.props["role"] === "switch"), byClass(head(member.root), "pl-more")]).toEqual([[], []]);
+    expect(byClass(head(member.root), "pl-head-tools")[0]!.textContent).toBe("pl.switch.on");
+
+    const admin = page({ packages: [pack("cx-sources"), pack("@comchatx/cx-topics")] });
+    await admin.view.load();
+    admin.view.show({ kind: "plugin", id: "cx-topics" });
+    await settle();
+    expect(byClass(head(admin.root), "pl-head-off")).toEqual([]);
+    expect([nodes(head(admin.root)).filter((node) => node.props["role"] === "switch").length, byClass(head(admin.root), "pl-more").length]).toEqual([1, 1]);
+  });
+
+  it("is offered no install of a plugin not installed, and no 试一试 for it", async () => {
+    const member = page({ member: true, packages: [pack("cx-sources")] });
+    await member.view.load();
+    member.view.show({ kind: "plugin", id: "cx-topics" });
+    await settle();
+    expect(presses(head(member.root))).toEqual([]);
+    expect(byClass(head(member.root), "pl-head-tools")[0]!.textContent).toBe("pl.side.notInstalled");
+    expect(byClass(member.root, "pl-tries")).toEqual([]);
+
+    const admin = page({ packages: [pack("cx-sources")] });
+    await admin.view.load();
+    admin.view.show({ kind: "plugin", id: "cx-topics" });
+    await settle();
+    expect(presses(head(admin.root)).length).toBeGreaterThan(0);
+  });
+
+  it("is told a bundle is the organization's, and offered no install of it nor its ⋮", async () => {
+    for (const packages of [[pack("cx-sources")], [pack("cx-sources"), pack("@comchatx/cx-topics")]]) {
+      const member = page({ member: true, packages });
+      await member.view.load();
+      member.view.show({ kind: "bundle", id: "pinned" });
+      await settle();
+      expect(byClass(head(member.root), "pl-head-off").map((line) => line.props["data-key"])).toEqual(["org.bundleManaged"]);
+      expect([presses(head(member.root)), byClass(head(member.root), "pl-more")]).toEqual([[], []]);
+    }
+  });
+
+  it("is shown on a model's Settings the ways that pay, with no press, and no link to choose the chat's vendors", async () => {
+    const member = page({ member: true });
+    await member.view.load();
+    member.view.show({ kind: "plugin", id: "jev", tab: "settings" });
+    await settle(); await settle();
+    const main = byClass(member.root, "pl-way-list")[0]!;
+    expect([presses(main), byClass(member.root, "pl-up"), byClass(member.root, "pl-choose")]).toEqual([[], [], []]);
+    expect(main.textContent).toContain("pl.ms.connected");
+
+    const admin = page();
+    await admin.view.load();
+    admin.view.show({ kind: "plugin", id: "jev", tab: "settings" });
+    await settle(); await settle();
+    expect([presses(byClass(admin.root, "pl-way-list")[0]!).length > 0, byClass(admin.root, "pl-choose").length]).toEqual([true, 1]);
+  });
 });
 
 it("turns Install while the click is written down, pressable by no one, with no words but its name for a screen reader and no line under the header", async () => {

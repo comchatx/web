@@ -1,4 +1,4 @@
-import { DOOR_PATH, doorReason, LANGUAGE_PARAM, ROAD_PATH, STYLE_NONCE_META, type DoorReason } from "../shared/door.js";
+import { CREATE_PATH, DOOR_PATH, doorReason, doorWork, LANGUAGE_PARAM, ROAD_PATH, STYLE_NONCE_META, type DoorReason } from "../shared/door.js";
 import { formatShown } from "./backend.js";
 import { dollars } from "../shared/money.js";
 import { VENDOR_WORDS, LANGUAGE_KEY, SUPPORT, say, type DoorLanguage } from "./door-words.js";
@@ -141,6 +141,8 @@ export function openDoor(win: DoorWindow, features: DoorFeatures = FEATURES): Do
   }
 
   const reason = doorReason(win.location.search);
+  // A sign-in begun from another for an organisation's work address: the address stands in the field, and the code right is the name page.
+  const work = doorWork(win.location.search);
   if (win.location.search !== "") {
     const named = new URLSearchParams(win.location.search).get(LANGUAGE_PARAM);
     win.history.replaceState(win.history.state, "", `${win.location.pathname}${named === null ? "" : `?${new URLSearchParams({ [LANGUAGE_PARAM]: named })}`}${win.location.hash}`);
@@ -192,12 +194,12 @@ export function openDoor(win: DoorWindow, features: DoorFeatures = FEATURES): Do
         return card.clientWidth - 2 * padding >= 300 ? "flexible" : "compact";
       };
       // The address the person last sent from the first screen, which the card is mounted again with when they come back to change it.
-      let kept = "";
+      let kept = work ?? "";
       const props = (): Readonly<Record<string, unknown>> => ({
         ...(kept === "" ? {} : { initialValues: { emailAddress: kept } }),
         // Google opens in its own window beside the door, which stays where it is; "auto" would choose that only inside a frame. An
         // account just made has no computer: it goes to the road, which reads the account before it draws, not through the chat page.
-        withSignUp: true, routing: "hash", oauthFlow: "popup", fallbackRedirectUrl: "/", signUpFallbackRedirectUrl: ROAD_PATH,
+        withSignUp: true, routing: "hash", oauthFlow: "popup", fallbackRedirectUrl: work === undefined ? "/" : CREATE_PATH, signUpFallbackRedirectUrl: work === undefined ? ROAD_PATH : CREATE_PATH,
         appearance: { options: { socialButtonsPlacement: "top" }, variables: themed(win), elements: FOOT, captcha: { theme: doc.documentElement.dataset.theme === "dark" ? "dark" : "light", language: language === "zh" ? "zh-cn" : "en", size: captchaSize() } },
       });
       // The vendor gives its first field no keyboard while a social button stands beside it; the door opens with the keyboard there, once, unless

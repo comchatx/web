@@ -1,7 +1,10 @@
-import { BOARD_READ_MAX_BYTES, boardFilePath, ENTRY_MAX_BYTES, treeFilePath, type BoardFileRow, type PageMaker } from "../shared/board.js";
+import { BOARD_READ_MAX_BYTES, boardFilePath, ENTRY_MAX_BYTES, PAGE_FILE, treeFilePath, type BoardFileRow, type PageMaker } from "../shared/board.js";
+import { addressBox, addressWho } from "./board-address.js";
 import { BoardRefused, type BoardPageRead, type OpenedFileBody } from "./backend.js";
 import { h, svg } from "./dom.js";
+import { tip } from "./forms.js";
 import { pageFileBox } from "./board-files.js";
+import type { FileNames } from "./paths.js";
 import { renderMarkdown } from "./markdown.js";
 import type { StringKey } from "./strings.js";
 
@@ -13,6 +16,8 @@ export const FAILED_AFTER_MS = 15_000;
 export const MOST_PAGES = 8;
 /** The longest sentence a page drafts or sends. */
 export const SAID_MAX = 2_000;
+/** The most a page's quote holds in UTF-8 bytes, what a card's own read holds (`ENTRY_MAX_BYTES`): a whole card's text, or an excerpt with its card's title. */
+export const QUOTE_MAX_BYTES = ENTRY_MAX_BYTES;
 /** The longest words a page gives with its number, and the longest name it gives what changed. */
 export const WORDS_MAX = 80;
 /** The largest number a page puts on the board's icon. */
@@ -29,8 +34,8 @@ export const FIGURE_VALUES: readonly string[] = Object.freeze([
  */
 export const THEME_VALUES: readonly string[] = Object.freeze([
   "--ground", "--raised", "--wash", "--held", "--hover", "--line", "--edge", "--ink", "--quiet", "--act", "--act-ink", "--act-hover", "--act-wash",
-  "--bad", "--live", "--live-edge", "--float-edge", "--float-shadow", "--float-hover", "--font-ui", "--font-mono", "--size-caption", "--size-small",
-  "--size-body", "--size-lead", "--size-title", "--leading-body", "--leading-small", "--leading-tight", "--leading-glyph",
+  "--bad", "--warn", "--live", "--live-edge", "--float-edge", "--float-shadow", "--float-hover", "--font-ui", "--font-mono", "--size-caption", "--size-small",
+  "--size-body", "--size-lead", "--size-title", "--size-display", "--leading-body", "--leading-small", "--leading-tight", "--leading-glyph",
   "--weight-regular", "--weight-strong", "--space-1", "--space-2", "--space-3", "--space-4", "--space-5", "--space-6", "--space-7",
   "--space-8", "--radius-small", "--radius", "--radius-round", ...FIGURE_VALUES,
 ]);
@@ -61,14 +66,25 @@ export type FrameAsks = {
   readonly save: (tab: string, name: string, from: { readonly text: string } | { readonly file: string }) => Promise<"saved">;
   readonly pressed: (tab: string) => void;
   /** Shows a file of the tenant tree on its own tab of the board, at a press the proxy held it to; absent, a page's open is refused. */
-  readonly open?: (tab: string, path: string) => void;
+  /** `file` where the page named a file of its own tab: the row the tab's listing gave, so the board knows the card is that tab's. */
+  readonly open?: (tab: string, path: string, file?: string) => void;
+  /**
+   * Puts words the page shows over the message box as a quote, with where they were: the card's file and title, or the whole card; throws
+   * `BoardRefused("no_press")` where the seller did not press. Absent where no chat stands beside the board, as in a window of its own.
+   */
+  readonly quote?: (tab: string, given: Quoted) => void;
 };
+
+/** A page's quote: the words, and the card they were in, by its file on the page's tab and its title, or the whole of that card. */
+export type Quoted = { readonly text: string; readonly card?: string; readonly title?: string; readonly whole: boolean };
 
 export type FramePorts = {
   /** The second site's origin, the only one the frame is drawn from and spoken with. */
   readonly origin: string;
   readonly read: (tab: string) => Promise<BoardPageRead>;
   readonly say: (key: StringKey, values?: Readonly<Record<string, string | number>>) => string;
+  /** The files the board lists: a file a page's words name, drawn by `markdown`, is the file box only where it is one of them. */
+  readonly names?: () => FileNames;
   /** The app's own origin, which the proxy answers to; the page's unless a test names one. */
   readonly appOrigin?: string;
   /** What a page's asks reach; without them a page is drawn and asks nothing that is answered. */
@@ -80,7 +96,7 @@ export type FramePorts = {
 };
 
 /** What a page is told of where it stands: the theme and its values, the language, the width it is given, and the name the chat gives its Send, for the box a page asks for. */
-export type FrameContext = { readonly theme: "light" | "dark"; readonly locale: "zh" | "en"; readonly width: number; readonly values: Readonly<Record<string, string>>; readonly send: string };
+export type FrameContext = { readonly theme: "light" | "dark"; readonly locale: "zh" | "en"; readonly width: number; readonly values: Readonly<Record<string, string>>; readonly send: string; readonly quote: boolean };
 
 const reloadIcon = (): SVGElement => svg("svg", { viewBox: "0 0 24 24", width: "18", height: "18", fill: "none", stroke: "currentColor", "stroke-width": "1.6", "stroke-linecap": "round", "stroke-linejoin": "round", "aria-hidden": "true" },
   ...["M19.5 12a7.5 7.5 0 1 1-2.2-5.3", "M19.5 4.5v4.5H15"].map((d) => svg("path", { d })));
@@ -102,13 +118,14 @@ const fileName = (value: unknown): value is string => boardFilePath(value) && !v
  * one on its way after a moment says 正在加载; one that does not come says it did not load, with 重试.
  */
 export class BoardFrame {
-  readonly #by = h("p", { class: "frame-by" });
-  readonly #reload = h("button", { type: "button", class: "page-icon frame-reload", onclick: () => this.reload() }, reloadIcon());
+  /** The address row's box: whose page, then which. */
+  readonly #by = h("div", { class: "frame-by" });
+  readonly #reload = tip(h("button", { type: "button", class: "page-icon f-icon frame-reload", onclick: () => this.reload() }, reloadIcon()), () => [this.ports.say("frame.reload")]);
   readonly #words = h("p", { class: "frame-words", role: "status" });
   readonly #retry = h("button", { type: "button", hidden: true, onclick: () => { const held = document.activeElement === this.#retry; this.reload(); if (held) this.#reload.focus({ preventScroll: true }); } });
   readonly #note = h("div", { class: "frame-note", hidden: true }, this.#words, this.#retry);
   readonly #stage = h("div", { class: "frame-stage" }, this.#note);
-  readonly element = h("div", { class: "board-pane board-frame", id: "board-frame", role: "tabpanel", hidden: true }, h("div", { class: "frame-head" }, this.#by, this.#reload), this.#stage);
+  readonly element = h("div", { class: "board-pane board-frame", id: "board-frame", role: "tabpanel", hidden: true }, h("div", { class: "frame-head address-row" }, this.#reload, this.#by), this.#stage);
   /** The tab whose page is shown, if any. */
   #tab: string | undefined;
   /** Who made each page, by its tab, as the board last said or the page's read did. */
@@ -187,6 +204,15 @@ export class BoardFrame {
   /** Lets every page go, as when the board is no longer shown. */
   clear(): void { for (const live of this.#lives.values()) live.stop(); this.#lives.clear(); this.hide(); }
 
+  /** Lets one tab's page go, loading nothing in its place. */
+  release(tab: string): void {
+    const live = this.#lives.get(tab);
+    if (live === undefined) return;
+    live.stop();
+    this.#lives.delete(tab);
+    if (this.#tab === tab) this.hide();
+  }
+
   /** Loads the page shown again, read afresh. */
   reload(): void {
     const tab = this.#tab;
@@ -203,10 +229,19 @@ export class BoardFrame {
   /** The board's files changed: every page that lives hears it. */
   files(): void { for (const live of this.#lives.values()) if (live.ready && live.page !== undefined) this.#post(live, { cx: "files" }); }
 
-  /** A viewer's file read anew: its page is handed it now if it is shown, else once it is. */
+  /**
+   * Whether the page living for a tab was loaded from this renderer for this owner: only then may its file be handed to it in place. What
+   * a page may ask follows the page that was loaded, so one drawn by another renderer, or for another tab, is loaded anew instead.
+   */
+  draws(tab: string, page: BoardPageRead): boolean {
+    const loaded = this.#lives.get(tab)?.page;
+    return loaded !== undefined && loaded.html === page.html && JSON.stringify(loaded.by) === JSON.stringify(page.by) && loaded.opened?.tab === page.opened?.tab && loaded.opened?.file === page.opened?.file;
+  }
+
+  /** A viewer's file read anew, for the owner its page was loaded for: its page is handed it now if it is shown, else once it is. */
   file(tab: string, opened: OpenedFileBody): void {
     const live = this.#lives.get(tab);
-    if (live?.page === undefined) return;
+    if (live?.page === undefined || live.page.opened?.tab !== opened.tab || live.page.opened?.file !== opened.file) return;
     live.page = { ...live.page, opened };
     this.#handed(live);
   }
@@ -235,12 +270,20 @@ export class BoardFrame {
   #caption(): void {
     const say = this.ports.say;
     const maker = this.#tab === undefined ? undefined : this.#makers.get(this.#tab);
-    this.#by.textContent = maker === undefined ? "" : maker.kind === "cx" ? say("frame.byCx") : say(maker.kind === "ours" ? "frame.byPlugin" : "frame.byThird", { name: (maker.kind === "ours" && maker.package !== undefined ? this.ports.plugin?.(maker.package) : undefined) ?? maker.name });
+    // cx's page by its place in the tree where the board's list holds it, else by the tab's own address.
+    const own = `${this.#tab}/${PAGE_FILE}`;
+    const box = maker === undefined || this.#tab === undefined ? undefined
+      : maker.kind === "cx" ? addressBox(addressWho(say("frame.byCx")), this.ports.names?.().tree(own) ?? own, true)
+      : addressBox(addressWho(say(maker.kind === "ours" ? "frame.byPlugin" : "pl.third.mark")), (maker.kind === "ours" && maker.package !== undefined ? this.ports.plugin?.(maker.package) : undefined) ?? maker.name, false);
+    const sum = box === undefined ? "" : box.textContent ?? "";
+    if (this.#by.dataset["sum"] !== sum) { this.#by.dataset["sum"] = sum; this.#by.replaceChildren(...(box === undefined ? [] : [box])); }
     this.#reload.setAttribute("aria-label", say("frame.reload"));
-    this.#reload.title = say("frame.reload");
     this.#retry.textContent = say("status.retry");
     for (const live of this.#lives.values()) live.frame.title = this.ports.name?.(live.tab) ?? live.tab;
   }
+
+  /** While cx's computer is off the row keeps whose and which, and takes no press. */
+  pressable(on: boolean): void { this.#reload.hidden = !on; }
 
   /** What the shown page's note says: nothing once it came or at once, 正在加载 when slow, and that it did not load with 重试. */
   #says(): void {
@@ -258,7 +301,7 @@ export class BoardFrame {
     for (const name of THEME_VALUES) { const value = style.getPropertyValue(name).trim(); if (value !== "") values[name] = value; }
     const width = Math.round(this.element.clientWidth);
     if (width > 0) this.#width = width;
-    return { theme: root.dataset["theme"] === "dark" ? "dark" : "light", locale: root.lang.startsWith("zh") ? "zh" : "en", width: this.#width, values, send: this.ports.say("composer.send") };
+    return { theme: root.dataset["theme"] === "dark" ? "dark" : "light", locale: root.lang.startsWith("zh") ? "zh" : "en", width: this.#width, values, send: this.ports.say("composer.send"), quote: this.ports.asks?.quote !== undefined };
   }
 
   #post(live: Live, data: Readonly<Record<string, unknown>>): void { live.frame.contentWindow?.postMessage(data, this.ports.origin); }
@@ -280,7 +323,7 @@ export class BoardFrame {
   #load(tab: string): Live {
     this.#lives.get(tab)?.stop();
     const app = this.ports.appOrigin ?? location.origin;
-    const frame = h("iframe", { class: "frame-page", src: `${this.ports.origin}${PROXY_PATH}#origin=${encodeURIComponent(app)}`, sandbox: "allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-downloads", referrerpolicy: "no-referrer", title: this.ports.name?.(tab) ?? tab }) as HTMLIFrameElement;
+    const frame = h("iframe", { class: "frame-page", src: `${this.ports.origin}${PROXY_PATH}#origin=${encodeURIComponent(app)}`, sandbox: "allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-downloads", allow: "clipboard-write", referrerpolicy: "no-referrer", title: this.ports.name?.(tab) ?? tab }) as HTMLIFrameElement;
     const loading = setTimeout(() => { if (live.state === "loading") this.#state(live, "slow"); }, LOADING_AFTER_MS);
     const failing = setTimeout(() => { if (live.state === "loading" || live.state === "slow") this.#state(live, "failed"); }, FAILED_AFTER_MS);
     const live: Live = { tab, frame, ready: false, state: "loading", stop: () => { clearTimeout(loading); clearTimeout(failing); frame.remove(); } };
@@ -312,17 +355,28 @@ export class BoardFrame {
 
   /** One ask of a page, its shape checked, answered to the page by its id: a value, or a refusal and why. */
   #ask(live: Live, id: number, data: Readonly<Record<string, unknown>>): void {
-    const tab = live.tab;
-    const answer = (ok: boolean, value?: unknown, reason?: string): void => { if (this.#lives.get(tab) === live) this.#post(live, { cx: "answer", id, ok, ...(value === undefined ? {} : { value }), ...(reason === undefined ? {} : { reason }) }); };
+    const key = live.tab;
+    const answer = (ok: boolean, value?: unknown, reason?: string): void => { if (this.#lives.get(key) === live) this.#post(live, { cx: "answer", id, ok, ...(value === undefined ? {} : { value }), ...(reason === undefined ? {} : { reason }) }); };
     const settle = (promise: Promise<unknown>): void => { void promise.then((value) => answer(true, value), (error: unknown) => answer(false, undefined, error instanceof BoardRefused ? error.reason : "unreadable")); };
     const asks = this.ports.asks;
     if (asks === undefined) { answer(false, undefined, "unavailable"); return; }
-    const { verb, text, file, n, words, name, card, path } = data;
-    // A page that draws one file of the tree has no tab of its own: it draws words as cx's answers are, and opens a file, and nothing else.
-    const opened = live.page?.opened !== undefined;
-    if (opened && verb !== "markdown" && verb !== "open") { answer(false, undefined, "no_tab"); return; }
+    const { verb, text, file, n, words, name, card, path, title, whole } = data;
+    // A card its tab's own page draws asks for that tab, all but the tab's number and its board. A page that draws any other one file of
+    // the tree has no tab of its own: it draws words as cx's answers are, opens a file, saves words it makes, and quotes its words, and nothing else.
+    const own = live.page?.opened?.tab;
+    const opened = live.page?.opened !== undefined && own === undefined;
+    if (opened && verb !== "markdown" && verb !== "open" && verb !== "quote" && !(verb === "save" && file === undefined)) { answer(false, undefined, "no_tab"); return; }
+    if (own !== undefined && (verb === "count" || verb === "show")) { answer(false, undefined, "no_tab"); return; }
+    const tab = own ?? key;
     const now = (act: () => unknown): void => { try { answer(true, act()); } catch (error) { answer(false, undefined, error instanceof BoardRefused ? error.reason : "unavailable"); } };
     if (verb === "draft" && said(text)) now(() => { asks.draft(tab, text); return "drafted"; });
+    // A quote is not a draft: it holds what a card holds, a whole card's title and words among them, as far as the card's own read does.
+    else if (verb === "quote" && typeof text === "string" && text.trim() !== "" && (card === undefined || (!opened && boardFilePath(card))) && (title === undefined || typeof title === "string") && (whole === undefined || typeof whole === "boolean")) {
+      // A whole card's text holds its title already, and its source names the board alone: the text is counted once, the title not again.
+      if (new TextEncoder().encode(whole === true ? text : text + (title ?? "")).length > QUOTE_MAX_BYTES) answer(false, undefined, "too_large");
+      else if (asks.quote === undefined) answer(false, undefined, "unavailable");
+      else now(() => { asks.quote!(tab, { text, ...(card === undefined ? {} : { card }), ...(typeof title === "string" && title.trim() !== "" ? { title: title.trim() } : {}), whole: whole === true }); return "quoted"; });
+    }
     else if (verb === "send" && said(text) && (card === undefined || boardFilePath(card))) now(() => asks.send(tab, text, card));
     else if (verb === "list") settle(asks.files(tab).then((rows) => rows.map((row) => ({ file: row.file, modified: row.modified, size: row.size }))));
     else if (verb === "read" && boardFilePath(file)) settle(asks.read(tab, file));
@@ -331,8 +385,17 @@ export class BoardFrame {
     else if (verb === "show" && typeof name === "string" && name.trim() !== "" && name.length <= WORDS_MAX) { asks.show(tab, name.trim()); answer(true); }
     // A card's words at most, or a viewer's own file up to a read's bound, drawn by the chat's own pipeline for the page's `.markdown` box.
     else if (verb === "markdown" && typeof text === "string") {
-      if (new TextEncoder().encode(text).length > (opened ? BOARD_READ_MAX_BYTES : ENTRY_MAX_BYTES)) answer(false, undefined, "too_large");
-      else answer(true, renderMarkdown(text, (path) => pageFileBox(path, this.ports.say)).innerHTML);
+      if (new TextEncoder().encode(text).length > (live.page?.opened !== undefined ? BOARD_READ_MAX_BYTES : ENTRY_MAX_BYTES)) answer(false, undefined, "too_large");
+      else {
+        const names = this.ports.names?.();
+        answer(true, renderMarkdown(text, names === undefined ? undefined : { names, box: (path) => pageFileBox(path, this.ports.say) }).innerHTML);
+      }
+    }
+    // A file of the page's own tab, by its path in it: opened at its path in the tree, as the tab lists it.
+    else if (verb === "open" && path === undefined && !opened && boardFilePath(file)) {
+      const open = asks.open;
+      if (open === undefined) answer(false, undefined, "unavailable");
+      else settle(asks.files(tab).then((rows) => { const row = rows.find((one) => one.file === file); if (row?.tree === undefined) throw new BoardRefused("gone"); open(tab, row.tree, row.file); return undefined; }));
     }
     else if (verb === "open" && treeFilePath(path)) { if (asks.open === undefined) answer(false, undefined, "unavailable"); else { asks.open(tab, path); answer(true); } }
     else if (verb === "save" && typeof text === "string" && file === undefined && fileName(name)) settle(asks.save(tab, name, { text }));

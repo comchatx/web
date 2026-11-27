@@ -37,7 +37,7 @@ function named(say: Say, key: "pl.by", slot: "name", name: string): HTMLElement 
  * A card's facts, one line: who made it, then, where npm holds its package, how many used it last month and how long ago its version
  * was published. Each fact holds the dot after it, and where the line runs short the maker's name gives way first, then the age; the downloads stay whole.
  */
-export function factsLine(words: CardWords, plugin: Plugin): HTMLElement {
+export function factsLine(words: CardWords, plugin: Plugin, after?: HTMLElement): HTMLElement {
   const { say } = words;
   const npm = plugin.onNpm;
   const when = npm?.published === undefined ? undefined : words.ago(npm.published);
@@ -47,7 +47,7 @@ export function factsLine(words: CardWords, plugin: Plugin): HTMLElement {
     when !== undefined && h("span", { class: "pl-figure" }, say("pl.head.updated", { when })),
   ].filter((one): one is HTMLElement => typeof one === "object");
   facts.slice(0, -1).forEach((one) => one.append(" ·"));
-  return h("span", { class: "pl-meta pl-facts" }, h("span", { class: "pl-facts-text" }, ...facts.flatMap((one, at) => (at > 0 ? [" ", one] : [one]))));
+  return h("span", { class: "pl-meta pl-facts" }, h("span", { class: "pl-facts-text" }, ...facts.flatMap((one, at) => (at > 0 ? [" ", one] : [one]))), after);
 }
 
 /** Whether a model's own name already says where it comes from: its maker's, DeepSeek, or its maker's with a word after it, Mistral AI. */

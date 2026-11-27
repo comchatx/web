@@ -40,6 +40,8 @@ export type Held = {
   readonly pressed?: readonly HeldBundle[];
   /** The npm names whose last end the list keeps is a failed install, where the list said its ends. */
   readonly failedInstalls?: readonly string[];
+  /** The asker is the organization's member, not its admin: an install, an update, a switch and a setting are the admin's, so none is offered. */
+  readonly member?: true;
 };
 
 /** A model the platform's key serves, as `/me` names it. */
@@ -283,6 +285,12 @@ export function failedInstalls(ends: readonly ClickEnd[]): readonly string[] {
   for (const end of ends) if ((last.get(end.source)?.at ?? -Infinity) <= end.at) last.set(end.source, end);
   return [...last.values()].flatMap((end) => (end.op === "install" && !end.ok ? [npmNameOf(end.source) ?? end.source] : []));
 }
+/**
+ * The organization's ends as a member's page takes them: an admin's change that failed and was neither an install nor an update is
+ * the admin's to try again, so a member's page never hears of it; a failed install or update stays, the queue's row saying it.
+ */
+export const sharedEnds = <End extends Pick<ClickEnd, "op" | "ok">>(ends: readonly End[], member: boolean): readonly End[] =>
+  (member ? ends.filter((end) => end.ok || end.op === "install" || end.op === "update") : ends);
 /**
  * Whether a bundle stands in Yours: from its press until its Remove or until none of what it installs is installed; and a bundle whose
  * list is all installed, however its plugins came. A failed press leaves the bundle as it stood before it, though the platform's row

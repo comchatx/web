@@ -16,7 +16,7 @@ const SIGN_UP = cents(1);
 /** The figures 条款 prints, as the platform serves them. */
 export const TERMS: Terms = Object.freeze({
   units_per_dollar: DOLLAR, price: PRICE, top_up_from: cents(10), paid_months: 12, trial: Object.freeze({ direct: cents(1), invited: cents(5), days: 7 }),
-  friends: 3, reward: cents(5), reward_window_days: 30,
+  friends: 3, reward: cents(5), reward_window_days: 30, seat_price: cents(20),
 });
 export const monthsOn = (day: Day, n: number): Day => {
   const [y, m, d] = [Number(day.slice(0, 4)), Number(day.slice(5, 7)), Number(day.slice(8, 10))];
@@ -190,15 +190,16 @@ export type Moved = {
  */
 function movedShape(world: MoneyWorld, today: Day, moved: Moved): Shape {
   let shape = shapeOf(world, today);
-  const member = (fromBalance: boolean): Shape => {
+  // An organisation's seats land as its included credit, the sum paid for them.
+  const member = (fromBalance: boolean, dollars = 10): Shape => {
     const { why: _why, ...rest } = shape;
-    return { ...rest, state: "member", credits: [...shape.credits, { kind: "included", landed: today, dollars: 10, ...(fromBalance ? { fromBalance: true as const } : {}) }] };
+    return { ...rest, state: "member", credits: [...shape.credits, { kind: "included", landed: today, dollars, ...(fromBalance ? { fromBalance: true as const } : {}) }] };
   };
   if (moved.renewed === true) shape = member(true);
   for (const one of [...(moved.landed ?? [])].reverse()) {
     const owed = replay(shape, today).debt;
     const repaid = one.kind === "top_up" ? Math.min(cents(one.dollars), owed) : 0;
-    shape = one.kind === "top_up" ? { ...shape, credits: [...shape.credits, { kind: "top_up", landed: today, dollars: one.dollars }] } : member(false);
+    shape = one.kind === "top_up" ? { ...shape, credits: [...shape.credits, { kind: "top_up", landed: today, dollars: one.dollars }] } : member(false, one.kind === "seats" ? one.dollars : 10);
     shape = { ...shape, payments: [{ on: today, kind: one.kind, amount: cents(one.dollars), debt_repaid: repaid, way: one.way, receipt: "https://pay.example/receipt" }, ...(shape.payments ?? [])] };
   }
   return shape;
@@ -356,7 +357,11 @@ function cut(span: SpanId, now: number): { first: Day; last: Day; step: Step; si
   }
 }
 
-export function spendingOf(world: MoneyWorld, span: SpanId, now: number): SpanSpending | undefined {
+/**
+ * What a span spent: the account's whole, or with `own` an organisation member's own, as the platform answers a member: the same days'
+ * model and source lines, and none of the computer's hours or storage, which are the organisation's.
+ */
+export function spendingOf(world: MoneyWorld, span: SpanId, now: number, own = false): SpanSpending | undefined {
   const shape = shapeOf(world, localDay(now));
   if (shape.unread === "spending" && span !== "lastMonth") return undefined;
   const today = localDay(now);
@@ -402,17 +407,18 @@ export function spendingOf(world: MoneyWorld, span: SpanId, now: number): SpanSp
     const whole = weights.reduce((a, b) => a + b, 0);
     const parts = weights.map((one) => Math.floor((bar.units * one) / whole));
     parts[0]! += bar.units - parts.reduce((a, b) => a + b, 0);
-    return parts;
+    return own ? parts.map((units, k) => (lines[k]!.kind === "box_time" || lines[k]!.kind === "box_storage" ? 0 : units)) : parts;
   });
-  const totals = lines.map((_, k) => split.reduce((sum, parts) => sum + parts[k]!, 0));
+  const held = spent.map((bar, b) => ({ at: bar.at, units: split[b]!.reduce((a, c) => a + c, 0), parts: split[b]! })).filter((bar) => bar.units > 0);
+  const totals = lines.map((_, k) => held.reduce((sum, bar) => sum + bar.parts[k]!, 0));
   const order = lines.map((_, k) => k).filter((k) => totals[k]! > 0).sort((a, b) => totals[b]! - totals[a]!);
   const kindsOf = (parts: readonly number[]): ByKind => ({ model: 0, source: 0, box_time: 0, box_storage: 0, ...Object.fromEntries((["model", "source", "box_time", "box_storage"] as const).map((kind) => [kind, parts.reduce((sum, units, k) => sum + (lines[k]!.kind === kind ? units : 0), 0)])) });
-  const total = spent.reduce((sum, bar) => sum + bar.units, 0);
+  const total = held.reduce((sum, bar) => sum + bar.units, 0);
   const folds = order.length > 6 ? 5 : undefined;
   return {
     span, step, first_day: first, last_day: last, ...(under ? { from: clockOf(new Date(since)), to: clockOf(new Date(until)) } : {}), total, kinds: kindsOf(totals),
     lines: order.map((k) => ({ kind: lines[k]!.kind, ...(lines[k]!.name === undefined ? {} : { name: lines[k]!.name }), units: totals[k]! })),
     ...(folds === undefined ? {} : { other: { from: folds, units: order.slice(folds).reduce((sum, k) => sum + totals[k]!, 0) } }),
-    bars: spent.map((bar, b) => ({ at: bar.at, total: bar.units, kinds: kindsOf(split[b]!), lines: order.flatMap((k, line) => (split[b]![k]! > 0 ? [{ line, units: split[b]![k]! }] : [])) })),
+    bars: held.map((bar) => ({ at: bar.at, total: bar.units, kinds: kindsOf(bar.parts), lines: order.flatMap((k, line) => (bar.parts[k]! > 0 ? [{ line, units: bar.parts[k]! }] : [])) })),
   };
 }

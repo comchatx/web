@@ -1,6 +1,6 @@
 import { AccountPages, inviting, type ReadyPort } from "./account-pages.js";
 import type { Appearance } from "./appearance.js";
-import type { Backend, Features, Me } from "./backend.js";
+import { isMember, type Backend, type Features, type Me } from "./backend.js";
 import { fill, h } from "./dom.js";
 import { CROSS, icon } from "./spend-chart.js";
 import { scrimCloses, tip } from "./forms.js";
@@ -11,6 +11,7 @@ import { BILLING_PAGES, BillingView, type BillingPage } from "./billing-page.js"
 import { Paying } from "./paying.js";
 import { UsagePage, type UsageRead } from "./usage-page.js";
 import { OrgPage } from "./org-page.js";
+import { MembersPage } from "./members-page.js";
 import { ComputerSection, type Power } from "./computer-section.js";
 import { bar, block, rowsFor, skeleton, type Twelfths, type Rows } from "./waiting.js";
 
@@ -25,9 +26,9 @@ export type Section = (typeof SECTIONS)[number];
  */
 export type WindowKind = "person" | "organization";
 /** 组织设置's sections, in the order its side lists them. */
-export const ORGANIZATION_SECTIONS = ["org", "billing", "usage"] as const;
+export const ORGANIZATION_SECTIONS = ["org", "members", "billing", "usage"] as const;
 /** What the window shows: a section, or the invitation sheet, the window without its side. */
-export type Place = Section | "org" | "invite";
+export type Place = Section | "org" | "members" | "invite";
 /** Where each window's addresses start. */
 export const PREFIX: Readonly<Record<WindowKind, string>> = { person: "#/settings", organization: "#/organization" };
 /** The addresses of the sections a section took the place of: the old settings page's parts and the window's old sections keep reaching the window. */
@@ -111,6 +112,8 @@ export type WindowPorts = {
   readonly kind?: WindowKind;
   /** 组织设置's organization was deleted: the page goes back to the person's own account. */
   readonly organizationDeleted?: (name: string) => void;
+  /** The plans page, which 调整方案 on a person's 账单 opens; none where the page has no such page. */
+  readonly plans?: () => void;
   readonly plugin: (kind: "vendor" | "source", id: string) => { readonly href: string; readonly name: string } | undefined;
   /** What the rest of the app calls a thing a line spent on, where no record page names it. */
   readonly name?: (kind: "vendor" | "source", id: string) => string | undefined;
@@ -132,6 +135,8 @@ export type WindowPorts = {
 export const PAYING_READ_MS = 5_000;
 /** A status emptied and then written a moment later is heard as a change. */
 const HEARD_MS = 120;
+/** How long a line said to a screen reader stays before it is taken away, as the page's own (`app.ts`). */
+const HEARD_FOR_MS = 1500;
 
 /** A settings row not read yet: its label, its help, and the control at its end. */
 const rowShape = (label: Twelfths, help: Twelfths | undefined): HTMLElement => h("li", { class: "sw-row" },
@@ -159,13 +164,14 @@ function paneShape(section: Place, page: BillingPage | undefined, word: string):
       ? skeleton(word, h("div", { class: "sw-title-line" }, h("div", { class: "sw-title" }, bar("word", "title"))), groupShape([[4, 7], [4, 7], [4, 7]]))
       : skeleton(word, topShape(), groupShape([[4, 8], [3, undefined]]), groupShape([[4, 6], [5, undefined]]), listShape("payments"));
     case "org": return skeleton(word, groupShape([[4, undefined]]), groupShape([[3, 6]]), groupShape([[8, undefined]]));
+    case "members": return skeleton(word, groupShape([[6, 3], [6, 3]]));
     case "computer": return skeleton(word, h("section", { class: "sw-group cz-loads" }, h("div", {}, bar("word")), h("div", { class: "cz-load-grid" }, ...[0, 1, 2].map(() => block(h("div", { class: "cz-load f-card" }))))), groupShape([[2, 6], [2, 10]]));
     case "invite": return skeleton(word, h("div", { class: "sw-title" }, bar(4, "title")), h("p", { class: "sw-help" }, bar(12, "small"), bar(8, "small")), groupShape([[5, 7], [4, undefined]]), listShape("invited"));
   }
 }
 
 /** A read of the window's: each of the account's own, a payment's answer, the cards and payments, the invitations. */
-type Read = UsageRead | "settle" | "billing" | "invitations" | "devices" | "computer";
+type Read = UsageRead | "settle" | "billing" | "invitations" | "devices" | "computer" | "members";
 /**
  * What a section draws from: it stands as its shape until these answer. 通用 draws at once; 账户 waits for its devices and for what
  * holds its deletion, and its Delete question reads the balance. 账单 draws no spending and no record, which are 用量's.
@@ -173,8 +179,10 @@ type Read = UsageRead | "settle" | "billing" | "invitations" | "devices" | "comp
 const NEEDS: Readonly<Record<Place, readonly Read[]>> = {
   account: ["money", "subscription", "devices"],
   general: [],
-  // 组织 draws the organization from the opening's own read of `/me`, and names the balance its deletion takes.
-  org: ["me", "money"],
+  // 组织 draws the organization from the opening's own read of `/me`, names the balance its deletion takes, and a seat's price in its step.
+  org: ["me", "money", "terms"],
+  // 成员 draws the provider's members and invitations; 添加成员's seats are priced with the period's last day and a seat's price.
+  members: ["me", "money", "terms", "members"],
   usage: ["money", "me", "subscription", "record", "spending", "models", "terms", "settle", "invitations"],
   billing: ["money", "me", "subscription", "models", "terms", "settle", "billing"],
   invite: ["money", "subscription", "terms", "invitations"],
@@ -201,6 +209,7 @@ export class SettingsWindow {
   readonly #billing: BillingView;
   readonly #account: AccountPages;
   readonly #org: OrgPage;
+  readonly #members: MembersPage;
   readonly paying: Paying;
   #section: Place | undefined;
   #page: BillingPage | undefined;
@@ -241,25 +250,38 @@ export class SettingsWindow {
     this.#computer = new ComputerSection({ backend: ports.backend, say: this.#say, me: () => this.#watched ?? this.#usage.reads?.me, power: ports.power, now: () => ports.backend.now(), redraw,
       shown: () => this.element.open && this.#section === "computer" });
     this.#billing = new BillingView({ backend: ports.backend, say: this.#say, features: ports.features, paying: this.paying, reads: () => this.#usage.reads, redraw, home: () => this.element, base: this.#base,
-      ...(this.#kind === "organization" ? { organization: () => ({ seats: this.#usage.reads?.me?.organization?.seats, name: this.#usage.reads?.me?.organization?.name }) } : {}),
+      ...(this.#kind === "organization" ? { organization: () => ({ seats: this.#usage.reads?.me?.organization?.seats, name: this.#usage.reads?.me?.organization?.name }),
+        seats: { ask: (w, at) => this.#org.askSeats(w, at), lead: (w) => this.#org.paidLead(w) } } : ports.plans === undefined ? {} : { plans: ports.plans }),
       reread: async () => { if (await this.#reread()) this.#readWhilePaying(); },
       go: (hash) => this.#go(hash, "pane") });
     this.#account = new AccountPages({ backend: ports.backend, say: this.#say, language: ports.language, appearance: ports.appearance, ready: ports.ready, paying: this.paying, redraw,
-      email: () => ports.me()?.email, reads: () => this.#usage.reads,
+      email: () => ports.me()?.email, member: () => isMember(ports.me()), reads: () => this.#usage.reads,
       money: () => this.#need("money").then(() => this.#usage.reads?.money), signOutEverywhere: ports.signOutEverywhere, signOutHere: ports.signOutHere,
       deleted: ports.deleted, home: () => this.element, history: () => this.#history,
       name: () => this.#named ?? ports.me()?.name,
       changed: (name) => { if (name !== undefined) this.#named = name; ports.changed(name); },
-      hear: (words) => { this.#heard.textContent = ""; setTimeout(() => { this.#heard.textContent = words; }, HEARD_MS); },
+      // Said once and taken away again, so a reader that walks the window later meets no stale line.
+      hear: (words) => {
+        this.#heard.textContent = "";
+        setTimeout(() => { this.#heard.textContent = words; setTimeout(() => { if (this.#heard.textContent === words) this.#heard.textContent = ""; }, HEARD_FOR_MS); }, HEARD_MS);
+      },
       subscribable: () => this.#billing.offered().includes("subscribe"), go: (hash) => this.#go(hash, "pane"),
       setLanguage: (language) => { ports.setLanguage(language); this.#drawNav(); this.#redraw(`lang:${language}`); },
       setAppearance: (appearance) => { ports.setAppearance(appearance); this.#redraw(`look:${appearance}`); } });
     this.#org = new OrgPage({ backend: ports.backend, say: this.#say, redraw, home: () => this.element, base: this.#base,
       organization: () => this.#usage.reads?.me?.organization, figure: () => this.#usage.reads?.money?.figure,
-      updateCard: (from) => this.#billing.updateCard(from), cardSaid: (at) => this.#billing.cardSaid(at), deleted: (name) => ports.organizationDeleted?.(name) });
+      updateCard: (from) => this.#billing.updateCard(from), cardSaid: (at) => this.#billing.cardSaid(at),
+      seatPrice: () => this.#usage.reads?.terms?.seat_price, lastDay: () => this.#usage.reads?.money?.member?.last_day,
+      buy: (n, w, back, paid) => this.#billing.buySeats(n, w, { price: this.#usage.reads?.terms?.seat_price, back, paid }),
+      reread: async () => { await this.#reread(); }, go: (hash) => this.#go(hash, "pane"), deleted: (name) => ports.organizationDeleted?.(name) });
+    this.#members = new MembersPage({ backend: ports.backend, say: this.#say, redraw, home: () => this.element, history: () => this.#history,
+      organization: () => this.#usage.reads?.me?.organization,
+      price: () => this.#usage.reads?.terms?.seat_price, lastDay: () => this.#usage.reads?.money?.member?.last_day,
+      reread: async () => { await this.#reread(); }, toCard: () => this.#go(`${this.#base}/billing`, "pane") });
     this.#pane.addEventListener("scroll", () => this.#side.classList.toggle("scrolled", this.#pane.scrollTop > 0));
     // Escape closes the window, as a press on the dimmed page does: an open menu takes its own Escape first.
-    this.element.addEventListener("cancel", (event) => { event.preventDefault(); this.shut(); });
+    // The window's own cancel, Escape, shuts it; a file picker's cancel bubbles here too, and is the picker's alone.
+    this.element.addEventListener("cancel", (event) => { if (event.target !== this.element) return; event.preventDefault(); this.shut(); });
     scrimCloses(this.element, () => this.shut());
     this.element.addEventListener("click", (event) => {
       const away = (event.target as Element).closest?.<HTMLAnchorElement>(`a[href^='#/']:not([href^='${this.#base}'])`);
@@ -364,7 +386,7 @@ export class SettingsWindow {
       this.#section = undefined;
       this.ports.watch?.(false);
       // A step asks within the window: the window gone, its question goes with it, answered by nothing.
-      for (const step of this.element.querySelectorAll<HTMLDialogElement>(":scope > dialog.confirm:not(.sw-card)")) { step.close(); step.remove(); }
+      for (const step of this.element.querySelectorAll<HTMLDialogElement>(":scope > dialog.f-dialog:not(.sw-card)")) { step.close(); step.remove(); }
       clearTimeout(this.#payingRead);
       this.#payingRead = undefined;
       if (this.element.open) this.element.close();
@@ -413,6 +435,7 @@ export class SettingsWindow {
       this.#done.clear();
       this.#account.begin();
       this.#org.begin();
+      this.#members.begin();
       this.#computer.begin();
       this.#watched = undefined;
       this.paying.moved();
@@ -474,6 +497,7 @@ export class SettingsWindow {
         case "invitations": return this.#account.readInvitations();
         case "devices": return this.#account.readDevices();
         case "computer": return this.#computer.read();
+        case "members": return this.#members.read();
         default: return this.#usage.read(read);
       }
     })();
@@ -573,7 +597,7 @@ export class SettingsWindow {
     this.#close.setAttribute("aria-label", close);
     fill(this.#nav, h("h2", { class: "sw-name", id: this.#id("name") }, say(organization ? "osw.title" : "sw.title")),
       ...this.#sections.map((id) => h("a", { href: `${this.#base}/${id}`, id: this.#id(`link-${id}`), "aria-current": id === this.#section ? "page" : undefined, "data-key": `nav:${id}` },
-        say(id === "org" ? "osw.sec.org" : `sw.sec.${id as Section}`))));
+        say(id === "org" ? "osw.sec.org" : id === "members" ? "osw.sec.members" : `sw.sec.${id as Section}`))));
     // As a sheet the window is named by the sheet's title alone: a name from the hidden side's 设置 would outrank it.
     if (this.#section === "invite") { this.element.removeAttribute("aria-labelledby"); this.element.setAttribute("aria-label", say("sw.invite")); }
     else { this.element.removeAttribute("aria-label"); this.element.setAttribute("aria-labelledby", this.#id("name")); }
@@ -587,11 +611,21 @@ export class SettingsWindow {
     const now = new Date(this.ports.backend.now());
     const w = writer({ language: this.ports.language(), say: this.#say, money: me.money, year: now.getFullYear() });
     this.#pane.setAttribute("aria-labelledby", section === "invite" ? "sw-page-title" : this.#id(`link-${section}`));
+    // A member's own 账单 and 用量 hold none of the organization's money, which is its admin's in 组织设置: the plan said to be the
+    // organization's, and their own spending.
+    const member = this.#kind === "person" && me.organization?.role === "member";
     const drawn = {
-      account: () => this.#account.account(w), general: () => this.#account.general(w), org: () => this.#org.draw(w), billing: () => this.#billing.draw(this.#page, w), usage: () => this.#usage.draw(w), computer: () => this.#computer.draw(w), invite: () => this.#account.invite(w),
+      account: () => this.#account.account(w), general: () => this.#account.general(w), org: () => this.#org.draw(w), members: () => this.#members.draw(w),
+      billing: () => (member ? [h("p", { class: "sw-lead", "data-key": "org.planManaged" }, this.#say("org.planManaged"))] : this.#billing.draw(this.#page, w)),
+      usage: () => (member ? this.#usage.spent(w) : this.#usage.draw(w)), computer: () => this.#computer.draw(w), invite: () => this.#account.invite(w),
     }[section]();
     fill(this.#pane, ...drawn);
     this.#side.classList.toggle("scrolled", this.#pane.scrollTop > 0);
+    // `#/organization/org/seats`, the chat's way to 购买席位, opens 组织 with the seats' step over it where the pane offers one.
+    if (section === "org" && location.hash === `${this.#base}/org/seats`) {
+      this.#history.replaceState(this.#history.state, "", `${this.#base}/org`);
+      if (this.#pane.querySelector("[data-key='seats']") !== null) this.#org.askSeats(w, "seats");
+    }
   }
 
   /**

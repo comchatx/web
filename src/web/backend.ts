@@ -1,6 +1,6 @@
 import type { Money } from "../shared/money.js";
 import type { StreamEvent } from "./stream-model.js";
-import type { DoorReason } from "../shared/door.js";
+import type { DoorReason, DoorWork } from "../shared/door.js";
 import type { Language } from "./strings.js";
 import type { PendingPick, PickOutcome } from "../shared/card-choices.js";
 import type { Catalogue, Way } from "./catalogue.js";
@@ -29,8 +29,8 @@ export type Usage = { readonly span: UsageSpan; readonly stepS: number; readonly
 
 export type { PendingPick };
 
-/** `GET /me`'s balance as the platform answers it, in platform units. */
-export type Balance = { readonly available: number; readonly open_floor: number; readonly can_open: boolean };
+/** `GET /me`'s balance as the platform answers it, in platform units; an organization's member is given no `available`. */
+export type Balance = { readonly available?: number; readonly open_floor: number; readonly can_open: boolean };
 
 /**
  * `GET /me` read once: the box, the balance, how units read as money and the month's spending. Settings and the sidebar draw from this one
@@ -55,8 +55,12 @@ export type Me =
       /** Who is signed in, as the identity vendor holds them; absent when the platform could not say. */
       readonly email: string | undefined;
       readonly name: string | undefined;
+      /** The address is a public mailbox, as the platform judges it: an organisation is made under a work address. */
+      readonly publicMailbox?: true;
       /** Whether the person has agreed to the terms, read for an account without a computer alone; absent where the platform did not say. */
       readonly terms?: boolean;
+      /** The account's tutorial is closed: by 跳过, its last step or a leave, or because the account was here before the tutorial came. */
+      readonly guideClosed?: true;
       /** Whether the box's Machine runs, as the platform read it for this answer; absent when it could not say. */
       readonly machine?: Machine | undefined;
       /** The Machine runs an image older than the platform's: a computer kept on takes the new one only when restarted. */
@@ -75,6 +79,12 @@ export type Me =
       readonly held?: readonly HeldMessage[];
       /** The organization the session has active, where it has one; absent for a person's own session. */
       readonly organization?: Organization;
+      /**
+       * The invitations waiting on the person, read while their account has no computer yet or an invitation's link is carried; and
+       * the carried link's own, where it is not among them: waiting on another address, or gone.
+       */
+      readonly invited?: readonly InvitedTo[];
+      readonly invitationLink?: "elsewhere" | "gone";
     }
   | { readonly kind: "signed_out" };
 
@@ -91,6 +101,8 @@ export type Seats = {
 };
 /** The organization a session has active: its id, the asker's role, its name and its seats, each absent where the platform could not say. */
 export type Organization = { readonly id: string; readonly role?: "admin" | "member"; readonly name?: string; readonly seats?: Seats };
+/** The asker is a member of the organization in use, not its admin: what only the admin changes is not offered, and they are told whom to ask. */
+export const isMember = (me: { readonly organization?: Organization } | undefined): boolean => me?.organization?.role === "member";
 
 /**
  * What opening the box and its session came to. A refusal is admission's verdict with its reason — the box did not start, or, for a box
@@ -116,7 +128,36 @@ export type Opened =
  * page with nothing behind it is not shown there.
  */
 /** What a checkout is asked for: a membership that renews, one period of it, or whole dollars topped up. */
-export type CheckoutAsk = { readonly kind: "subscription" | "period" } | { readonly kind: "top_up"; readonly dollars: number };
+export type CheckoutAsk = { readonly kind: "subscription" | "period" } | { readonly kind: "top_up"; readonly dollars: number } | { readonly kind: "seats"; readonly seats: number; readonly name?: string };
+/**
+ * What a change of an organization's seats costs, as the vendor previews it, in units: today's charge, the next bill's total, and the
+ * instant priced. The next total is left out while a cut already waits for the renewal.
+ */
+export type SeatsPrice = { readonly due: number; readonly next?: number; readonly at: number };
+/** The seats an invitation buys first: the count and the moment of the quote the admin confirmed, as `seatsPrice` read it. */
+export type SeatsBuy = { readonly seats: number; readonly at: number };
+/** A count of seats set: the count held now, and the count a cut sets for the renewal. */
+export type SeatsSet = { readonly seats: number; readonly next?: number };
+/** Why the platform did not change the count, which stays as it was: `declined`, `seats_limit`, `seats_taken`, `no_subscription`, `cancelling` or `retrying`. */
+export class SeatsRefused extends Error {
+  constructor(readonly reason: string) { super(reason); }
+}
+/** An invitation waiting on the signed-in person: the organization it is to, the role, and who sent it. */
+export type InvitedTo = { readonly id: string; readonly organization: { readonly id: string; readonly name: string }; readonly role: MemberRole; readonly inviter?: string };
+/** An organization's two roles, as its admin sends an invitation with one. */
+export type MemberRole = "admin" | "member";
+/** A member of the organization, as the identity provider holds them: a name where they gave one, their address, their role. */
+export type Member = { readonly name?: string; readonly email?: string; readonly role: MemberRole };
+/** An invitation not yet answered: its address, the role it was sent with, who sent it, when it lapses (ms), and its link, read by the admin alone. */
+export type WaitingInvitation = { readonly id: string; readonly email: string; readonly role: MemberRole; readonly inviter?: string; readonly expires: number; readonly url?: string };
+export type Members = { readonly members: readonly Member[]; readonly invitations: readonly WaitingInvitation[] };
+/** What an admin's invitations answered: the addresses sent, refused by the provider, past the organization's bound, and already a member's or waiting. */
+/** What an invitation did; `seats`, where seats were asked for and something was left to send, is the count the platform holds after: it says nothing of a charge. */
+export type InviteAnswer = { readonly sent: readonly string[]; readonly refused: readonly string[]; readonly full: readonly string[]; readonly known: readonly string[]; readonly seats?: SeatsSet };
+/** The provider's limit of invitations for the day, passed on by its code. */
+export class InvitationsLimited extends Error {
+  constructor() { super("invitations_limited"); }
+}
 /** How a payment is made in the page: by card, or by Alipay, which leaves the page for its own and comes back. */
 export type PayWay = "card" | "alipay";
 export type Features = {
@@ -199,12 +240,15 @@ export type Payment = { readonly on: Day; readonly kind: "membership" | "top_up"
 /** A page of payments: `total` counts them all, and `next`, where there are more, is where the next page goes on from. */
 export type Payments = { readonly payments: readonly Payment[]; readonly more: boolean; readonly total: number; readonly next?: string };
 /** The platform's word on a session come back to: paid or not, and, once the ledger holds this payment's own credit, what it brought. */
-export type Returned = { readonly state: "paid" | "unpaid"; readonly credited?: { readonly kind: "membership" | "top_up" | "seats"; readonly amount: number; readonly debt_repaid: number } };
+/** A payment session's answer; one that makes an organisation names it once made, `pending` until then. */
+export type Returned = { readonly state: "paid" | "unpaid"; readonly organization?: string; readonly credited?: { readonly kind: "membership" | "top_up" | "seats"; readonly amount: number; readonly debt_repaid: number } };
 /** The figures 条款 prints, served to anyone: what a membership costs, the least top-up, and what a sign-up and an invitation bring. */
 export type Terms = {
   readonly units_per_dollar: number; readonly price: number; readonly top_up_from: number; readonly paid_months: number;
   readonly trial: { readonly direct: number; readonly invited: number; readonly days: number };
   readonly friends: number; readonly reward: number; readonly reward_window_days: number; readonly promotion_last_day?: Day;
+  /** A seat's monthly price, which is also what a seat brings a month; the lines that print it are left out where none is sent. */
+  readonly seat_price?: number;
 };
 /**
  * A friend an invitation brought, as `/invitations` serves it: the coupon it took, absent for a friend past the coupons, who had the
@@ -347,8 +391,8 @@ export type FieldsCheck = { readonly ok: true } | { readonly ok: false; readonly
  * This month's money: the credit that landed in the month — the base the low-balance warnings are a share of — and what was spent,
  * by what it was spent on.
  */
-/** `boxStorage` is what the computer's disk was debited, a day at a time, apart from the time it ran. */
-export type Spending = { readonly credited: number; readonly spent: { readonly model: number; readonly sources: number; readonly boxTime: number; readonly boxStorage: number } };
+/** `boxStorage` is what the computer's disk was debited, a day at a time, apart from the time it ran. An organization's member is given their own model and source spending alone: no credit, hours or storage. */
+export type Spending = { readonly credited?: number; readonly spent: { readonly model: number; readonly sources: number; readonly boxTime?: number; readonly boxStorage?: number } };
 
 /**
  * `via` names the person's own credential a model comes through; a model without one is the platform's. `aggregator` says its provider
@@ -615,7 +659,8 @@ export type BoardTabAsk =
   | { readonly op: "rename"; readonly tab: string; readonly to: string }
   | { readonly op: "delete"; readonly tab: string; readonly n: number; readonly newest: number };
 /** A file of the tenant tree a viewer draws, as `/board/open` read it: its words, or its bytes in base64 for a viewer that takes them. */
-export type OpenedFileBody = { readonly path: string; readonly name: string; readonly size: number; readonly modified: number; readonly text?: string; readonly bytes?: string };
+/** `tab` and `file` where the file is a card its tab's own page draws: the page asks for that tab, and names the card by its path in it. */
+export type OpenedFileBody = { readonly path: string; readonly name: string; readonly size: number; readonly modified: number; readonly text?: string; readonly bytes?: string; readonly tab?: string; readonly file?: string };
 /** A tab's page; `opened` where it draws one file of the tree, a viewer handed it or an HTML file that is the page itself. */
 export type BoardPageRead = { readonly html: string; readonly by: PageMaker; readonly kit?: { readonly css: string; readonly js: string }; readonly opened?: OpenedFileBody };
 /** Where a file was pressed, as `/board/open` logs it. */
@@ -651,8 +696,12 @@ export interface Backend {
    * the open, when there is one: a 401 carries it through the renewal as a message whose own command was refused.
    */
   open(carrying?: () => string | undefined): Promise<Opened>;
-  /** Puts the person's box to sleep by its own close; `busy` while pi is at work, which the box refuses; rejects when no close was made. */
-  close(): Promise<"closed" | "busy">;
+  /**
+   * Puts the person's box to sleep by its own close; `busy` while pi is at work, which the box refuses; `unanswered` when the request ended
+   * with no word from the box (the platform's 502 `box_unreachable`, or the connection ending), so a close it began may still run; rejects
+   * when the platform answered that no close was made.
+   */
+  close(): Promise<"closed" | "busy" | "unanswered">;
   /**
    * Restarts the person's box on the platform's image: the box's own close, then the open, both on the platform, so a page that leaves
    * meanwhile still finds it on. `busy` while pi is at work; rejects when the restart did not end with the box on.
@@ -838,13 +887,15 @@ export interface Backend {
   now(): number;
   /** Ends the person's session with the platform, or every session of the account, and leaves the pages, or leaves to renew the session first; rejects when the session may not have ended. */
   /** Signs out, here or everywhere, and goes to the door, which says why by the sign-out's reason, or by `landing` where one is named. */
-  leave(everywhere?: boolean, landing?: DoorReason): Promise<Left>;
+  /** Ends the sign-in; the door says why, or, given a work address, signs the person in under it (`DoorWork`). */
+  leave(everywhere?: boolean, landing?: DoorReason | DoorWork): Promise<Left>;
   /** Leaves the pages for their own address, to start again as whoever is signed in now. */
   again(): void;
   /** The accounts this sign-in holds; none where the provider cannot say. */
   spaces(): Promise<Spaces | undefined>;
   /** Makes an organisation, or the person's own account (`null`), the one in use, then starts the pages again in it, as `again` does. */
-  use(organization: string | null): Promise<void>;
+  /** Switches the session to an organisation, or to the person's own; the page starts again there, or at `landing`. */
+  use(organization: string | null, landing?: string): Promise<void>;
   /** Whether these pages were started by a switch of account; asking spends it. */
   switched(): boolean;
   /** Whether the pages are back from renewing the session only to sign out again; asking spends it. */
@@ -885,8 +936,34 @@ export interface Backend {
   deleteAccount(): Promise<void>;
   /** Renames the organization the session has active, as its admin; the name kept, or a rejection where it was not. */
   renameOrganization(name: string): Promise<string>;
+  /** The organization's members and its invitations not yet answered; rejects where they could not be read. */
+  members(): Promise<Members>;
+  /** Where the admin downloads the members, each one's name, address and role, as a file a spreadsheet opens. */
+  membersFile(): string;
+  /**
+   * Invites the addresses with a role, as the admin. Where `seats` is given the organization's seats are bought up to it first, by the
+   * seats' own road; a purchase refused rejects with `SeatsRefused` and sends nothing, the provider's day's limit with `InvitationsLimited`.
+   */
+  invite(emails: readonly string[], role: MemberRole, buy?: SeatsBuy): Promise<InviteAnswer>;
+  /** Sends a waiting invitation again, a new one for the same address and role: true where the provider sent it; rejects where it failed. */
+  resendInvitation(id: string): Promise<boolean>;
+  /** Takes a waiting invitation back; rejects where it was not. */
+  revokeInvitation(id: string): Promise<void>;
+  /** The invited person's 接受邀请, by the identity provider's own call: joined, the organization full, or the invitation gone. */
+  acceptInvitation(id: string): Promise<"accepted" | "full" | "gone">;
+  /** The invited person's 拒绝邀请: the invitation is taken off, and its seat is free; rejects where it was not. */
+  declineInvitation(id: string): Promise<void>;
+  /** What a change to `seats` costs before it is made; rejects with `SeatsRefused` where the seats' state refuses one. */
+  seatsPrice(seats: number): Promise<SeatsPrice>;
+  /**
+   * Sets the organization's count: a raise is paid now, at `at` where a price read gave one; a cut takes the renewal. Rejects with
+   * `SeatsRefused` where the platform did not change it.
+   */
+  setSeats(seats: number, at?: number): Promise<SeatsSet>;
   /** What the person asked to be called, which the identity provider keeps as their name; rejects where it was not kept. */
   setName(name: string): Promise<void>;
+  /** Closes the account's tutorial for good; rejects where the platform did not keep it. */
+  closeGuide(): Promise<void>;
   /** The devices the account is signed in on, this browser's first; rejects where the platform could not read them. */
   devices(): Promise<readonly Device[]>;
   /** Signs one of the account's own devices out; rejects where it was not. */
@@ -962,10 +1039,10 @@ export function readModels(answers: { readonly get_state?: unknown; readonly get
   };
 }
 
-export const spentTotal = (spending: Spending): number => spending.spent.model + spending.spent.sources + spending.spent.boxTime + spending.spent.boxStorage;
+export const spentTotal = (spending: Spending): number => spending.spent.model + spending.spent.sources + (spending.spent.boxTime ?? 0) + (spending.spent.boxStorage ?? 0);
 
 /** The share of the month's credit that is gone, as the low-balance rule counts it: from what is left, not from what was spent. */
 export function creditUsedPercent(balance: Balance, spending: Spending): number | undefined {
-  if (spending.credited <= 0) return undefined;
+  if (balance.available === undefined || spending.credited === undefined || spending.credited <= 0) return undefined;
   return Math.round(Math.min(1, Math.max(0, 1 - balance.available / spending.credited)) * 100);
 }

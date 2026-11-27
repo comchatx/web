@@ -10,12 +10,14 @@ import { carried, fill, h, svg } from "./dom.js";
 import { hideTipWithin } from "./forms.js";
 import { bar, block, skeleton, Waits } from "./waiting.js";
 import { renderMarkdown, type PathLink } from "./markdown.js";
+import { GUIDE_LINES, GUIDE_VALUE, guideMarkdown, guidePieces, SELLERS } from "./guide-lines.js";
+import type { FileNames } from "./paths.js";
 import { fileBox } from "./board-files.js";
 import { dayKey } from "./days.js";
-import { NOTICE_MS, working, type Block, type Item, type StreamState } from "./stream-model.js";
+import { message, NOTICE_MS, working, type Block, type Item, type StreamState } from "./stream-model.js";
 import type { Language, StringKey } from "./strings.js";
 import { doorName } from "./catalogue.js";
-import type { CardWords } from "../shared/maker-words.js";
+import type { CardWords, NoticeHeadings } from "../shared/maker-words.js";
 import type { Way } from "../shared/card-choices.js";
 import { unquoted, type Quote } from "./quote.js";
 import type { RowOf, WaitingOf } from "./message-rows.js";
@@ -44,10 +46,16 @@ export type StreamViewPorts = {
   readonly modelName?: (model: { readonly provider: string; readonly id: string }) => string;
   /** Each card's words, by which a move's line names a way's door (`doorName`). Absent, a door is named from the registry alone. */
   readonly makers?: () => CardWords;
+  /** The headings packages give their notices, by type: a notice of a type headed is headed in the page's language, else by its first line. */
+  readonly headings?: () => NoticeHeadings;
   /** Opens the model card. Absent, no answer offers it. */
   readonly chooseModel?: () => void;
   /** Shows a file cx named on its own tab of the board. Absent, a path the session prints is its words. */
   readonly openFile?: (path: string) => void;
+  /** The asker is the organization's member: a stop whose mending is the admin's says whom to ask after its words. */
+  readonly member?: () => boolean;
+  /** The files the board lists, a new value each time the list changes: a file cx names is drawn as the file box only where it is one of them. */
+  readonly names?: () => FileNames;
   /** The page's clock: a command the page saw start is timed on it. */
   readonly now: () => number;
   /** Called each time the running cards' times are drawn, so what reads them (the line beside cx's desk) turns with them. */
@@ -124,7 +132,7 @@ export class StreamView {
     if (path !== null && path !== undefined) this.ports.openFile?.(path);
   } });
   /** What is drawn, by item key, in the stream's order: an earlier part put first leaves every drawn item's element as it was. */
-  #rendered = new Map<string, { readonly item: Row; readonly element: HTMLElement; readonly waits: boolean; readonly now: boolean; readonly cancel: boolean; readonly moved: boolean; readonly tooLong: string | undefined; readonly onStep?: boolean; readonly cards?: string; readonly beneath?: string; readonly under?: HTMLElement | undefined }>();
+  #rendered = new Map<string, { readonly item: Row; readonly element: HTMLElement; readonly waits: boolean; readonly now: boolean; readonly cancel: boolean; readonly moved: boolean; readonly tooLong: string | undefined; readonly onStep?: boolean; readonly cards?: string; readonly names?: FileNames | undefined; readonly beneath?: string; readonly under?: HTMLElement | undefined }>();
   /** The day rows drawn, by day: one whose words have not changed is the same row. */
   #days = new Map<string, DayRow>();
   /** The next update keeps the reader where they are, wherever that is: a far stretch the reader read on through has met the latest. */
@@ -139,6 +147,7 @@ export class StreamView {
   #life: string | undefined;
   /** The answer being written, its pieces drawn once each: a delta parses only the piece it grows, and the rest are copies of their drawings. */
   #written = new Map<string, HTMLElement>();
+  #writtenFor: FileNames | undefined;
   #breaks = 0;
   /** The running times drawn, brought up to date each second while any is on the page. */
   readonly #running = new Map<HTMLElement, { readonly key: string; readonly from: number }>();
@@ -280,14 +289,14 @@ export class StreamView {
   }
 
   /**
-   * Whether the latest message is where the reader sees it: the box of the last item drawn and shown meets the view's. With nothing drawn,
+   * Whether the latest message is where the reader sees it: the box of the last message drawn and shown meets the view's. With nothing drawn,
    * or a view not laid out, nothing lies out of sight.
    */
   latestSeen(): boolean {
     const scroller = this.element.parentElement;
     if (scroller === null || scroller.clientHeight === 0) return true;
     for (const drawn of [...this.#rendered.values()].reverse()) {
-      if (drawn.element.hidden || drawn.item.kind === "day") continue;
+      if (drawn.element.hidden || drawn.item.kind === "day" || !message(drawn.item)) continue;
       const box = drawn.element.getBoundingClientRect(), view = scroller.getBoundingClientRect();
       return box.bottom > view.top && box.top < view.top + scroller.clientHeight;
     }
@@ -297,11 +306,11 @@ export class StreamView {
   /**
    * Where cx stands in the stream, in client px — a line's middle, its top and where its item begins: beside the last line of what pi is writing,
    * or, while that ends with the person's message, one line below it, where the answer starts. A message sent while pi works waits below
-   * and moves nothing, and so does the day it is dated. Nothing while nothing is drawn.
+   * and moves nothing, and so do the day it is dated and a tutorial line. Nothing while nothing is drawn.
    */
   lastLine(): { readonly y: number; readonly top: number; readonly start: number } | undefined {
     for (const drawn of [...this.#rendered.values()].reverse()) {
-      if (drawn.element.hidden || drawn.item.kind === "day" || (drawn.item.kind === "user" && drawn.item.pending && drawn.item.queued === true)) continue;
+      if (drawn.element.hidden || drawn.item.kind === "day" || !message(drawn.item) || (drawn.item.kind === "user" && drawn.item.pending && drawn.item.queued === true)) continue;
       const box = drawn.element.getBoundingClientRect();
       if (drawn.item.kind === "user") {
         const line = lastTextLine(drawn.element) ?? box;
@@ -311,6 +320,15 @@ export class StreamView {
       return { y: (line.top + line.bottom) / 2, top: line.top, start: box.left };
     }
     return undefined;
+  }
+
+  /** Where cx stands beside the tutorial line `key` while it writes it, as beside pi's line: for placement only. Nothing while it is not drawn. */
+  guideLine(key: string): { readonly y: number; readonly top: number; readonly start: number } | undefined {
+    const drawn = this.#rendered.get(`guide:${key}`);
+    if (drawn === undefined || drawn.element.hidden) return undefined;
+    const box = drawn.element.getBoundingClientRect();
+    const line = lastTextLine(drawn.element) ?? box;
+    return { y: (line.top + line.bottom) / 2, top: line.top, start: box.left };
   }
 
   /** The stream's items, with the day over the first of the person's messages sent on it. */
@@ -363,6 +381,14 @@ export class StreamView {
    * divider, the window or the sidebar — and the view keeps its place: at the bottom it stays at the bottom, and elsewhere the first line
    * in view stays where it stood, however the lines above it wrap.
    */
+  /** The band the chat gives up at its foot while cx's bubble stands there (guide-band.ts), its last lines kept in view; null for none. */
+  giveWay(px: number | null): void {
+    const scroller = this.element.parentElement;
+    if (scroller === null) return;
+    scroller.style.marginBottom = px === null ? "" : `${px}px`;
+    this.resized();
+  }
+
   resized(): void {
     const scroller = this.element.parentElement;
     if (scroller === null) return;
@@ -433,7 +459,7 @@ export class StreamView {
     const moves = movedAnswers(state.items);
     const tooLongs = tooLongAnswers(state.items);
     const onSteps = stopsOnSteps(state.items);
-    const drawn = new Map<string, { readonly item: Row; readonly element: HTMLElement; readonly waits: boolean; readonly now: boolean; readonly cancel: boolean; readonly moved: boolean; readonly tooLong: string | undefined; readonly onStep: boolean; readonly cards: string; readonly beneath: string; readonly under?: HTMLElement | undefined }>();
+    const drawn = new Map<string, { readonly item: Row; readonly element: HTMLElement; readonly waits: boolean; readonly now: boolean; readonly cancel: boolean; readonly moved: boolean; readonly tooLong: string | undefined; readonly onStep: boolean; readonly cards: string; readonly names: FileNames | undefined; readonly beneath: string; readonly under?: HTMLElement | undefined }>();
     const turn = working(state);
     const reach = this.ports.reachable?.() !== false;
     let parent: HTMLElement = this.#before;
@@ -451,11 +477,12 @@ export class StreamView {
       const tooLong = item.kind === "assistant" && item.model !== undefined && tooLongs.has(item.key) ? this.ports.modelName?.(item.model) ?? item.model.id : undefined;
       // A board card's row is drawn again as the card is read, or changes where it stands.
       const cards = this.#cardsOf(item);
+      const names = this.ports.names?.();
       const live = item.kind === "asking" ? this.#dialogCard(state, item.id) : undefined;
       const beneath = item.kind === "user" && !item.pending ? this.ports.beneath?.stamp(item.echo ?? item.key) ?? "" : "";
       // A stop its step already says is not said again by the empty message after it.
       const onStep = onSteps.has(item.key);
-      const element = live ?? (held?.item === item && held.waits === marked && held.now === now && held.cancel === cancel && held.moved === moved && held.tooLong === tooLong && held.onStep === onStep && held.cards === cards ? held.element
+      const element = live ?? (held?.item === item && held.waits === marked && held.now === now && held.cancel === cancel && held.moved === moved && held.tooLong === tooLong && held.onStep === onStep && held.cards === cards && held.names === names ? held.element
         : item.kind === "day" ? h("p", { class: "day-line" }, item.words) : onStep ? h("div", { class: "item", hidden: true }) : this.#draw(item, marked, now, cancel, moved, tooLong));
       if (held !== undefined && held.element !== element) {
         // What follows is placed against the drawing now in the page, not the one that left it.
@@ -478,7 +505,7 @@ export class StreamView {
         if (under === next) next = under.nextSibling;
         else parent.insertBefore(under, next);
       }
-      drawn.set(key, { item, element, waits: marked, now, cancel, moved, tooLong, onStep, cards, beneath, under });
+      drawn.set(key, { item, element, waits: marked, now, cancel, moved, tooLong, onStep, cards, names, beneath, under });
     });
     for (const [key, held] of this.#rendered) {
       if (drawn.get(key)?.element !== held.element) { hideTipWithin(held.element); held.element.remove(); }
@@ -604,7 +631,10 @@ export class StreamView {
   }
 
   /** A path the session prints, as main's file box whose press shows the file on the board, where the board can. */
-  get #link(): PathLink | undefined { return this.ports.openFile === undefined ? undefined : (path) => fileBox(path, this.ports.say); }
+  get #link(): PathLink | undefined {
+    const names = this.ports.names?.();
+    return this.ports.openFile === undefined || names === undefined ? undefined : { names, box: (path) => fileBox(path, this.ports.say) };
+  }
 
   /** Between a question's answers in its row: 、 in Chinese, a comma in English. */
   #joiner(): string { return this.ports.language?.() === "en" ? ", " : "、"; }
@@ -619,6 +649,7 @@ export class StreamView {
     // pi draws a tool's result on its call's card, and one whose call is not held is drawn by nobody.
     if (item.kind === "tool_result") return undefined;
     if (item.kind === "assistant") return this.#answer(item, moved, tooLong);
+    if (item.kind === "guide") return this.#guide(item);
     if (item.kind === "asked" && item.form !== undefined) return h("article", { class: "item asked", "data-key": item.key }, formRows(item.form, item.answer, this.ports.say, this.#joiner()));
     if (item.kind === "asked" && item.method === "confirm") return h("article", { class: "item asked", "data-key": item.key }, confirmRows(item.title, item.answer, this.ports.say));
     if (item.kind === "asked") return h("article", { class: "item asked", "data-key": item.key }, askedRecord(item, this.ports.say));
@@ -630,7 +661,10 @@ export class StreamView {
     const drawn = note(item.form, item.body);
     if (drawn === undefined) return undefined;
     if (drawn.kind === "summary") return h("article", { class: "item" }, this.#marker(item.key, this.ports.say(drawn.title), drawn.markdown));
-    if (drawn.kind === "message") return h("article", { class: "item" }, this.#marker(item.key, drawn.head, drawn.markdown));
+    if (drawn.kind === "message") {
+      const type = typeof item.body["customType"] === "string" ? item.body["customType"] : undefined;
+      return h("article", { class: "item" }, this.#marker(item.key, this.#heading(type) ?? drawn.head, drawn.markdown, type));
+    }
     if (drawn.kind === "moved") {
       const key = drawn.to === undefined ? `stream.stopped.${drawn.from.way}` as Exclude<`stream.stopped.${Way}`, "stream.stopped.platform">
         : `stream.moved.${drawn.from.way}.${drawn.to.way}` as Exclude<`stream.moved.${Way}.${Way}`, "stream.moved.platform.platform">;
@@ -700,17 +734,31 @@ export class StreamView {
   }
 
   /** A marker for a record pi draws — a summary, a skill read in, a package's notice — whose words open what it holds; a head that held the focus keeps it across the press. */
-  #marker(key: string, title: string, markdown: string): HTMLElement {
+  #marker(key: string, title: string, markdown: string, type?: string): HTMLElement {
     const open = this.#open.has(key);
     const head = h("button", { type: "button", class: "note-head", "aria-expanded": String(open), onclick: () => {
       const held = head.ownerDocument.activeElement === head;
       this.#flip(key);
-      const next = this.#marker(key, title, markdown);
+      const next = this.#marker(key, this.#heading(type) ?? title, markdown, type);
       card.replaceWith(next);
       if (held) (next.firstElementChild as HTMLElement).focus({ preventScroll: true });
     } }, title);
-    const card: HTMLElement = h("div", { class: "note" }, head, open && renderMarkdown(markdown, this.#link));
+    const card: HTMLElement = h("div", { class: "note", "data-type": type }, head, open && renderMarkdown(markdown, this.#link));
     return card;
+  }
+
+  /** A package's heading for a notice of its type, in the page's language. */
+  #heading(type: string | undefined): string | undefined {
+    return type === undefined ? undefined : this.ports.headings?.().get(type)?.[this.ports.language?.() ?? "zh"];
+  }
+
+  /** The notices drawn take the headings their packages give, in place: what the person holds, the keyboard among it, stays as it was. */
+  retitle(): void {
+    for (const card of this.element.querySelectorAll<HTMLElement>(".note[data-type]")) {
+      const words = this.#heading(card.dataset["type"]);
+      const head = card.querySelector<HTMLElement>(":scope > .note-head");
+      if (words !== undefined && head !== null) head.textContent = words;
+    }
   }
 
   #flip(key: string): void { if (this.#open.has(key)) this.#open.delete(key); else this.#open.add(key); }
@@ -724,6 +772,9 @@ export class StreamView {
     // Each run opens with its name, so what sets it apart from the answer is said in words.
     const texts: HTMLElement[] = [];
     const written = new Map<string, HTMLElement>();
+    // An answer still written keeps each drawing of its words while the board's files stay those it was drawn for.
+    const names = this.ports.names?.();
+    if (item.draft && names !== this.#writtenFor) { this.#written.clear(); this.#writtenFor = names; }
     const markdown = (source: string): HTMLElement => {
       if (!item.draft) return renderMarkdown(source, this.#link);
       const drawing = this.#written.get(source) ?? renderMarkdown(source, this.#link);
@@ -735,7 +786,9 @@ export class StreamView {
     if (item.draft) this.#written = written;
     const stopClass = drawn.stopped ? "stop stopped" : "stop";
     // A stop the person made is the step's stop tag, standing alone on its line; a failure is said in words.
-    if (drawn.stop.length > 0) article.append(h("div", { class: stopClass }, ...drawn.stop.map((words) => (drawn.stopped && "key" in words && words.key === "stream.cancelled" ? this.#tag("stopped", "stream.cancelled") : h("p", "quiet" in words ? { class: "quiet" } : {}, this.#say(words))))));
+    // A model the admin has not set to answer from the balance is the admin's to set: a member reads whom to ask after the stop's words.
+    const stop = this.ports.member?.() === true && drawn.stop.some((words) => "key" in words && words.key === "stream.balanceOff") ? [...drawn.stop, { key: "stream.balanceOffMember" } as const] : drawn.stop;
+    if (stop.length > 0) article.append(h("div", { class: stopClass }, ...stop.map((words) => (drawn.stopped && "key" in words && words.key === "stream.cancelled" ? this.#tag("stopped", "stream.cancelled") : h("p", "quiet" in words ? { class: "quiet" } : {}, this.#say(words))))));
     if (drawn.tooLong) article.append(...this.#tooLongWays(item));
     for (const card of drawn.tools) {
       article.append(this.#card(card));
@@ -751,6 +804,24 @@ export class StreamView {
       article.append(this.ports.rows.under({ who: "cx", key: item.key, entryId: item.entryId, time: item.at, words: () => texts.map((one) => one.innerText ?? one.textContent ?? "").join("\n\n").trim(), first: true }));
     }
     return article;
+  }
+
+  /**
+   * A tutorial line cx says, drawn as its answers are, by the same renderer: no row under it, so nothing copies, quotes or times it, and
+   * no class an answer's reader looks for. A plugin it names opens that plugin's page where the page stands, as the page's own links do.
+   */
+  #guide(item: Extract<Item, { kind: "guide" }>): HTMLElement {
+    // The signed words are read as markdown, with no value in them; each value goes in afterwards as the text it is.
+    const { source, values } = guideMarkdown(guidePieces(this.ports.say(GUIDE_LINES[item.line]), item.values), item.shown);
+    const words = renderMarkdown(source, undefined);
+    for (const anchor of words.querySelectorAll("a")) { anchor.removeAttribute("target"); anchor.removeAttribute("rel"); }
+    const walker = document.createTreeWalker(words, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node !== null; node = walker.nextNode()) {
+      node.nodeValue = node.nodeValue!.replace(/[\uE000-\uF8FF]/gu, (held) => values[held.codePointAt(0)! - GUIDE_VALUE] ?? held);
+    }
+    // The seller's first question, sent unchanged, is drawn as their message is, with no row under it.
+    if (item.line === SELLERS) return h("article", { class: "item user", "data-key": item.key, "data-said": "guide" }, h("div", { class: "said" }, words));
+    return h("article", { class: "item", "data-key": item.key, "data-said": "guide" }, words);
   }
 
   /** Under a turn refused for its length: the way out, then the vendor's words, folded for whoever helps. A fold keeps its place across drawings. */

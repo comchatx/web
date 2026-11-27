@@ -5,7 +5,7 @@
  * holds is drawn as it came; the words around it — a step's plain name, how long it took, the folds — are the page's own. Pure: no DOM,
  * no clock; the page's words are named by key and said by the view.
  */
-import { askedHere, failureWords, plainStop, stepStopped, STOP_TEXTS, type Block, type Item } from "./stream-model.js";
+import { askedHere, failureWords, messages, plainStop, stepStopped, STOP_TEXTS, type Block, type Item } from "./stream-model.js";
 import type { StringKey } from "./strings.js";
 import { fileName } from "./board-files.js";
 import { BOARD_ROOT, BOARD_TAB, boardFilePath, PERSON } from "../shared/board.js";
@@ -382,9 +382,9 @@ export function stop(item: Extract<Item, { kind: "assistant" }>, moved = false, 
   if (item.stopReason === "error") {
     if (tooLong !== undefined) return [{ key: "stream.tooLong", values: { model: tooLong } }];
     const key = failureWords(item.errorMessage, moved);
-    // A used-up way's refusal and a balance-off one are the proxy's machine text: the page's words say it, and for a used-up way the line
-    // after the answer names the ways.
-    return key === "stream.wayUsedUp" || key === "stream.balanceOff" ? [{ key }] : [{ key }, ...(item.errorMessage ? [{ text: item.errorMessage }] : [])];
+    // A used-up way's refusal, a balance-off one and the balance's own are the proxy's machine text: the page's words say it, and for a
+    // used-up way the line after the answer names the ways.
+    return key === "stream.wayUsedUp" || key === "stream.balanceOff" || key === "cx.say.balance" ? [{ key }] : [{ key }, ...(item.errorMessage ? [{ text: item.errorMessage }] : [])];
   }
   return [];
 }
@@ -494,8 +494,9 @@ export const stopsOnSteps = (items: readonly Item[]): ReadonlySet<string> => {
   return keys;
 };
 
-function answersBefore(items: readonly Item[], marks: (form: string, body: Readonly<Record<string, unknown>>) => boolean): ReadonlySet<string> {
+function answersBefore(all: readonly Item[], marks: (form: string, body: Readonly<Record<string, unknown>>) => boolean): ReadonlySet<string> {
   const keys = new Set<string>();
+  const items = messages(all);
   items.forEach((item, at) => {
     if (item.kind !== "record" || !marks(item.form, item.body)) return;
     for (let back = at - 1; back >= 0; back--) {
@@ -513,7 +514,7 @@ function answersBefore(items: readonly Item[], marks: (form: string, body: Reado
  * person sends. A message that opened its own turn and was stopped is the person's own stop, not one kept. Its key, or `undefined`.
  */
 export function heldForNext(all: readonly Item[]): string | undefined {
-  const items = all.filter((item) => !askedHere(item));
+  const items = messages(all).filter((item) => !askedHere(item));
   let at = items.length - 1;
   while (at >= 0) {
     const item = items[at]!;

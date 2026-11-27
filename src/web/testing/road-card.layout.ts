@@ -24,10 +24,10 @@ const scratch = mkdtempSync(join(tmpdir(), "cmx-road-card-"));
 beforeAll(async () => { chrome = await browser(); });
 afterAll(async () => { await chrome.close(); rmSync(scratch, { recursive: true, force: true }); });
 
-async function drawn(terms: boolean, walk: (root: HTMLElement) => Promise<void>, pay: () => Promise<PayAnswer> = () => never): Promise<string> {
+async function drawn(terms: boolean, walk: (root: HTMLElement) => Promise<void>, pay: () => Promise<PayAnswer> = () => never, start: () => Promise<boolean> = async () => true): Promise<string> {
   const backend = {
     me: async () => me(terms), accountMoney: async () => money, acceptTerms: () => never, setName: async () => undefined,
-    startBox: async () => true, leave: async () => "ended" as const, features: { checkout: true }, returned: async () => ({ state: "unpaid" as const }), payIn: async () => "cs_1_secret_x",
+    startBox: start, leave: async () => "ended" as const, features: { checkout: true }, returned: async () => ({ state: "unpaid" as const }), payIn: async () => "cs_1_secret_x",
     payForm: async () => ({ total: { text: "$10.00", minor: 1_000 }, mount: async () => undefined, pay }),
     spaces: async () => undefined,
   } as unknown as RoadBackend;
@@ -84,6 +84,40 @@ it("draws 创建账户 while it waits on the platform as a button that is off, t
   })()`);
   expect(read[0]).toEqual(["true", "false"]);
   expect(read[1]).toEqual(read[2]);
+});
+
+it("draws 开始使用 under the pointer and held down while it waits as it is drawn busy, with the forms' busy colours and none of an off button's", async () => {
+  const markup = await drawn(true, async (root) => {
+    await settled();
+    button(root, ".trial button").click();
+    await settled();
+    const field = root.querySelector<HTMLInputElement>("#call")!;
+    field.value = "陈静";
+    field.dispatchEvent(new Event("input"));
+    root.querySelector("form")!.requestSubmit();
+    await settled();
+    [...root.querySelectorAll<HTMLButtonElement>("button")].find((one) => one.textContent === "继续")!.click();
+    await settled();
+    [...root.querySelectorAll<HTMLButtonElement>("button.road-go")].find((one) => one.textContent === "开始使用")!.click();
+    await settled();
+  }, () => never, () => never);
+  const look = `(() => { const go = document.querySelector(".road-go.busy"), style = getComputedStyle(go);
+    return [go.matches(":active"), style.backgroundColor, style.color, style.borderTopColor]; })()`;
+  const rest = await laid<readonly (string | boolean)[]>(markup, "busy", look);
+  // Under the pointer first, then pressed and held there.
+  const [x, y] = await chrome.evaluate<readonly number[]>(`(() => { const box = document.querySelector(".road-go.busy").getBoundingClientRect(); return [box.x + box.width / 2, box.y + box.height / 2]; })()`);
+  await chrome.point(x!, y!);
+  const over = await chrome.evaluate<readonly (string | boolean)[]>(look);
+  await chrome.hold(x!, y!);
+  const held = await chrome.evaluate<readonly (string | boolean)[]>(look);
+  // The forms' busy paint, read off a bare busy button of theirs on the same page, and an off button's, read off the road's own.
+  const forms = await chrome.evaluate<readonly string[]>(`(() => { const one = document.createElement("button"); one.className = "f-btn busy"; document.body.append(one);
+    const style = getComputedStyle(one); return [style.backgroundColor, style.color, style.borderTopColor]; })()`);
+  const off = await chrome.evaluate<readonly string[]>(`(() => { const one = document.createElement("button"); one.className = "road-go"; one.setAttribute("aria-disabled", "true"); document.body.append(one);
+    const style = getComputedStyle(one); return [style.backgroundColor, style.color, style.borderTopColor]; })()`);
+  expect([rest[0], held[0]]).toEqual([false, true]);
+  expect([rest.slice(1), over.slice(1), held.slice(1)]).toEqual([forms, forms, forms]);
+  expect(held.slice(1)).not.toEqual(off);
 });
 
 // What a card that waits on a read draws, read the same way off the prototype (`spike/road-read-fails`): the card's box, and for each of

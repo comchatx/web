@@ -52,6 +52,11 @@
 .road-plans .trial { margin-top: var(--space-8); }
 .road-plans .trial .btn { border: 0; cursor: pointer; }
 .road-skip { margin-top: var(--space-7); text-align: center; }
+/* The plans page as a person's 账单 opens it (spike/hive-seats, plan.css): the plan they hold says so where its press would be, off as
+   the set draws off, and the way back to 账单 stands at the head's left edge, a road link. */
+.road-plans .plan .btn[aria-disabled="true"], .road-plans .plan .btn[aria-disabled="true"]:hover { border: 1px solid var(--line); background: var(--wash); color: var(--quiet); cursor: default; transform: none; box-shadow: none; }
+.road-head:has(.plan-back) { position: relative; }
+.road-head .plan-back { position: absolute; left: var(--container-margin); top: 50%; transform: translateY(-50%); }
 .road-by { color: var(--quiet); font-size: var(--size-small); }
 
 /* ---- 订阅 as a card: Pro and its price, then 订阅's own form (pay.css), whose 支付 is the card's one wide button, then 返回 ---- */
@@ -92,10 +97,11 @@
 .road-go { flex: none; display: inline-flex; align-items: center; justify-content: center; padding: var(--space-4) var(--space-6); border: 1px solid var(--act); border-radius: var(--radius); background: var(--act); color: var(--act-ink); font-size: var(--size-body); font-weight: var(--weight-strong); line-height: var(--leading-small); cursor: pointer; }
 .road-go.is-icon { padding: var(--space-4) var(--space-5); }
 .road-go.is-icon svg { width: var(--space-6); height: var(--space-6); fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-.road-go:hover:not(:disabled) { border-color: var(--act-hover); background: var(--act-hover); }
+.road-go:hover:not(:disabled):not(.busy) { border-color: var(--act-hover); background: var(--act-hover); }
 .road-go:disabled { border-color: var(--line); background: var(--wash); color: var(--quiet); cursor: default; }
 /* A press waiting on the platform is off by `aria-disabled` (road.ts, `#pressing`), so it keeps the keyboard; it is drawn as an off button, as the door's own is (door.css). */
-.road-go[aria-disabled="true"], .road-go[aria-disabled="true"]:hover, .road-go[aria-disabled="true"]:active { border-color: var(--line); background: var(--wash); color: var(--quiet); cursor: default; transform: none; }
+.road-go[aria-disabled="true"] { transform: none; }
+.road-go[aria-disabled="true"]:not(.busy), .road-go[aria-disabled="true"]:not(.busy):hover, .road-go[aria-disabled="true"]:not(.busy):active { border-color: var(--line); background: var(--wash); color: var(--quiet); cursor: default; }
 .road-link[aria-disabled="true"] { cursor: default; }
 /* The questions: the welcome over the first as cx's first sentence, each question over its blocks, the line under the second. */
 .road-asks { display: flex; flex-direction: column; gap: var(--space-7); margin: 0; min-width: 0; }
@@ -133,3 +139,80 @@
 
 /* A step drawn takes the keyboard to its heading (road.ts, `#page`), which is read, not pressed: no ring. */
 .road-main h1[tabindex="-1"]:focus { outline: none; }
+
+/* The organisation's invitation card, as the road signed on 2026-11-13 draws it: the organisation's mark beside its title, the card's acts, a
+   second button. */
+.road-org { display: flex; align-items: center; gap: var(--space-5); }
+.road-org-mark { flex: none; display: inline-flex; align-items: center; justify-content: center; width: var(--space-9); height: var(--space-9); border-radius: var(--radius); background: var(--wash); color: var(--ink); font-size: var(--size-title); font-weight: var(--weight-strong); line-height: 1; }
+.road-org .cl-headerTitle { overflow-wrap: anywhere; text-wrap: balance; }
+.road-acts { display: flex; flex-direction: column; gap: var(--space-5); align-items: stretch; }
+.road-acts .road-link { align-self: flex-start; }
+:where(.road-column) .road-second { display: flex; align-items: center; justify-content: center; width: 100%; padding: var(--space-4) var(--space-5); font-size: var(--size-body); line-height: var(--leading-small); }
+@media (max-width: 30rem) { .road-org { flex-direction: column; align-items: flex-start; } }
+
+/* ---- The organisation's pages: the signed creation pages (spike/hive-create @ e87f3ff39, hive-create.css), whose order line and sum
+   line take names of their own beside 订阅's ---- */
+:where(.door-column, .road-column) .road-link, :where(.door-column, .road-column) .road-link:hover:not(:disabled) { padding: 0; border: none; background: none; text-decoration: none; }
+:where(.door-column, .road-column) .road-link:hover:not(:disabled) { border-radius: var(--radius-small); background: var(--float-hover); box-shadow: 0 0 0 var(--space-1) var(--float-hover); color: var(--act-hover); }
+.road-card .cl-headerTitle { overflow-wrap: anywhere; text-wrap: balance; }
+.road-words.is-quiet { color: var(--quiet); font-size: var(--size-small); line-height: var(--leading-small); }
+.road-fields { min-width: 0; }
+.road-seats { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); flex-wrap: wrap; }
+/* The words beside the count turn onto a second line before the count drops under them. */
+.road-seats > div:first-child { flex: 1 1 10rem; min-width: 0; }
+.road-stepper { flex: none; display: inline-flex; align-items: center; gap: var(--space-2); }
+/* The count, in the third piece's measures (spikes/hive-seats/hive-seats.css, .st-stepper, .st-num): the two presses and, between
+   them, a field of three figures' room that takes typing. Its dress is the set's own field (forms.css). A press at its bound is
+   drawn off and still takes a press, which says the bound. */
+:where(.road-column) .road-stepper button { width: var(--space-8); height: var(--space-8); padding: 0; display: inline-flex; align-items: center; justify-content: center; font-size: var(--size-lead); line-height: var(--leading-glyph); }
+:where(.road-column) .road-stepper button[aria-disabled="true"], :where(.road-column) .road-stepper button[aria-disabled="true"]:hover { border-color: var(--line); background: var(--wash); color: var(--quiet); cursor: default; }
+.road-stepper .road-count { width: calc(3ch + 2 * var(--space-4)); height: var(--space-8); padding: 0 var(--space-2); text-align: center; font-family: var(--font-mono); font-size: var(--size-lead); font-variant-numeric: tabular-nums; }
+.road-notes:empty { display: none; }
+.road-fine { margin: 0; color: var(--quiet); font-size: var(--size-caption); line-height: var(--leading-small); text-align: center; }
+.road-card .cl-headerSubtitle { margin: 0; text-wrap: pretty; overflow-wrap: anywhere; }
+/* ---- Claude's two pages that make one (corrections 7 and 8, from the owner's pictures 6 to 8): no card, one column, ← at the
+   head's start ---- */
+.road-head.has-back { position: relative; padding: 0 calc(2 * var(--space-6) + var(--space-8)); }
+/* ←, where Claude's pages draw it: an icon drawn as the road's head draws its icons (main's road.css, .road-switch .icon). It shows
+   no tip under the pointer or the focus, its mark being one everyone reads (845 correction 10, the owner's word of 2026-11-24); its
+   word stays its aria-label. */
+.road-back-arrow { position: absolute; left: var(--space-6); top: 50%; transform: translateY(-50%); display: inline-grid; place-items: center; width: var(--space-8); height: var(--space-8); padding: 0; border: none; border-radius: var(--radius); background: none; color: var(--ink); cursor: pointer; }
+.road-back-arrow:hover { background: var(--float-hover); }
+.road-back-arrow:focus-visible { outline: 2px solid var(--act); outline-offset: 2px; }
+.road-back-arrow .icon { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+/* The name typed, beside the wordmark after a rule, as Claude's head shows its team's name; a long one is cut here and stands whole in its field. */
+.road-brand { display: flex; align-items: center; min-width: 0; max-width: 100%; }
+.road-brand .wordmark { flex: none; }
+.road-brand-org { min-width: 0; margin-left: var(--space-5); padding-left: var(--space-5); border-left: 1px solid var(--line); font-size: var(--size-lead); line-height: var(--leading-tight); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.road-brand-org[hidden] { display: none; }
+/* On a phone the head gives the name the room ← leaves on the right, so a short name stands whole. */
+@media (max-width: 30rem) { .road-head.has-back { padding-right: var(--space-6); } }
+.road-step-head { display: flex; flex-direction: column; gap: var(--space-3); }
+.road-step .cl-headerTitle { overflow-wrap: anywhere; text-wrap: balance; }
+/* 继续 under the name is as wide as its word, at the column's start, as Claude's. */
+.road-step .road-press-fit { width: auto; align-self: flex-start; }
+/* The order and the payment: two boxes of the page's raised paper, as the door's card is drawn. */
+.road-box { display: flex; flex-direction: column; gap: var(--space-5); min-width: 0; padding: var(--space-6); border: 1px solid var(--line); border-radius: var(--radius-large); background: var(--raised); }
+.road-box-title { margin: 0; font-size: var(--size-body); font-weight: var(--weight-strong); line-height: var(--leading-small); overflow-wrap: anywhere; }
+.road-tally { display: flex; flex-direction: column; gap: var(--space-3); }
+.road-tally[hidden], .road-step .road-seats[hidden] { display: none; }
+.road-sumline { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-5); font-size: var(--size-small); line-height: var(--leading-small); }
+.road-sumline > :first-child { min-width: 0; overflow-wrap: anywhere; }
+.road-sum { flex: none; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.road-total .road-sum { font-size: var(--size-title); font-weight: var(--weight-strong); line-height: var(--leading-tight); }
+.road-rule { height: 1px; margin: 0; border: 0; background: var(--line); }
+:where(.road-step) .road-adjust { width: 100%; margin-top: var(--space-2); }
+.road-fine.is-start { text-align: start; }
+
+/* 添加成员's step in the created card (`inviteStep` in a card): app.css's rules for the step, which this page does not load, for the card. */
+.road-invite .iv-left { margin: 0; }
+.road-invite .iv-name { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-5); margin: var(--space-6) 0 var(--space-3); font-size: var(--size-body); line-height: var(--leading-body); }
+.road-invite .iv-field { box-sizing: border-box; display: block; width: 100%; min-height: calc(3 * var(--size-body) * var(--leading-body) + 2 * var(--space-3)); padding: var(--space-3) var(--space-4); color: var(--ink); font: inherit; font-size: var(--size-body); line-height: var(--leading-body); resize: vertical; }
+.road-invite .iv-field::placeholder { color: var(--quiet); opacity: 1; }
+.road-invite .iv-field[readonly] { color: var(--quiet); }
+.road-invite .iv-pick { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-4); font-size: var(--size-body); line-height: var(--leading-body); }
+.road-invite .iv-notes p { margin: var(--space-3) 0 0; font-size: var(--size-small); line-height: var(--leading-small); text-wrap: pretty; overflow-wrap: anywhere; }
+.road-invite .iv-notes p:first-child { margin-top: var(--space-4); }
+.road-invite .f-select .icon { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.road-invite .road-acts { margin-top: var(--space-6); }
+.road-step .road-pay > .pl-card-acts { display: flex; margin: 0; }

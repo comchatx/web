@@ -2,7 +2,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { h } from "./dom.js";
 import { drawnAsABrowserDraws } from "./testing/drawn.js";
-import { choice, dialog, EDGE, GAP, giveBack, hideTip, hideTipWithin, menu, menuRow, ORDER, redrawTip, searchBox, seat, select, switchButton, tip, toast, toastStay } from "./forms.js";
+import { choice, dialog, EDGE, GAP, giveBack, hideTip, hideTipWithin, menu, menuRow, ORDER, redrawTip, searchBox, seat, select, switchButton, tip, tipWouldStand, toast, toastStay } from "./forms.js";
 
 afterEach(() => { hideTip(); document.body.replaceChildren(); vi.useRealTimers(); vi.restoreAllMocks(); });
 
@@ -224,6 +224,20 @@ describe("tip", () => {
     expect(tipBox()?.hidden).toBe(false);
     hideTipWithin(part);
     expect(tipBox()?.hidden).toBe(true);
+  });
+});
+
+describe("tipWouldStand", () => {
+  it("says where a target's tip would stand without showing it, and nothing for a target with no tip or nothing to say", () => {
+    let words = "Plugins";
+    const target = tip(h("button"), () => [words]);
+    document.body.append(target);
+    const before = document.body.childElementCount;
+    expect(tipWouldStand(target)).toBeInstanceOf(DOMRect);
+    expect([document.body.childElementCount, tipBox()?.hidden ?? true]).toEqual([before, true]);
+    words = "";
+    expect(tipWouldStand(target)).toBeNull();
+    expect(tipWouldStand(h("button"))).toBeNull();
   });
 });
 

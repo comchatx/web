@@ -696,35 +696,61 @@
       "name": "@comchatx/cx-schedule",
       "description": "Lets cx do things for you at the times you set.",
       "kinds": [
-        "extension",
         "skill"
       ],
       "author": "ComChatX",
       "updated": "2026-09-26T08:00:00.000Z",
-      "version": "0.3.0",
+      "version": "0.3.8",
       "repository": "https://github.com/comchatx/cx-schedule",
-      "readme": "Ask cx to do something at set times, such as checking your listings' Buy Box every hour, and cx keeps it as a scheduled job, which stays after cx's computer switches off.\n\n## When jobs run\n\nJobs run only while cx's computer is on, that is, while you use cx or after you ask cx to keep it on. If cx's computer is off when a job falls due, the job doesn't run and doesn't switch it on.\n\n## What it costs\n\nYou pay for the time cx's computer is kept on, and a job that runs often keeps it on.",
+      "readme": "Tell cx what to do and when, such as summing up yesterday's orders at 9 every morning, and cx keeps it as a scheduled job and does it on time, in the conversation where you asked. Jobs that read your store need your Amazon seller account connected.\n\nSome things you can ask:\n\n- At 9 every morning, sum up yesterday's orders and sales in each marketplace.\n- Check B0EXAMPLE1's Buy&nbsp;Box every hour, and tell me if someone takes it.\n- Remind me every Friday afternoon to look at the ads report.\n\n## When jobs run\n\nJobs run only while cx's computer is on, that is, while you use cx or after you turn on Keep it on in Settings. If cx's computer is off when a job falls due, the job doesn't run and doesn't switch it on, and the missed run isn't made up once it's back on. A job set to run once never runs if it's missed. Jobs stay after cx's computer switches off.\n\n## What it costs\n\nYou pay for the time cx's computer is kept on, and a job that runs often keeps it on.\n",
       "readme_cut": false,
       "ours": true,
       "comchatx": {
+        "name": "Scheduled Tasks",
+        "nameZh": "定时任务",
         "about": "让 cx 在你设定的时间替你做事。",
+        "skills": {
+          "cx-schedule": {
+            "en": "Tells cx when a scheduled task runs and in which conversation.",
+            "zh": "告诉 cx 定时任务何时运行、在哪个对话里做。"
+          }
+        },
         "mark": {
-          "line": "clock"
+          "draw": [
+            {
+              "d": "M4.4 13.4a7.6 7.6 0 1 1 15.2 0a7.6 7.6 0 1 1 -15.2 0zM11.1 9.4h1.8v3.7l2.4 1.5-.95 1.55-3.25-2.05z",
+              "rule": "evenodd"
+            },
+            {
+              "d": "M3.3 7.9a4.1 4.1 0 0 1 4.6-4.6c.45.05.62.6.3.92L4.2 8.2c-.32.32-.86.15-.9-.3zM20.7 7.9a4.1 4.1 0 0 0-4.6-4.6c-.45.05-.62.6-.3.92l4 3.98c.32.32.86.15.9-.3z",
+              "rule": "evenodd"
+            }
+          ]
         },
         "section": "extensions",
         "order": 30,
-        "awake": true
+        "builds": [
+          "@amaster.ai/pi-task-scheduler"
+        ],
+        "settings": {
+          "pi-scheduler": {
+            "dataDir": "{tree}/.pi/pi-scheduler"
+          }
+        }
       },
       "shipped": {
-        "readme": "Ask cx to do something at set times, such as checking your listings' Buy Box every hour, and cx keeps it as a scheduled job, which stays after cx's computer switches off.\n\n## When jobs run\n\nJobs run only while cx's computer is on, that is, while you use cx or after you ask cx to keep it on. If cx's computer is off when a job falls due, the job doesn't run and doesn't switch it on.\n\n## What it costs\n\nYou pay for the time cx's computer is kept on, and a job that runs often keeps it on.",
-        "readme_zh": "让 cx 在设定的时间做某件事，比如每小时检查一次 listing 的 Buy Box，cx 会把它存为定时任务，cx 的电脑关机后任务也不会丢失。\n\n## 什么时候运行\n\n任务只在 cx 的电脑开机时运行，即你正在使用 cx，或已让 cx 保持开机时。到点时如果 cx 的电脑已关机，任务不会运行，也不会让它开机。\n\n## 费用\n\n保持开机的时长需要付费，运行频繁的任务也会让 cx 的电脑保持开机。",
-        "skills": [],
+        "readme": "Tell cx what to do and when, such as summing up yesterday's orders at 9 every morning, and cx keeps it as a scheduled job and does it on time, in the conversation where you asked. Jobs that read your store need your Amazon seller account connected.\n\nSome things you can ask:\n\n- At 9 every morning, sum up yesterday's orders and sales in each marketplace.\n- Check B0EXAMPLE1's Buy&nbsp;Box every hour, and tell me if someone takes it.\n- Remind me every Friday afternoon to look at the ads report.\n\n## When jobs run\n\nJobs run only while cx's computer is on, that is, while you use cx or after you turn on Keep it on in Settings. If cx's computer is off when a job falls due, the job doesn't run and doesn't switch it on, and the missed run isn't made up once it's back on. A job set to run once never runs if it's missed. Jobs stay after cx's computer switches off.\n\n## What it costs\n\nYou pay for the time cx's computer is kept on, and a job that runs often keeps it on.\n",
+        "readme_zh": "把要做的事和时间告诉 cx，比如每天早上 9 点汇总前一天的订单，cx 会记成定时任务，到点在原来的对话里做完。读取店铺数据的任务，要先连接你的亚马逊店铺。\n\n你可以这样问：\n\n- 每天早上 9 点，按站点汇总前一天的订单数和销售额。\n- 每小时看一次 B0EXAMPLE1 的 Buy&nbsp;Box，被别人拿走就告诉我。\n- 每周五下午提醒我看广告报表。\n\n## 任务何时运行\n\n定时任务只在 cx 的电脑开机时运行，即你正在使用 cx 时，或在设置里打开「保持开机」之后。到点时如果 cx 的电脑已关机，任务不会运行，也不会让它开机；开机后，错过的那次不会补做。只运行一次的任务，错过就不再运行。cx 的电脑关机后，任务仍会保留。\n\n## 费用\n\ncx 的电脑保持开机的时长需要付费，运行频繁的任务也会让它保持开机。\n",
+        "skills": [
+          {
+            "name": "cx-schedule",
+            "description": "Scheduled tasks in the seller's box - a recurring check, a task at a time - run by `@amaster.ai/pi-task-scheduler`, which cx-schedule needs, and its `scheduler_*` tools; what the tools' own words miss here. cx-schedule needs `@amaster.ai/pi-task-scheduler`: where no `scheduler_*` tool is there, the scheduler is not installed, and the seller installs it in Plugins, which installs it with cx-schedule. cx-schedule installs from Plugins, or with `pi install -l npm:@comchatx/cx-schedule` run in /tenant (without -l it is gone at the box's next start)."
+          }
+        ],
         "prompts": [],
         "unread": []
       },
-      "uses": [
-        "@amaster.ai/pi-task-scheduler"
-      ]
+      "uses": []
     },
     {
       "name": "cx-keepa",

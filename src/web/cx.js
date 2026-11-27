@@ -92,6 +92,13 @@
   const ARM_NATURAL = 70;
   // cx's width, in its own units: the measure of how far a move goes.
   const BODY_W = 113;
+  // The body alone, its paper's two rings, in its own units from its middle: what a place on the page (goTo) is the box of. The arms,
+  // the z and the thought dots reach past it.
+  const BODY_BOX = Object.freeze({ x: -56.5, y: -37.5, w: BODY_W, h: 77 });
+  // A hop to a place on the page takes MOTION.hop.dur and a quarter second more over the first 800 px of its way, never over GO_MAX s.
+  const GO_FAR = 800;
+  const GO_MORE = 0.25;
+  const GO_MAX = 0.9;
   // The body goes where it is sent without overshooting (a critically damped spring, in rad/s). A move farther than HOP_FAR body
   // widths, and any move to another kind of block farther than HOP_FROM (scene units), is a hop.
   const BODY_OMEGA = 5;
@@ -294,6 +301,71 @@
     const len = Math.hypot(dx, dy) || 1;
     const b = bow === undefined ? 6 : bow;
     return { elbow: [(sx + hand[0]) / 2 - (dy / len) * b, (sy + hand[1]) / 2 + (dx / len) * b], hand, fingers, item: undefined, far: 1 };
+  };
+
+  // ---- the pointing hand: cx shows the one thing to press ----
+  // The hand people read as "press here" (the link's pointer, 👉 👆 in every emoji set): one long finger leaving the palm at its edge
+  // on the thumb's side, the thumb out at an angle on that side, the other fingers folded round the palm on the far side; drawn a
+  // little larger than the resting hand, whose thumb would not show at the size cx is drawn out on a page. It is an arm of the same
+  // pencil line from the same shoulder, in place of the resting arm on that side; its fingertip stops POINT_CLEAR px short of the key.
+  const POINT = Object.freeze({ palm: 5, finger: 13, thumb: 6.5, knuckle: 2.2, at: (40 * Math.PI) / 180, thumbAt: (95 * Math.PI) / 180, thumbOut: (42 * Math.PI) / 180, out: 14, max: 150, min: 24 });
+  const POINT_CLEAR = 2;
+  const unit = ([x, y]) => { const l = Math.hypot(x, y) || 1; return [x / l, y / l]; };
+  /** The pointing arm, in the body's units: from the shoulder on `side` (1 right, -1 left) to a fingertip at `tip`, the finger along
+   *  `dir`; held to the arm's reach between POINT.min and POINT.max, the finger still aimed. */
+  const pointArm = (side, tip, dir) => {
+    const s = [SHOULDER[0] * side, SHOULDER[1]];
+    // The thumb's side of the finger: a quarter turn anticlockwise for the hand on cx's right (as 👉 and 👆 draw it), mirrored on its left.
+    const t = side === 1 ? [dir[1], -dir[0]] : [-dir[1], dir[0]];
+    const round = (a, r) => [(Math.cos(a) * dir[0] + Math.sin(a) * t[0]) * r, (Math.cos(a) * dir[1] + Math.sin(a) * t[1]) * r];
+    const base = round(POINT.at, POINT.palm);
+    let hand = [tip[0] - base[0] - dir[0] * POINT.finger, tip[1] - base[1] - dir[1] * POINT.finger];
+    let reach = Math.hypot(hand[0] - s[0], hand[1] - s[1]);
+    const held = reach > POINT.max;
+    const least = reach <= POINT.min;
+    if (reach > POINT.max || reach < POINT.min) {
+      const along = unit([hand[0] - s[0], hand[1] - s[1]]);
+      reach = Math.max(POINT.min, Math.min(POINT.max, reach));
+      hand = [s[0] + along[0] * reach, s[1] + along[1] * reach];
+    }
+    // The elbow bows away from the body, a little more for a longer arm.
+    const mid = [(s[0] + hand[0]) / 2, (s[1] + hand[1]) / 2];
+    let n = unit([-(hand[1] - s[1]), hand[0] - s[0]]);
+    if (n[0] * mid[0] + n[1] * mid[1] < 0) n = [-n[0], -n[1]];
+    const bow = Math.max(2, Math.min(8, reach * 0.1));
+    const elbow = [mid[0] + n[0] * bow, mid[1] + n[1] * bow];
+    const line = [];
+    for (let i = 0; i <= 9; i++) { const u = i / 9; line.push([(1 - u) * (1 - u) * s[0] + 2 * u * (1 - u) * elbow[0] + u * u * hand[0], (1 - u) * (1 - u) * s[1] + 2 * u * (1 - u) * elbow[1] + u * u * hand[1]]); }
+    const at = ([x, y]) => [hand[0] + x, hand[1] + y];
+    const start = at(base);
+    const end = [start[0] + dir[0] * POINT.finger, start[1] + dir[1] * POINT.finger];
+    const from = at(round(POINT.thumbAt, POINT.palm));
+    const out = round(POINT.thumbOut, POINT.thumb);
+    const fold = [-12, -48, -84].map((deg) => at(round((deg * Math.PI) / 180, POINT.palm + POINT.knuckle)));
+    // Where the arm passes, every few units from the shoulder's end (its first part lies in the body) to the fingertip, and the thumb.
+    const passes = [];
+    for (let i = 3; i <= 24; i++) { const u = i / 24; passes.push([(1 - u) * (1 - u) * s[0] + 2 * u * (1 - u) * elbow[0] + u * u * hand[0], (1 - u) * (1 - u) * s[1] + 2 * u * (1 - u) * elbow[1] + u * u * hand[1]]); }
+    for (let i = 0; i <= 6; i++) passes.push([start[0] + (dir[0] * POINT.finger * i) / 6, start[1] + (dir[1] * POINT.finger * i) / 6]);
+    passes.push([from[0] + out[0], from[1] + out[1]]);
+    return { line: wobbly(line, 12 + side, 0.45), hand, finger: wobbly([start, end], 31 + side, 0), thumb: wobbly([from, [from[0] + out[0], from[1] + out[1]]], 41, 0), fold: wobbly(fold, 42, 0.2), end, held, least, passes };
+  };
+  /** Where to point and with which hand, from the key's box and cx's middle and half size, in client px (`k` px a unit). Beside the key
+   *  the arm reaches level from the shoulder to its near edge, held inside the key's height; above or below it, to its near edge, the
+   *  hand a little outside the shoulder so the arm clears the body. The hand is the one on the key's side; straight above or below, the
+   *  right, the one cx presses its computer's button with. "screen" is its own computer's screen, "self" its own middle. */
+  const aimAt = (how, key, centre, half, k) => {
+    if (how === "self") return { side: 1, at: null, short: 0 };
+    if (how === "screen") return { side: 1, at: [key.left + key.width * 0.56, key.top + key.height * 0.34], short: 7 };
+    const shoulderY = centre[1] + SHOULDER[1] * k;
+    const y = Math.max(key.top + 4, Math.min(shoulderY, key.top + key.height - 4));
+    // A key beside cx but well above or below the shoulder is pointed at as from above or below: a level finger would run along its edge.
+    const steep = (x, s) => { const dx = x - (centre[0] + s * SHOULDER[0] * k); const dy = y - shoulderY; return Math.abs(dy) > Math.abs(dx) && Math.hypot(dx, dy) <= (POINT.max + POINT.finger + POINT.palm) * k; };
+    const right = key.left + key.width;
+    if (right <= centre[0] - half[0] + 1 && !steep(right, -1)) return { side: -1, at: [right, y], short: 0 };
+    if (key.left >= centre[0] + half[0] - 1 && !steep(key.left, 1)) return { side: 1, at: [key.left, y], short: 0 };
+    const side = key.left + key.width / 2 < centre[0] - 4 ? -1 : 1;
+    const x = centre[0] + side * (SHOULDER[0] + POINT.out) * k;
+    return { side, at: [Math.max(key.left + 4, Math.min(x, right - 4)), key.top >= centre[1] ? key.top : key.top + key.height], short: 0 };
   };
 
   const EYES_NEUTRAL = Object.freeze({ sx: 1, sy: 1, dx: 0, dy: 0 });
@@ -635,6 +707,11 @@
     const eyeL = el("g", {}, [eyePiece(1, "var(--cx-forest-shade)", 0.9), eyePiece(1, "var(--cx-forest)")]);
     const eyeR = el("g", {}, [eyePiece(-1, "var(--cx-sand-shade)", 0.9), eyePiece(-1, "var(--cx-sand)")]);
     const hands = el("g", { class: "cx-hands", stroke: "currentColor", "stroke-linecap": "round", "stroke-linejoin": "round", fill: "none" }, [wire(armL), wire(armR)]);
+    // The pointing arm (pointArm): drawn in place of the resting arm on its side while cx points, and only then.
+    const pointer = { g: el("g", { class: "cx-point" }, []), line: el("path", {}), palm: el("circle", { r: POINT.palm }), finger: el("path", {}), thumb: el("path", {}), fold: el("path", {}) };
+    pointer.g.append(pointer.line, pointer.palm, pointer.finger, pointer.thumb, pointer.fold);
+    pointer.g.style.display = "none";
+    hands.append(pointer.g);
     const body = el("g", { class: "cx-body" }, [
       el("g", { class: "cx-paper" }, [paper("var(--cx-forest-shade)", "var(--cx-sand-shade)", 1.8), paper("var(--cx-forest)", "var(--cx-sand)", 0)]),
       el("g", { class: "cx-eyes" }, [eyeL, eyeR]),
@@ -859,6 +936,11 @@
     // body is sent, and beside what kind of block; when text last arrived. The page says where, and when; the body gets there at its
     // own pace.
     const walk = { on: false, p: [0, 0], v: [0, 0], g: 0, s: AWAY_SCALE, hop: null, goal: [0, 0], kind: "", wrote: -Infinity, at: performance.now(), view: null };
+    // Sent to a place on the page (goTo): the page holds cx there, and the stream's margin does not move it, until it is sent home. What
+    // it does on landing, and what its hand points at once it has landed (point).
+    let held = false;
+    let landed = null;
+    let pointing = null;
     const WIDTH = BODY_W * AWAY_SCALE;
     const hopTo = (to, now, how) => {
       const d = Math.hypot(to[0] - walk.p[0], to[1] - walk.p[1]);
@@ -876,6 +958,14 @@
       const d = Math.hypot(goal[0] - walk.p[0], goal[1] - walk.p[1]);
       if (d > HOP_FAR * WIDTH || (newKind && d > HOP_FROM)) hopTo(goal, now, "step");
     };
+    // A place moved while cx is in the air towards it: the move is laid over the rest of the hop, eased from what was laid on when it
+    // moved, so cx neither sets off again nor jumps; `h.moved` is that move, from `u` on.
+    const laidOn = (h, u) => {
+      const m = h.moved;
+      if (!m) return [0, 0, 0];
+      const w = m.u >= 1 ? 1 : easeInOut(clamp01((u - m.u) / (1 - m.u)));
+      return [0, 1, 2].map((i) => m.from[i] + (m.to[i] - m.from[i]) * w);
+    };
     const advance = (now) => {
       const dt = Math.min(0.05, Math.max(0, (now - walk.at) / 1000));
       walk.at = now;
@@ -883,14 +973,18 @@
       if (h) {
         const u = clamp01((now - h.start) / 1000 / h.dur);
         const e = easeInOut(u);
-        walk.p = [lerp(h.from[0], h.to[0], e), lerp(h.from[1], h.to[1], e) - h.height * Math.sin(Math.PI * u)];
+        const o = laidOn(h, u);
+        walk.p = [lerp(h.from[0], h.to[0], e) + o[0], lerp(h.from[1], h.to[1], e) - h.height * Math.sin(Math.PI * u) + o[1]];
         walk.g = lerp(h.g0, h.g1, e);
+        if (h.s1 !== undefined) walk.s = lerp(h.s0, h.s1, e) + o[2];
         if (u >= 1) {
           walk.hop = null;
-          walk.p = [...h.to];
+          walk.p = h.s1 !== undefined ? [...walk.goal] : [...h.to];
           walk.v = [0, 0];
           walk.g = h.g1;
-          if (walk.on) sendTo(walk.goal, now, false);
+          if (h.s1 !== undefined) walk.s = h.s1 + (h.moved ? h.moved.to[2] : 0);
+          if (walk.on && !held) sendTo(walk.goal, now, false);
+          if (h.go && landed) { const then = landed; landed = null; queueMicrotask(then); }
         }
       } else if (walk.on) {
         for (const i of [0, 1]) {
@@ -977,6 +1071,55 @@
       shape(keyLight, fr.hit > 0.5 ? KEY_LIGHT[fr.hitKey] : "");
       drawLed(m.dot);
     };
+    // The pointing arm, drawn again each frame from where the shoulder and the key are then, so the fingertip stays by the key while cx
+    // breathes or the page moves; only once cx has landed: in the air it does not point.
+    let pointed = false;
+    const drawPointer = () => {
+      const m = pointing !== null && walk.hop === null ? hands.getScreenCTM() : null;
+      const key = m && pointing.how !== "self" ? pointing.key() : null;
+      if (!m || (pointing.how !== "self" && !key)) {
+        if (pointed) { pointed = false; pointer.g.style.display = "none"; armL.g.style.display = ""; armR.g.style.display = ""; }
+        return;
+      }
+      const k = Math.hypot(m.a, m.b);
+      const centre = new DOMPoint(0, 0).matrixTransform(m);
+      const a = aimAt(pointing.how, key, [centre.x, centre.y], [(BODY_W / 2) * k, (BODY_BOX.h / 2) * k], k);
+      let tip = [14, 8];
+      let dir = unit([-1, -0.55]);
+      if (a.at !== null) {
+        const at = new DOMPoint(a.at[0], a.at[1]).matrixTransform(m.inverse());
+        dir = unit([at.x - SHOULDER[0] * a.side, at.y - SHOULDER[1]]);
+        const back = (a.short + POINT_CLEAR) / k;
+        tip = [at.x - dir[0] * back, at.y - dir[1] * back];
+      }
+      let arm = pointArm(a.side, tip, dir);
+      // The way to the key: where the arm would lie over a word, a press or a picture or within POINT_CLEAR px of one, it reaches less
+      // far, 2 px at a time, still aimed.
+      // What lies inside the key, or holds it, is the key's own.
+      let stopped = false;
+      if (key) {
+        const inKey = (b) => b.left >= key.left - 1 && b.top >= key.top - 1 && b.right <= key.left + key.width + 1 && b.bottom <= key.top + key.height + 1;
+        const holdsKey = (b) => b.left <= key.left + 1 && b.top <= key.top + 1 && b.right >= key.left + key.width - 1 && b.bottom >= key.top + key.height - 1;
+        const boxes = pointing.clear().filter((b) => !inKey(b) && !holdsKey(b));
+        const blocked = (shape) => shape.passes.some(([x, y]) => { const c = new DOMPoint(x, y).matrixTransform(m); return boxes.some((b) => c.x > b.left - POINT_CLEAR && c.x < b.right + POINT_CLEAR && c.y > b.top - POINT_CLEAR && c.y < b.bottom + POINT_CLEAR); });
+        for (let tries = 0; boxes.length > 0 && tries < 60 && !arm.least && blocked(arm); tries++) {
+          arm = pointArm(a.side, [arm.end[0] - dir[0] * (2 / k), arm.end[1] - dir[1] * (2 / k)], dir);
+          stopped = true;
+        }
+      }
+      (a.side === 1 ? armR : armL).g.style.display = "none";
+      (a.side === 1 ? armL : armR).g.style.display = "";
+      pointer.line.setAttribute("d", arm.line);
+      pointer.palm.setAttribute("cx", f(arm.hand[0]));
+      pointer.palm.setAttribute("cy", f(arm.hand[1]));
+      pointer.finger.setAttribute("d", arm.finger);
+      pointer.thumb.setAttribute("d", arm.thumb);
+      pointer.fold.setAttribute("d", arm.fold);
+      pointer.g.setAttribute("data-side", a.side === 1 ? "right" : "left");
+      if (arm.held || stopped) pointer.g.setAttribute("data-short", ""); else pointer.g.removeAttribute("data-short");
+      pointer.g.style.display = "";
+      pointed = true;
+    };
     const draw = (fr, t) => {
       const s = fr.squash;
       body.setAttribute("transform", `translate(0 ${f(fr.dy)}) rotate(${f(fr.rotate)}) scale(${f(1 / Math.sqrt(s))} ${f(s)})`);
@@ -1007,6 +1150,7 @@
         const beat = reduced || t === undefined ? 0.9 : ((t * 0.8) % 1);
         [...thoughts.children].forEach((dot, i) => dot.setAttribute("opacity", beat > 0.12 + i * 0.22 ? "1" : "0.15"));
         drawScene(fr, t === undefined ? opts.stillAt : t);
+        drawPointer();
       }
       last = fr;
     };
@@ -1063,8 +1207,8 @@
       lastDrawn = now;
       // The scene's own motion: a move between two places, the pencil's strokes while text arrives, the yawn cycle while sleep is due,
       // the dots while the model thinks, and a keystroke for its length.
-      const settling = scene && walk.on && (Math.hypot(walk.goal[0] - walk.p[0], walk.goal[1] - walk.p[1]) > 0.2 || Math.hypot(walk.v[0], walk.v[1]) > 0.2 || (state === "writing" && at.writing > 0));
-      const moving = scene && (at.flight >= 0 || walk.hop !== null || settling || (state === "ready" && (model.sleepy || model.thinking || (model.typing && tapAge < TAP + 0.05))));
+      const settling = scene && walk.on && !held && (Math.hypot(walk.goal[0] - walk.p[0], walk.goal[1] - walk.p[1]) > 0.2 || Math.hypot(walk.v[0], walk.v[1]) > 0.2 || (state === "writing" && at.writing > 0));
+      const moving = scene && (at.flight >= 0 || walk.hop !== null || settling || pointing !== null || (state === "ready" && (model.sleepy || model.thinking || (model.typing && tapAge < TAP + 0.05))));
       if (blending || moving || spec.motion === "continuous" || spec.motion === "slow") { frame(); return; }
       if (spec.motion === "blink") {
         // Sleep until the next blink, then run frames for its length.
@@ -1133,6 +1277,7 @@
     // whether cx is out.
     const away = (point) => {
       if (!scene) throw new Error("cx: no scene to leave");
+      if (held) return walk.on;
       const now = performance.now();
       advance(now);
       let goal = null;
@@ -1190,6 +1335,80 @@
       if (timer) { clearTimeout(timer); timer = 0; }
       frame();
       return walk.on;
+    };
+
+    // Sends cx to a place on the page, or home to its desk with `null`: `place` is the box its body fills there, in client px, which
+    // also gives the size it is drawn at. It hops there in an arc from wherever it stands (MOTION.hop's, for at most GO_MAX s), and
+    // `then` runs once it has landed. A place given again while cx is in the air towards the last moves the landing: the difference is
+    // laid over the rest of the hop. While cx stands at a place, the stream's margin does not move it (away); sent home, it is the
+    // stream's again. Under reduced motion it is drawn where it lands. Any move ends a pointing (point). Returns whether cx is out.
+    const goTo = (place, then) => {
+      if (!scene) throw new Error("cx: no scene to leave");
+      const now = performance.now();
+      advance(now);
+      pointing = null;
+      landed = then || null;
+      if (!place) {
+        held = false;
+        if (walk.on) {
+          walk.on = false;
+          walk.kind = "";
+          walk.goal = [0, 0];
+          hopTo(walk.goal, now, "home");
+          walk.hop = Object.freeze({ ...walk.hop, go: true });
+        }
+      } else {
+        const r = svg.getBoundingClientRect();
+        if (!r.width || ![place.left, place.top, place.width].every(Number.isFinite)) return walk.on;
+        const k = r.width / box.w;
+        const s = place.width / k / BODY_BOX.w;
+        const goal = [(place.left - r.left) / k + box.x - BODY_BOX.x * s, (place.top - r.top) / k + box.y - BODY_BOX.y * s];
+        const h = walk.hop;
+        held = true;
+        walk.on = true;
+        walk.kind = "go";
+        walk.view = null;
+        if (h && h.go && h.s1 !== undefined && !reduced) {
+          const u = clamp01((now - h.start) / 1000 / h.dur);
+          walk.hop = Object.freeze({ ...h, moved: { u, from: laidOn(h, u), to: [goal[0] - h.to[0], goal[1] - h.to[1], s - h.s1] } });
+          walk.goal = goal;
+        } else {
+          const s0 = lerp(1, walk.s, walk.g);
+          const d = Math.hypot(goal[0] - walk.p[0], goal[1] - walk.p[1]) * k;
+          walk.goal = goal;
+          walk.g = 1;
+          walk.s = s0;
+          // A place where cx already stands, at its size: no hop.
+          walk.hop = d <= 2 && Math.abs(s - s0) < 0.01 ? null
+            : Object.freeze({ from: [...walk.p], to: goal, start: now, dur: Math.min(GO_MAX, MOTION.hop.dur + GO_MORE * Math.min(1, d / GO_FAR)), height: Math.min(MOTION.hop.riseMax, MOTION.hop.rise + d * MOTION.hop.perPx) / k, lift: 1, g0: 1, g1: 1, s0, s1: s, go: true });
+          if (!walk.hop) walk.s = s;
+        }
+      }
+      svg.setAttribute("data-away", String(walk.on));
+      if (held) svg.setAttribute("data-held", ""); else svg.removeAttribute("data-held");
+      if (reduced || !walk.hop) {
+        const h = walk.hop;
+        walk.hop = null;
+        walk.p = [...walk.goal];
+        walk.v = [0, 0];
+        walk.g = walk.on ? 1 : 0;
+        if (h && h.s1 !== undefined) walk.s = h.s1 + (h.moved ? h.moved.to[2] : 0);
+        draw(still(state));
+        if (landed) { const done = landed; landed = null; queueMicrotask(done); }
+        if (reduced) return walk.on;
+      }
+      if (timer) { clearTimeout(timer); timer = 0; }
+      frame();
+      return walk.on;
+    };
+    // cx's hand points at a key while cx stands still: `key` gives the key's box in client px each frame, or null while there is none to
+    // point at; "screen" points at its own computer's screen (the key is the computer's box), "self" at its own middle (no key). The
+    // fingertip stops POINT_CLEAR px short of the key's near edge, or, where the key is farther than the arm reaches, the finger aims at
+    // it from the arm's end. `null` puts the resting arm back.
+    const point = (key, how, clear) => {
+      if (!scene) throw new Error("cx: no scene to point from");
+      pointing = key === null && how !== "self" ? null : Object.freeze({ key: typeof key === "function" ? key : () => key, how: how || "key", clear: clear ?? (() => []) });
+      redraw();
     };
 
     // How far below its line's middle cx's figure reaches when it stands out beside a line beginning at `start` in a view whose left edge is
@@ -1250,6 +1469,8 @@
           update,
           tap,
           away,
+          goTo,
+          point,
           reach,
           slipPoint,
           slipMatrix,
@@ -1271,5 +1492,5 @@
     });
   };
 
-  return Object.freeze({ STATES, REASONS, DOTS, WORDS, mount, MARK_W, BOX: VB, SCENE_BOX: SCENE_VB, COMPUTER_BOX, COMPUTER_PTS, TARGETS, hit: hitOf, machine: machineOf, MOTION, SLIP_MID, slip: (stroke = 0.9) => slipShape(stroke) });
+  return Object.freeze({ STATES, REASONS, DOTS, WORDS, mount, MARK_W, BODY_BOX, BOX: VB, SCENE_BOX: SCENE_VB, COMPUTER_BOX, COMPUTER_PTS, TARGETS, hit: hitOf, machine: machineOf, MOTION, SLIP_MID, slip: (stroke = 0.9) => slipShape(stroke) });
 });

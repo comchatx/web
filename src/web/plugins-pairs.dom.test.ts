@@ -4,7 +4,7 @@ import { FIRST_RELEASE, type Backend, type ConnectionCheck, type GrantAccount, t
 import { CATALOGUE } from "./canned-catalogue.js";
 import type { Catalogue, Plugin } from "./catalogue.js";
 import { PluginsPage } from "./plugins-page.js";
-import { clickStub } from "./plugins-test-kit.js";
+import { clickStub, scrimPresses } from "./plugins-test-kit.js";
 import { text, type StringKey } from "./strings.js";
 import { ADS_SOURCE_WORDS } from "./testing/source-words.js";
 
@@ -214,6 +214,21 @@ it("removes a row at once, and the keyboard goes to the press that adds under it
   expect([heads(view), words(body(view), "section > h2"), focused()]).toEqual([[], ["Connect your ad accounts"], "sp-client_id"]);
 });
 
+it("closes the card that asks before a Client identifier goes on a press that starts and ends on the dimmed page, not on its own padding or across its edge, and on Escape", async () => {
+  const { view, calls } = world({ pairs: [...one.pairs, { name: "p-2", fields: { client_id: OTHER } }], rows: [...one.rows, { store: "c-dead", pair: "p-2", accounts: [], refused: true }] });
+  await opened(view);
+  const card = (): HTMLDialogElement | null => document.querySelector("dialog.pl-card-dialog");
+  await press(at(view, "remove-pair first"));
+  expect(scrimPresses(card()!)).toEqual([true, true, true, false]);
+  await settle();
+  expect([card(), focused()]).toEqual([null, "remove-pair first"]);
+  await press(at(view, "remove-pair first"));
+  card()!.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
+  await settle();
+  expect([card(), focused(), calls]).toEqual([null, "remove-pair first", []]);
+  document.body.replaceChildren();
+});
+
 it("asks before a Client identifier goes, on a card that names its ad accounts; Cancel and Escape give the keyboard back, Remove takes it with its rows; one whose rows name nothing goes at once", async () => {
   for (const language of ["en", "zh"] as const) {
     const { view, calls } = world({ language, pairs: [...one.pairs, { name: "p-2", fields: { client_id: OTHER } }], rows: [...one.rows, { store: "c-dead", pair: "p-2", accounts: [], refused: true }] });
@@ -226,7 +241,7 @@ it("asks before a Client identifier goes, on a card that names its ad accounts; 
     await press(card()!.querySelector("[data-focus='card-cancel']"));
     expect([card(), focused()]).toEqual([null, "remove-pair first"]);
     await press(at(view, "remove-pair first"));
-    card()!.dispatchEvent(new Event("cancel", { cancelable: true }));
+    card()!.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
     await settle();
     expect([card(), focused()]).toEqual([null, "remove-pair first"]);
     await press(at(view, "remove-pair first"));

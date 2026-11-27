@@ -26,3 +26,14 @@ const add = (role: "user" | "assistant", content: string): void => {
   }
   view.update(state);
 };
+
+/** A turn the test plays, event by event, as the stream would bring it: each event is reduced and drawn. */
+(window as unknown as { feed: (events: readonly unknown[]) => void }).feed = (events) => {
+  for (const one of events) {
+    const event = one as { event: string; data?: { seq?: number } };
+    if (event.event === "entry") seq = Math.max(seq, event.data?.seq ?? 0);
+    state = reduce(state, event as StreamEvent);
+  }
+  view.update(state);
+};
+(window as unknown as { next: () => number }).next = () => seq + 1;

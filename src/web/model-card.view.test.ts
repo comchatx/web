@@ -122,7 +122,9 @@ it("is one line closed — the vendor and the model in use — and a card that o
   // Default, the three vendors on the card, others: no blank row fills it out.
   expect(rowsOf().map((row) => row.tag)).toEqual(["button", "button", "button", "button", "button"]);
   expect(texts()[0]).toBe("card.defaultcard.bestValuecard.platform›");
-  expect(texts().slice(1, 4)).toEqual(["AAnthropiccard.key›", "OOpenAIcard.account›", "MMiniMaxcard.platform›"]);
+  // The vendor of the model in use is ticked in its mark's place, and is the current one to a screen reader.
+  expect(texts().slice(1, 4)).toEqual(["✓Anthropiccard.key›", "OOpenAIcard.account›", "MMiniMaxcard.platform›"]);
+  expect(rowsOf().slice(1, 4).map((row) => row.getAttribute("aria-current"))).toEqual(["true", null, null]);
   expect(texts()[4]).toBe("…card.others↗");
   // Read, a row is its words: its ✓, ›, … and ↗ are drawn and hidden, as Default's spacer is.
   expect(rowsOf().map(heard)).toEqual(["card.defaultcard.bestValuecard.platform", "Anthropiccard.key", "OpenAIcard.account", "MiniMaxcard.platform", "card.others"]);
@@ -132,6 +134,21 @@ it("is one line closed — the vendor and the model in use — and a card that o
   expect(rowsOf()[1]!.classList.contains("mp-in-use")).toBe(true);
   expect(doc.activeElement).toBe(rowsOf()[0]);
   expect(doc.listening("pointerdown")).toBe(1);
+});
+
+it("tells a member whom to ask in 更多模型's place, at the rows' inset, and draws the admin's row as before", () => {
+  let member = true;
+  const asked = new ModelCard({ say, choose: () => {}, others: (vendor) => others.push(vendor), member: () => member });
+  asked.update(view, "en");
+  asked.show("vendors");
+  const rows = (): Node[] => ((asked.element.children[1] as unknown as Node).children[0] as unknown as Node).children as Node[];
+  const last = (): Node => rows()[rows().length - 1]!;
+  expect([last().tag, last().getAttribute("class"), last().getAttribute("data-key"), last().textContent]).toEqual(["p", "quiet mp-ask", "org.askForModels", "org.askForModels"]);
+  expect(rows().filter((row) => row.textContent?.includes("card.others"))).toEqual([]);
+  member = false;
+  asked.update(view, "en");
+  expect([last().tag, last().textContent]).toEqual(["button", "…card.others↗"]);
+  asked.close();
 });
 
 it("still opens where the record ticks no vendor, on Default and the way to add vendors; with nothing to choose and no record it is a line", () => {
@@ -152,6 +169,9 @@ it("opens on the ticked row, on the level that holds it, and says a pick pi has 
   card.open();
   expect(texts()[1]).toBe("✓Claude Opus 5.5card.chosenTagcard.key");
   expect(rowsOf()[1]!.querySelectorAll("span.mp-tick")[0]!.title).toBe("");
+  // A pick pi has not taken yet ticks its vendor on the vendors too, Default left bare.
+  card.show("vendors");
+  expect([texts()[0], texts()[1], rowsOf()[1]!.getAttribute("aria-current")]).toEqual(["card.defaultcard.bestValuecard.platform›", "✓Anthropiccard.key›", "true"]);
   card.close();
   // The default in use is ticked on the vendors, which is where the card opens for it.
   card.update({ ...view, current: { provider: "openrouter", id: "minimax/m3", name: "MiniMax M3", vendor: "minimax", vendorName: "MiniMax", served: true, chosen: true } }, "en");
@@ -268,7 +288,8 @@ it("closes on Escape and gives the line the focus, goes back on ArrowLeft, and c
   trigger().focus();
   inner.dispatch("keydown", { key: "ArrowDown" });
   expect(doc.activeElement).toBe(rowsOf()[0]);
-  inner.dispatch("keydown", { key: "Escape" });
+  // Escape is heard on the page, wherever the keyboard is.
+  doc.dispatch("keydown", { key: "Escape", preventDefault: () => undefined, stopPropagation: () => undefined });
   expect(card.opened).toBe(false);
   expect(doc.activeElement).toBe(trigger());
   card.show("vendors");
@@ -286,7 +307,7 @@ it("keeps the focus on the row in the person's hand when the rows are drawn agai
   const [anthropic, openai, minimax] = view.slots;
   card.update({ ...view, slots: [openai!, anthropic!, minimax!] }, "en");
   expect(doc.activeElement).toBe(rowsOf()[2]);
-  expect(texts()[2]).toBe("AAnthropiccard.key›");
+  expect(texts()[2]).toBe("✓Anthropiccard.key›");
   rowsOf()[2]!.click();
   inner().dispatch("keydown", { key: "ArrowDown" });
   expect(texts()[1]).toBe("✓Claude Opus 5.5card.key");
@@ -301,7 +322,7 @@ it("keeps the focus on the row in the person's hand when the rows are drawn agai
   expect(doc.activeElement).toBe(rowsOf()[0]);
   inner().dispatch("keydown", { key: "ArrowUp" });
   expect(doc.activeElement).toBe(rowsOf().at(-1));
-  inner().dispatch("keydown", { key: "Escape" });
+  doc.dispatch("keydown", { key: "Escape", preventDefault: () => undefined, stopPropagation: () => undefined });
   expect(card.opened).toBe(false);
   expect(doc.activeElement).toBe(trigger());
   card.update(view, "zh");
@@ -310,8 +331,8 @@ it("keeps the focus on the row in the person's hand when the rows are drawn agai
 
 it("letters a vendor's glyph in the page's own face, naming no font of its own", () => {
   card.show("vendors");
-  const letter = rowsOf()[1]!.querySelectorAll("text")[0]!;
-  expect([letter.textContent, letter.getAttribute("font-family")]).toEqual(["A", null]);
+  const letter = rowsOf()[2]!.querySelectorAll("text")[0]!;
+  expect([letter.textContent, letter.getAttribute("font-family")]).toEqual(["O", null]);
 });
 
 it("lays its rows out by how many it draws, a number the stylesheet does not hold", () => {
